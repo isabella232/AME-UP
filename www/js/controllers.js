@@ -52,6 +52,8 @@ angular.module('starter.controllers', [])
     center: ol.proj.transform([ -111,32.3], 'EPSG:4326', 'EPSG:3857'),
     zoom: 6.5
   });
+
+
   $scope.map = new ol.Map({
     target: 'map',
     layers: [
@@ -110,10 +112,24 @@ angular.module('starter.controllers', [])
             })
           })
         ]
+      }),
+      new ol.layer.Group({
+        title: 'Land Ownership',
+        layers: [
+          new ol.layer.Image({
+            title: 'Arizona Land Ownership',
+            source: new ol.source.ImageArcGISRest({
+              ratio: 1,
+              params: {},
+              url: 'http://services.azgs.az.gov/arcgis/rest/services/test/Arizona_Land_Ownership/MapServer'
+            })
+          })
+        ]
       })
     ],
     view: $scope.view
   });
+
 
   var layerSwitcher = new ol.control.LayerSwitcher({
     tipLabel: 'Légende' // Optional label for button
@@ -131,13 +147,20 @@ angular.module('starter.controllers', [])
     var viewResolution = /** @type {number} */ ($scope.view.getResolution());
     $scope.wmsSource.get(name);
 
-    /* var url = $scope.wmsSource.getGetFeatureInfoUrl(
+     var url = $scope.wmsSource.get()
+      .getGetFeatureInfoUrl(
       evt.coordinate, viewResolution, 'EPSG:3857',
-      {'INFO_FORMAT': 'text/html'});
+        $scope.map.getView().getResolution(),
+        $scope.map.getView().getProjection(),
+      {
+        'INFO_FORMAT': 'text/html',
+        'propertyName': 'NAME,AREA_CODE,DESCRIPTIO'
+      }
+      );
     if (url) { console.log(url);
-     /* document.getElementById('info').innerHTML =
+      document.getElementById('info').innerHTML =
         '<iframe seamless src="' + url + '"></iframe>';
-    *//*}*/
+    }
   });
 
 });
