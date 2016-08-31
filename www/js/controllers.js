@@ -155,10 +155,7 @@ angular.module('starter.controllers', [])
 
   $scope.map.on('singleclick', function(evt) {
     document.getElementById('popup').innerHTML = '';
-    //var prettyCoord = ol.coordinate.toStringHDMS(ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326'), 2);
-    //popup.show(evt.coordinate, '<div><h2>Coordinates</h2><p>' + prettyCoord + '</p></div>');
 
-   // document.getElementById('info').innerHTML = '';
     var viewResolution = /** @type {number} */ ($scope.view.getResolution());
     $scope.wmsSource.get(name);
 
