@@ -43,11 +43,6 @@ angular.module('starter.controllers', [])
 
 
 .controller('MapCtrl', function($scope) {
- /* $scope.wmsSource = new ol.source.ImageArcGISRest({
-    url: 'http://services.azgs.az.gov/arcgis/rest/services/baselayers/AZWellHeadersOilGasViewer/MapServer',
-    ratio: 1,
-    params: {}
-  });*/
     $scope.wmsSource = new ol.source.ImageWMS({
     url: 'http://services.azgs.az.gov/arcgis/services/aasggeothermal/AZWellHeaders/MapServer/WMSServer?',
              params: {
@@ -74,14 +69,6 @@ angular.module('starter.controllers', [])
         'title': 'Base maps',
         openInayerSwitcher: true,
         layers: [
-          /*new ol.layer.Tile({
-           title: 'Water color',
-           type: 'base',
-           visible: false,
-           source: new ol.source.Stamen({
-           layer: 'watercolor'
-           })
-           }),*/
           new ol.layer.Tile({
             title: 'OSM',
             type: 'base',
@@ -116,15 +103,7 @@ angular.module('starter.controllers', [])
           new ol.layer.Image({
             title: 'Wells',
             source: $scope.wmsSource
-          })/*,
-          new ol.layer.Image({
-            title: 'seismo stations',
-            source: new ol.source.ImageWMS({
-              url: 'http://data.usgin.org:8086/arizona-hazards/azgs/wms',
-              params: { 'LAYERS': 'seismostations' },
-              serverType: 'geoserver'
-            })
-          })*/
+          }),
         ]
       }),
       new ol.layer.Group({
@@ -139,6 +118,77 @@ angular.module('starter.controllers', [])
             })
           })
         ]
+      }),
+      new ol.layer.Group({
+        title: 'Military Areas',
+        layers: [
+          new ol.layer.Image({
+            title: 'Installation Ranges',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'AMEUP:MILITARY_INSTALLATIONS_RANGES_TRAINING_AREAS_BND'},
+              url: 'http://10.208.3.127:8080/geoserver/AMEUP/wms'
+            })
+          }),
+          new ol.layer.Image({
+            title: 'Military Training Route: Instrument Route Corridor',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:military_training_route_ir_corridor'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          })
+        ]
+      }),
+      new ol.layer.Group({
+        title: 'Environmental',
+        layers: [
+          new ol.layer.Image({
+            title: 'Areas of Critical Environmental Concern',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:acec2'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          }),
+          new ol.layer.Image({
+            title: 'ESA-Listed Species Designated Critical Habitat Areas',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:critical_habitat_esa_listed_species_area'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          }),
+          new ol.layer.Image({
+            title: 'ESA-Listed Species Designated Critical Habitat Lines',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:critical_habitat_esa_listed_species_line'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          })
+        ]
+      }),
+      new ol.layer.Group({
+        title: 'Energy',
+        layers: [
+          new ol.layer.Image({
+            title: 'Solar Energy Zone',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:developable_area_sez'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          }),
+          new ol.layer.Image({
+            title: 'Solar Energy Zone Labels',
+            source: new ol.source.ImageWMS({
+              ratio: 1,
+              params: {'LAYERS':'section368:developable_area_sez_point'},
+              url: 'http://bogi.evs.anl.gov/geoserver/section368/wms'
+            })
+          })
+        ]
       })
     ],
     view: $scope.view
@@ -150,37 +200,49 @@ angular.module('starter.controllers', [])
   });
   $scope.map.addControl(layerSwitcher);
 
-  var popup = new ol.Overlay.Popup();
+  document.getElementById('popup').innerHTML = '';
+
+  var popup = new ol.Overlay.Popup({
+    stopEvent:true
+  });
   $scope.map.addOverlay(popup);
 
   $scope.map.on('singleclick', function(evt) {
-    document.getElementById('popup').innerHTML = '';
-
+    var pixel = $scope.map.getEventPixel(evt.originalEvent);
+    var hit = $scope.map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+          if (layer == $scope.wmsSource) {
+            return feature;
+          }
+        }
+    );
     var viewResolution = /** @type {number} */ ($scope.view.getResolution());
     $scope.wmsSource.get(name);
 
      var url = $scope.wmsSource.getGetFeatureInfoUrl(
             evt.coordinate, viewResolution, 'EPSG:3857',
             {'INFO_FORMAT': 'text/html'});
-    if (url) {
-      //document.getElementById('popup').innerHTML =
+     if (url) {
       var content = '<iframe seamless src="' + url + '"></iframe>';
+        popup.setOffset([0, -22]);
         popup.show(evt.coordinate, content);
-    } else {
+     } else {
     // maybe you hide the popup here
     popup.hide();
-    }
+     }
   });
   
-   $scope.map.on('pointermove', function(evt) {
+  /*$scope.map.on('pointermove', function(evt) {
         if (evt.dragging) {
           return;
         }
         var pixel = $scope.map.getEventPixel(evt.originalEvent);
-        var hit = $scope.map.forEachLayerAtPixel(pixel, function() {
-          return true;
-        });
+        var hit = $scope.map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+              if (layer == $scope.wmsSource) {
+                return feature;
+              }
+            }
+        );
         $scope.map.getTargetElement().style.cursor = hit ? 'pointer' : '';
-    });
+    });*/
 
 });
