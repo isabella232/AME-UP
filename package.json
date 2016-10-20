@@ -1,9 +1,9 @@
 {
-  "name": "angular-seed",
+  "name": "AME-UP",
   "private": true,
   "version": "0.0.0",
-  "description": "A starter project for AngularJS",
-  "repository": "https://github.com/angular/angular-seed",
+  "description": "A map thing",
+  "repository": "https://github.com/azgs/AME-UP.git",
   "license": "MIT",
   "devDependencies": {
     "bower": "^1.7.7",
