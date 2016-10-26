@@ -20,8 +20,8 @@
 
 <style>
 .ol-zoom {
-	top: 50px;
- 	left: .5em
+  left: unset;
+  right: 8px
 }
 
 </style>
@@ -70,7 +70,7 @@
 		</md-sidenav>
 
 		<md-content>
-			<openlayers width="100%" height="100%"   ol-center="center" custom-layers="true" style="width: 70%; height: 100%; position:fixed">
+			<openlayers  ol-center="center" custom-layers="true" style="width: 70%; height: 100%; position:fixed">
 					<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers|filter: { active: true}"></ol-layer>
 			</openlayers>
 		</md-content>
