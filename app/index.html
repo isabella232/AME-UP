@@ -47,6 +47,28 @@
 						</md-content>
 					</md-tab-body>
 				</md-tab>
+				<md-tab label="Legend" >
+					<md-tab-body >
+						<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
+						<div ng-repeat="layer in layers" >
+							
+							<div ng-if="layer.active === true">
+								{{layer.name}}
+								<div ng-if="layer.source.type === 'ImageWMS'">
+									<img ng-src="{{layer.source.legend_url}}"/>
+								</div>
+								<div ng-if="layer.source.type === 'TileArcGISRest'">
+									<div ng-repeat="legendElement in layer.legend_json.layers[0].legend" >
+										<img ng-src="data:image/png;base64, {{legendElement.imageData}}"/>
+										{{legendElement.label}}
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						</md-content>
+					</md-tab-body>
+				</md-tab>
 				<md-tab label="Models">
 					<md-tab-body>
 						<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
