@@ -58,6 +58,17 @@ angular.module('MapController', [])
 				}
 			},
 			{
+				name: 'Heat Map',
+				active: true,
+				opacity: 0.5,
+				source: {
+					type: 'TileArcGISRest',
+					params: {},
+					url: 'http://services.azgs.az.gov/arcgis/rest/services/test/ArizonaHeatMap/MapServer',
+					legend_url: 'http://services.azgs.az.gov/arcgis/rest/services/test/ArizonaHeatMap/MapServer/legend?f=pjson'
+				}
+			},
+			{
 				name: 'Installation Ranges',
 				active: true,
                 opacity: 0.5,
