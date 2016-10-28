@@ -4,8 +4,8 @@
 var app = angular.module('mapApp', [
   'openlayers-directive',
   'MapController',
+  'AccessController',
+  'login',
   'ngMaterial'
 ]);
-
-
 
