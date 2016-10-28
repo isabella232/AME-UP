@@ -157,7 +157,6 @@ angular.module('MapController', [])
 		]
 	});
 	
-	
 	$scope.layers.forEach(function(layer) {
 		if (layer.source.type === "TileArcGISRest") {
 			$http.get(layer.source.legend_url).
