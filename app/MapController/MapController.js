@@ -8,6 +8,11 @@ angular.module('MapController', [])
 			lon: -111.6513,
 			zoom: 6
 		},
+		defaults: {
+			interactions: {
+				mouseWheelZoom: true
+			}
+		},
 		layers: [
 			{
 				name: 'OpenStreetMap',
