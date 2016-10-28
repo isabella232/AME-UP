@@ -13,9 +13,34 @@ angular.module('MapController', [])
 				mouseWheelZoom: true
 			}
 		},
+		groups: [{
+			name: 'BaseMaps',
+			type: 'Group'
+		},
+		{
+			name: 'Solar',
+			type: 'Group'
+		},
+		{
+			name: 'Land Ownership',
+			type: 'Group'
+		},
+		{
+			name: 'Environmental',
+			type: 'Group'
+		},
+		{
+			name: 'Critical Habitat Areas',
+			type: 'Group'
+		},
+		{
+			name: 'Military',
+			type: 'Group'
+		}],
 		layers: [
 			{
 				name: 'OpenStreetMap',
+				group: 'BaseMaps',
 				active: true,
                 opacity: 1.0,
 				source: {
@@ -24,6 +49,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Bing - Aerial',
+				group: 'BaseMaps',
 				active: false,
 				source: {
                         type: 'BingMaps',
@@ -33,6 +59,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Stamen Terrain Labels',
+				group: 'BaseMaps',
 				active: false,
 				source: {
                         type: 'Stamen',
@@ -53,6 +80,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Land Ownership',
+				group: 'Land Ownership',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -64,6 +92,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Heat Map',
+				group: 'Solar',
 				active: true,
 				opacity: 0.5,
 				source: {
@@ -75,6 +104,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Installation Ranges',
+				group: 'Military',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -88,6 +118,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Military Training Route: Instrument Route Corridor',
+				group: 'Military',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -100,6 +131,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Areas of Critical Environmental Concern',
+				group: 'Environmental',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -112,6 +144,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'ESA-Listed Species Designated Critical Habitat Areas',
+				group: 'Critical Habitat Areas',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -124,6 +157,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'ESA-Listed Species Designated Critical Habitat Lines',
+				group: 'Critical Habitat Areas',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -136,6 +170,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Solar Energy Zone',
+				group: 'Solar',
 				active: true,
                 opacity: 0.5,
 				source: {
@@ -148,6 +183,7 @@ angular.module('MapController', [])
 			},
 			{
 				name: 'Solar Energy Zone Labels',
+				group: 'Solar',
 				active: true,
                 opacity: 0.5,
 				source: {
