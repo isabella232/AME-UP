@@ -21,17 +21,31 @@
     <link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
+
 </head>
 
+<style>
+    div.md-label {
+        font-size: 14px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-style: italic;
+    }
+    div.ng-binding {
+        font-size: 18px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-style: italic;
+    }
+</style>
+
+
 <body ng-controller="AccessController">
+<h3>AME-UP Arizona Military Energy Land Use Plan</h3>
 	
 	<div ng-if="!isLoggedIn.value">
 		<login></login>
 	</div>
-
 	<div ng-if="isLoggedIn.value" ng-controller="MapController" layout="row" layout-fill>
 		<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" style="width: 35%">
-			<h3>AME-UP</h3><h4>Arizona Military Energy Land Use Plan</h4>
 			<md-tabs layout-fill>
 				<md-tab label="Layers" >
 					<md-tab-body >
