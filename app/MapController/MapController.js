@@ -4,9 +4,9 @@ angular.module('MapController', [])
 	
 	angular.extend($scope, {
 		center: { //Flagstaff
-			lat: 35.1983,
-			lon: -111.6513,
-			zoom: 6
+			lat: 34.3983,
+			lon: -109.6513,
+			zoom: 7
 		},
 		defaults: {
 			interactions: {
