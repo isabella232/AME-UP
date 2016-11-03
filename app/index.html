@@ -10,14 +10,18 @@
 	<script src="/bower_components/angular-aria/angular-aria.min.js"></script>
 	<script src="/bower_components/angular-messages/angular-messages.min.js"></script>
 	<script src="/bower_components/angular-material/angular-material.min.js"></script>
+	<script src="/bower_components/angular-resource/angular-resource.js"></script>
 
     <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 	<script src="app.js"></script>
+	<script src="/app.config.js"></script>
 	<script src="MapController/MapController.js"></script>
 	<script src="AccessController/AccessController.js"></script>
 	<script src="login/login.module.js"></script>
 	<script src="login/login.component.js"></script>
+	<script src="LayerService/LayerService.module.js"></script>
+	<script src="LayerService/LayerService.service.js"></script>
     <link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
@@ -53,13 +57,14 @@
 							<form>
 								<div ng-repeat="group in groups" ol-layer-properties="group">
 									{{ group.name }}
-								<div ng-repeat="layer in layers | filter:group.name">
-									<md-checkbox style="margin-bottom:0px;margin-top:20px" ng-model="layer.active" aria-label={{ layer.name }}>
-									{{ layer.name }}
-									</md-checkbox>
-									<md-slider style="margin-left:30px;margin-right:15px" min="0" max="1" step="0.01" ng-model="layer.opacity" ></md-slider>
-									<md-divider></md-divider>
-								</div>
+									<div ng-repeat="layer in layers | filter:group.name">
+										<md-checkbox style="margin-bottom:0px;margin-top:20px" ng-model="layer.active" aria-label={{ layer.name }}>
+										{{ layer.name }}
+										</md-checkbox>
+										<md-slider style="margin-left:30px;margin-right:15px" min="0" max="1" step="0.01" ng-model="layer.opacity" ></md-slider>
+										<!--<md-divider></md-divider>-->
+									</div>
+									<md-divider style="margin-bottom:15px"></md-divider>
 								</div>
 							</form>
 						</md-content>

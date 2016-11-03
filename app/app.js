@@ -6,6 +6,7 @@ var app = angular.module('mapApp', [
   'MapController',
   'AccessController',
   'login',
-  'ngMaterial'
+  'ngMaterial',
+  'ngResource'
 ]);
 
