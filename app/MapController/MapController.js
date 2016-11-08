@@ -227,9 +227,9 @@ angular.module('MapController', ['LayerService'])
 					group: remoteLayer.layer_group,
 					active: remoteLayer.is_initially_active,
 					opacity: remoteLayer.layer_group === $scope.groups[0] ? 1 : 0.5, //Base maps get full opacity, all others get half
-					layerType: remoteLayer.type,
+					layerType: remoteLayer.layer_type,
 					source: {
-						type: remoteLayer.map_type,
+						type: remoteLayer.source_type,
 						url: remoteLayer.source_url,
 						legend_url: remoteLayer.legend_url,
 						key: remoteLayer.key,
