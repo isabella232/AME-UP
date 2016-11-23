@@ -7,6 +7,12 @@ var app = angular.module('mapApp', [
   'AccessController',
   'login',
   'ngMaterial',
-  'ngResource'
-]);
+  'ngResource',
+  'ngMaterialAccordion'
+])
+.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('default')
+    .primaryPalette('indigo')
+    .accentPalette('brown');
+});;
 

@@ -12,27 +12,33 @@ angular.module('MapController', ['LayerService'])
 			},
 			groups: [{
 				name: 'BaseMaps',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			},
 			{
 				name: 'Solar',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			},
 			{
 				name: 'Land Ownership',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			},
 			{
 				name: 'Environmental',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			},
 			{
 				name: 'Critical Habitat Areas',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			},
 			{
 				name: 'Military',
-				type: 'Group'
+				type: 'Group',
+				active: true
 			}],
 			layers: [
 				{
@@ -216,7 +222,11 @@ angular.module('MapController', ['LayerService'])
 			}
 		};
 
-		$scope.groups = LayerGroups.query();
+		$scope.groups = LayerGroups.query(function() {
+			$scope.groups.forEach(function(group) {
+				group.active = true;
+			});
+		});
 		
 		var remoteLayers = Layers.query(function() {
 			console.log("remoteLayers = " + remoteLayers);
@@ -262,5 +272,23 @@ angular.module('MapController', ['LayerService'])
 				
 			});
 		});			
-	}	
+	};
+
+	$scope.groupActiveChange = function(group) {
+		$scope.layers.forEach(function(layer) {
+			if (layer.group == group.name) {
+				layer.active = group.active;
+			}
+		});
+	};
+	
+	$scope.layerActiveChange = function(layer) {
+		$scope.groups.forEach(function(group) {
+			if (group.name == layer.group) {
+				group.active = group.active || layer.active;
+			}
+		});
+	};
+
+	
 });

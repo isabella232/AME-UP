@@ -25,10 +25,15 @@
     <link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
+	<link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/bower_components/angular-material-accordion/dist/angular-material-accordion.css">
+	<script src="/bower_components/angular-material-accordion/dist/angular-material-accordion.js"></script>
+
 
 </head>
 
 <style>
+<!--
     div.md-label {
         font-size: 14px;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -39,11 +44,33 @@
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-style: italic;
     }
+	
+	.md-accordion-toggle.md-active .accordion-arrow {
+		transform: rotate(-180deg) translateZ(0);
+	}
+	.md-accordion .md-button {
+		padding: 0 0;
+		background-color: #f6f6f6;
+		font-size: 18px;
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-style: italic;
+	}
+	.fa-chevron-down:before {
+		color:rgb(63,81,181);
+		font-weight: 500;
+		font-size: 14px;
+	}
+-->
 </style>
 
 
 <body ng-controller="AccessController">
-<h3>AME-UP Arizona Military Energy Land Use Plan</h3>
+	<md-toolbar>
+		<!--<h3>AME-UP Arizona Military Energy Land Use Plan</h3>-->
+		<div class="md-toolbar-tools">
+			<span>AME-UP Arizona Military Energy Land Use Plan</span>
+		</div>
+	</md-toolbar>
 	
 	<div ng-if="!isLoggedIn.value">
 		<login></login>
@@ -51,21 +78,29 @@
 	<div ng-if="isLoggedIn.value" ng-controller="MapController" layout="row" layout-fill>
 		<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" style="width: 35%">
 			<md-tabs layout-fill>
-				<md-tab label="Layers" >
-					<md-tab-body >
+				<md-tab label="Layers">
+					<md-tab-body>
 						<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
 							<form>
-								<div ng-repeat="group in groups" ol-layer-properties="group">
-									{{ group.name }}
-									<div ng-repeat="layer in layers | filter:group.name">
-										<md-checkbox style="margin-bottom:0px;margin-top:20px" ng-model="layer.active" aria-label={{ layer.name }}>
-										{{ layer.name }}
-										</md-checkbox>
-										<md-slider style="margin-left:30px;margin-right:15px" min="0" max="1" step="0.01" ng-model="layer.opacity" ></md-slider>
-										<!--<md-divider></md-divider>-->
+								<md-accordion>
+									<div ng-repeat="group in groups" ol-layer-properties="group">
+										<md-accordion-group>
+											<md-accordion-content md-arrow="true" md-heading="{{ group.name }}" >
+												<md-checkbox ng-model="group.active" ng-change="groupActiveChange(group)" aria-label={{ group.name }}>
+													Group
+												</md-checkbox>
+												<div ng-repeat="layer in layers | filter:group.name" style="margin-left:10px">
+													<md-checkbox style="margin-bottom:0px;margin-top:20px" ng-model="layer.active" ng-change="layerActiveChange(layer)" aria-label={{ layer.name }}>
+													{{ layer.name }}
+													</md-checkbox>
+													<md-slider style="margin-left:30px;margin-right:15px" min="0" max="1" step="0.01" ng-model="layer.opacity" ></md-slider>
+												</div>
+											</md-accordion-content>
+
+										</md-accordion-group>
+										<md-divider style="margin-bottom:15px"></md-divider>
 									</div>
-									<md-divider style="margin-bottom:15px"></md-divider>
-								</div>
+								</md-accordion>
 							</form>
 						</md-content>
 					</md-tab-body>

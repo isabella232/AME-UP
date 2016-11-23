@@ -1,6 +1,6 @@
 angular.module('mapApp').constant('APP_CONFIG', {
 	corsProxy: '/proxy/',
-	useRemote: false,
+	useRemote: true,
 	center: { //Flagstaff
 		lat: 34.3983,
 		lon: -109.6513,
