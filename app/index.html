@@ -86,7 +86,7 @@
 										<div ng-repeat="group in groups" ol-layer-properties="group">
 											<md-accordion-group style="position:relative">
 											<div layout="row"  style="width:100%;">
-												<md-checkbox style="position:absolute; top: 15px; left:0px;" ng-model="group.active" ng-change="groupActiveChange(group)" aria-label={{ group.name }}></md-checkbox>
+												<md-checkbox style="position:absolute; top: 14px; left:0px;" ng-model="group.active" ng-change="groupActiveChange(group)" aria-label={{ group.name }}></md-checkbox>
 												
 												<md-accordion-content style="margin-left:30px" md-arrow="true" md-heading="{{ group.name }}" >
 													<div ng-repeat="layer in layers | filter:group.name" style="margin-left:10px">
