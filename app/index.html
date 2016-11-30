@@ -84,11 +84,11 @@
 								<form>
 									<md-accordion>
 										<div ng-repeat="group in groups" ol-layer-properties="group">
-											<md-accordion-group>
-												<md-accordion-content md-arrow="true" md-heading="{{ group.name }}" >
-													<md-checkbox ng-model="group.active" ng-change="groupActiveChange(group)" aria-label={{ group.name }}>
-														Group
-													</md-checkbox>
+											<md-accordion-group style="position:relative">
+											<div layout="row"  style="width:100%;">
+												<md-checkbox style="position:absolute; top: 15px; left:0px;" ng-model="group.active" ng-change="groupActiveChange(group)" aria-label={{ group.name }}></md-checkbox>
+												
+												<md-accordion-content style="margin-left:30px" md-arrow="true" md-heading="{{ group.name }}" >
 													<div ng-repeat="layer in layers | filter:group.name" style="margin-left:10px">
 														<md-checkbox style="margin-bottom:0px;margin-top:20px" ng-model="layer.active" ng-change="layerActiveChange(layer)" aria-label={{ layer.name }}>
 														{{ layer.name }}
@@ -96,7 +96,7 @@
 														<md-slider style="margin-left:30px;margin-right:15px" min="0" max="1" step="0.01" ng-model="layer.opacity" ></md-slider>
 													</div>
 												</md-accordion-content>
-
+											</div>
 											</md-accordion-group>
 											<md-divider style="margin-bottom:15px"></md-divider>
 										</div>
