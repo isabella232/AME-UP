@@ -12,7 +12,7 @@ var app = angular.module('mapApp', [
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
-    .primaryPalette('indigo')
+    .primaryPalette('blue-grey')
     .accentPalette('brown');
 });;
 

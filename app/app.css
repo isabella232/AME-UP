@@ -29,26 +29,60 @@
     div.md-label {
         font-size: 14px;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-style: italic;
+        /*font-style: italic;*/
     }
     div.ng-binding {
         font-size: 18px;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-style: italic;
+        /*font-style: italic;*/
     }
+	
+	.md-toolbar-tools {
+		font-size: 24px;
+		font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+		font-style: italic;
+	}
 	
 	.md-accordion-toggle.md-active .accordion-arrow {
 		transform: rotate(-180deg) translateZ(0);
 	}
 	.md-accordion .md-button {
+		height: 20px;
+		min-height: 20px;
+		margin: 0;
+		margin-bottom: 10px;
 		padding: 0 0;
 		background-color: #f6f6f6;
-		font-size: 18px;
+		font-size: 16px;
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-		font-style: italic;
+		/*font-style: italic;*/
 	}
+	
+	.md-button {
+		line-height:0;
+	}
+	
 	.fa-chevron-down:before {
-		color:rgb(63,81,181);
+		color:#607D8B;
 		font-weight: 500;
-		font-size: 14px;
+		font-size: 12px;
 	}
+	
+	
+	md-checkbox.md-checkbox-small {
+		transform: scale(0.75);
+	}
+	
+	.md-accordion-content {
+	  min-height: 20px;
+	}
+	
+	md-input-container.md-opacity {
+	  padding: 0px;
+	  margin: 0px 0;
+		transform: scale(0.85);
+	}
+	.layer-name {
+		font-size:14px;
+	}
+
