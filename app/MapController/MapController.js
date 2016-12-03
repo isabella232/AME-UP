@@ -216,12 +216,24 @@ angular.module('MapController', ['LayerService'])
 		
 		$scope.center = APP_CONFIG.center;
 		
+		
 		$scope.defaults = {
 			interactions: {
 				mouseWheelZoom: true
+			},
+			controls: {
+				zoom: true,
+				rotate: false,
+				attribution: false,
 			}
 		};
-
+			
+		//scaleline does not work when added via the defaults above. Instead, we must create this object then use it with ol-control in the html
+		$scope.controls = [
+                { name: 'scaleline', active: true }
+        ]
+		
+		
 		$scope.groups = LayerGroups.query(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
