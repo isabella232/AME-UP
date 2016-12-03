@@ -31,9 +31,6 @@
 
     <link rel="stylesheet" href="app.css" />
 
-	<style>
-
-	</style>
 </head>
 
 
@@ -148,7 +145,8 @@
 			</md-sidenav>
 
 			<md-content>
-				<openlayers width ="100%" height = "100%" ol-defaults="defaults" ol-center="center" custom-layers="true" style="width: 70%; height: 100%; position:fixed">
+				<openlayers width ="100%" height = "93%" ol-defaults="defaults" ol-center="center" custom-layers="true" style="width: 70%; height: 100%; position:fixed">
+						<ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
 						<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers|filter: { active: true}"></ol-layer>
 				</openlayers>
 			</md-content>
