@@ -14,5 +14,5 @@ var app = angular.module('mapApp', [
   $mdThemingProvider.theme('default')
     .primaryPalette('blue-grey')
     .accentPalette('brown');
-});;
+});
 
