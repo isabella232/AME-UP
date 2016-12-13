@@ -20,11 +20,11 @@ var app = angular.module('mapApp', [
   $stateProvider
   .state('cover', {
     url: '/',
-    templateUrl: 'views/cover.html'
+    templateUrl: 'cover/cover.html'
   })
   .state('map', {
     url: '/map',
-    templateUrl: 'views/map.html',
+    templateUrl: 'map/map.html',
 	controller: 'MapController'
   });
  

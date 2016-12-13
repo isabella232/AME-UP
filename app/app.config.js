@@ -7,5 +7,6 @@ angular.module('mapApp').constant('APP_CONFIG', {
 		zoom: 7
 	},
 	layersAPI: 'http://192.168.11.141:3000/api'
+	//layersAPI: 'http://10.208.1.160:3000/api'
 });
 

@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('LayerService').
-	factory('Layers', function($resource, APP_CONFIG) {
+angular.module('LayerService', ['ngResource'])
+//angular.module('LayerService').
+	.factory('Layers', function($resource, APP_CONFIG) {
 		console.log("layersAPI = " + APP_CONFIG.layersAPI);
 
 		return $resource(APP_CONFIG.layersAPI + '/layers/:layerID'/*, {layerId:'@id'}*/);
