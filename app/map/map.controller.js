@@ -214,8 +214,6 @@ angular.module('MapController', ['LayerService'])
 		});
 	} else {
 
-	$http.defaults.headers.common.Authorization = 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOnsiaWQiOjQsInVzZXJuYW1lIjoiZG91Z2xhc20wMSIsInBhc3N3b3JkIjoiJDJhJDEwJEhhVkF4M0ZHYzB6c2hGTW5VZXdLYk84VjhJUEdKanM5d0lOTmswYUwyTmdMNUxvSFNSY1FpIiwidXNlcl9yb2xlc19pZCI6MSwiZW1haWwiOm51bGwsImZpcnN0X25hbWUiOm51bGwsImxhc3RfbmFtZSI6bnVsbH0sImV4cCI6MTQ4MTE1MjkzOTczMn0.IMltr4Xu_RL1w-T4O8mIddNbMgy0fI1MM84AKWz4I4s';
-	
 		$scope.center = APP_CONFIG.center;
 		
 		
@@ -237,12 +235,14 @@ angular.module('MapController', ['LayerService'])
 		
 		
 		$scope.groups = LayerGroups.query(function() {
+		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
 			});
 		});
 		
 		var remoteLayers = Layers.query(function() {
+		//var remoteLayers = Layers.get(function() {
 			console.log("remoteLayers = " + remoteLayers);
 			$scope.layers = [];
 			remoteLayers.forEach(function(remoteLayer) {

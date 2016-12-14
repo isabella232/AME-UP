@@ -9,7 +9,8 @@ var app = angular.module('mapApp', [
   'ngMaterial',
   'ngResource',
   'ngMaterialAccordion',
-  'ui.router'
+  'ui.router',
+  'AuthService'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -30,16 +31,21 @@ var app = angular.module('mapApp', [
  
   $urlRouterProvider.otherwise('/');
 })
-;/*
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+
+.run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
-    if (!AuthService.isAuthenticated()) {
+    if (!Auth.isAuthenticated()) {
       console.log(next.name);
-      if (next.name !== 'outside.login' && next.name !== 'outside.register') {
+      if (next.name == 'map') {
         event.preventDefault();
-        $state.go('outside.login');
+        $state.go('cover');
       }
     }
   });
+  
+  $rootScope.isAuthenticated = function() {return Auth.isAuthenticated();}
+  $rootScope.logout = function() {Auth.logout(); $state.go('cover');}
+ 
+  
 });
-*/
+

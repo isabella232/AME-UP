@@ -78,3 +78,6 @@ md-input-container.md-opacity {
 	font-size:14px;
 }
 
+#registration md-input-container {
+	margin-top: 5px;
+}

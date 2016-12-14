@@ -58,10 +58,9 @@
 			</div>
 
 			<div class="flex-15" style=" height:100%" class="three">
-				<md-content layout-padding>
-					<md-subheader layout-padding layout-align="top center"
-								  class="md-no-sticky" style="align: center; font-weight: bold">Map Login</md-subheader>
+				<div ng-if="!isAuthenticated()">
+					<md-subheader layout-padding layout-align="top center" class="md-no-sticky" style="align: center; font-weight: bold; margin-bottom:0px; padding-bottom:0px">Map Login</md-subheader>
 					<login></login>
-				</md-content>
+				</div>
 			</div>
 		</div>
