@@ -31,6 +31,12 @@ var app = angular.module('mapApp', [
  
   $urlRouterProvider.otherwise('/');
 })
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS) {
+  $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+    Auth.logout();
+    $state.go('cover');
+  });
+})
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
