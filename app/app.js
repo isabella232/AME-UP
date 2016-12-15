@@ -17,7 +17,7 @@ var app = angular.module('mapApp', [
     .primaryPalette('blue-grey')
     .accentPalette('brown');
 })
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
   .state('cover', {
     url: '/',
@@ -30,7 +30,11 @@ var app = angular.module('mapApp', [
   });
  
   $urlRouterProvider.otherwise('/');
+  
+  //TODO: This leads to reload/url-paste issues. Apparently needs url rewriting installed as well. Maybe later.
+  //$locationProvider.html5Mode(true); 
 })
+
 .controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS) {
   $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
     Auth.logout();
