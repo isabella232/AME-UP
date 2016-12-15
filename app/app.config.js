@@ -6,6 +6,11 @@ angular.module('mapApp').constant('APP_CONFIG', {
 		lon: -109.6513,
 		zoom: 7
 	},
+	tokenKey: 'AME-UP_Token',
 	layersAPI: 'http://192.168.11.141:3000/api'
+	//layersAPI: 'http://10.208.1.160:3000/api'
+})
+.constant('AUTH_EVENTS', {
+  notAuthenticated: 'auth-not-authenticated'
 });
 

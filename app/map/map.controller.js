@@ -213,7 +213,7 @@ angular.module('MapController', ['LayerService'])
 			}
 		});
 	} else {
-		
+
 		$scope.center = APP_CONFIG.center;
 		
 		
@@ -235,12 +235,14 @@ angular.module('MapController', ['LayerService'])
 		
 		
 		$scope.groups = LayerGroups.query(function() {
+		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
 			});
 		});
 		
 		var remoteLayers = Layers.query(function() {
+		//var remoteLayers = Layers.get(function() {
 			console.log("remoteLayers = " + remoteLayers);
 			$scope.layers = [];
 			remoteLayers.forEach(function(remoteLayer) {
