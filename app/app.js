@@ -4,7 +4,6 @@
 var app = angular.module('mapApp', [
   'openlayers-directive',
   'MapController',
-  'AccessController',
   'login',
   'ngMaterial',
   'ngResource',
@@ -35,11 +34,17 @@ var app = angular.module('mapApp', [
   //$locationProvider.html5Mode(true); 
 })
 
-.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS) {
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav) {
   $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
     Auth.logout();
     $state.go('cover');
   });
+  
+	$scope.toggleSideNav = function() {
+		$mdSidenav('main').toggle();
+	}
+
+
 })
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
@@ -55,7 +60,6 @@ var app = angular.module('mapApp', [
   
   $rootScope.isAuthenticated = function() {return Auth.isAuthenticated();}
   $rootScope.logout = function() {Auth.logout(); $state.go('cover');}
- 
-  
+   
 });
 

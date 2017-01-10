@@ -61,6 +61,9 @@
 }
 
 
+.md-button {    
+    text-transform: none
+}
 md-checkbox.md-checkbox-small {
 	transform: scale(0.75);
 }
@@ -80,4 +83,12 @@ md-input-container.md-opacity {
 
 #registration md-input-container {
 	margin-top: 5px;
+}
+
+md-checkbox#showAllGroups .md-label {
+    margin-left: -120px;
+}
+
+md-checkbox#showAllLayers .md-label {
+    margin-left: -115px;
 }
