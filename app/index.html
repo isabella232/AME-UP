@@ -42,7 +42,7 @@
 	
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<md-button class="md-icon-button md-no-focus" aria-label="Side Panel" ng-click="toggleSideNav()">
+				<md-button ng-if="isAuthenticated()" class="md-icon-button md-no-focus" aria-label="Side Panel" ng-click="toggleSideNav()">
 					 <!--<md-tooltip>Controls</md-tooltip>-->
 					 <md-icon md-font-icon="fa-bars"  class="fa" style="font-size:25px"></md-icon>
 				</md-button>
