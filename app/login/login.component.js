@@ -48,7 +48,7 @@ angular.module('login', ['ngMaterial', 'AuthService'])
 					} else {
 						Auth.register($scope.credentials).then(function(msg) {
 							console.log("registered");
-							$scope.showAlert('Registration successful', 'Please login');
+							$scope.showAlert('Registration submitted', 'You will receive an email when your registration has been approved.');
 							$scope.showRegistration = false;
 						}, function(errMsg) {
 							console.log("not registered");
