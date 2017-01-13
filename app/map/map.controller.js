@@ -238,11 +238,11 @@ angular.module('MapController', ['LayerService'])
 		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
-				group.showAll = false;
+				group.showAll = true;
 			});
 		});
 		
-		$scope.showAll = false;
+		$scope.showAll = true;
 		
 		var remoteLayers = Layers.query(function() {
 		//var remoteLayers = Layers.get(function() {
@@ -306,6 +306,5 @@ angular.module('MapController', ['LayerService'])
 			}
 		});
 	};
-
 	
 });
