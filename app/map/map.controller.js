@@ -238,8 +238,11 @@ angular.module('MapController', ['LayerService'])
 		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
+				group.showAll = true;
 			});
 		});
+		
+		$scope.showAll = true;
 		
 		var remoteLayers = Layers.query(function() {
 		//var remoteLayers = Layers.get(function() {
@@ -295,7 +298,7 @@ angular.module('MapController', ['LayerService'])
 			}
 		});
 	};
-	
+		
 	$scope.layerActiveChange = function(layer) {
 		$scope.groups.forEach(function(group) {
 			if (group.name == layer.group) {
@@ -303,6 +306,5 @@ angular.module('MapController', ['LayerService'])
 			}
 		});
 	};
-
 	
 });

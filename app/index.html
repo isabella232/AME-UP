@@ -42,6 +42,11 @@
 	
 		<md-toolbar>
 			<div class="md-toolbar-tools">
+				<md-button ng-if="isAuthenticated()" class="md-icon-button md-no-focus" aria-label="Side Panel" ng-click="toggleSideNav()">
+					 <!--<md-tooltip>Controls</md-tooltip>-->
+					 <md-icon md-font-icon="fa-bars"  class="fa" style="font-size:25px"></md-icon>
+				</md-button>
+
 				<span class="md-toolbar-title">AME-UP Arizona Military Energy Land Use Plan</span>
 				<span flex=""></span>
 				<md-button ng-if="isAuthenticated()" class="md-raised" aria-label="Logout" ng-click="logout()">Logout</md-button>
@@ -53,5 +58,38 @@
 		</div>
 				
 	</div>
+	
+	<md-sidenav md-component-id="main" class="md-sidenav-left" style="width: 35%;height="100%">
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<md-button class="md-icon-button md-no-focus" aria-label="Close Panel" ng-click="toggleSideNav()">
+					 <!--<md-tooltip>Close</md-tooltip>-->
+					 <md-icon md-font-icon="fa-arrow-left"  class="fa" style="font-size:25px"></md-icon>
+				</md-button>
+
+				<h1>Controls</h1>
+				<span flex=""></span>
+			</div>
+		</md-toolbar>
+		<md-content layout-margin="">
+			<md-button class="md-primary">
+				 <md-icon md-font-icon="fa-plus-square-o"  class="fa" style="font-size:25px"></md-icon>
+				 New Project
+			</md-button><br/>
+			<md-button class="md-primary">
+				 <md-icon md-font-icon="fa-folder-open-o"  class="fa" style="font-size:25px"></md-icon>
+				 Open project...
+			</md-button><br/>
+			<md-button class="md-primary">
+				 <md-icon md-font-icon="fa-save"  class="fa" style="font-size:25px"></md-icon>
+				 Save project...
+			</md-button><br/>
+			<md-button class="md-primary">
+				 <md-icon md-font-icon="fa-folder-o"  class="fa" style="font-size:25px"></md-icon>
+				 Close project
+			</md-button><br/>
+		</md-content>
+	</md-sidenav>
+
 </body>
 </html>
