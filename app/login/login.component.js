@@ -1,19 +1,27 @@
 'use strict';
 
-angular.module('login', ['ngMaterial', 'AuthService'])
+angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 	.component('login', {
 		templateUrl: 'login/login.html',
-		controller: function LoginController($scope, Auth, $state, $mdDialog) {
+		controller: function LoginController($scope, Auth, $state, $mdDialog, Roles) {
 			$scope.credentials = {
 				username: '',
 				password: '',
 				password2: '',
 				firstName: '',
 				lastName: '',
-				email: ''
+				email: '',
+				desiredRole: ''
 			};
 			
 			$scope.showRegistration = false;
+			
+			$scope.roles = Roles.query(function() {
+				$scope.roles.forEach(function(role) {
+					console.log("role = " + role.name);
+				});
+			});
+
 			
 			$scope.showAlert = function(titleText, bodyText) {
 				$mdDialog.show(

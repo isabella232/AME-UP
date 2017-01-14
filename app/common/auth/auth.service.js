@@ -1,4 +1,5 @@
-angular.module('AuthService', ['LayerService'])
+//angular.module('AuthService', ['LayerService'])
+angular.module('AuthService', ['APIService'])
  
 	.service('Auth', function($q, $http, User, APP_CONFIG) {
 		const TOKEN_KEY = APP_CONFIG.tokenKey;
@@ -31,7 +32,7 @@ angular.module('AuthService', ['LayerService'])
 		
 		let register = function(user) {
 			return $q(function(resolve, reject) {
-				User.register({username:user.username, password:user.password, firstName:user.firstName, lastName:user.lastName, email:user.email}, function(user){resolve(user.msg);}, function(response){reject(response.data.msg);});
+				User.register({username:user.username, password:user.password, firstName:user.firstName, lastName:user.lastName, email:user.email, desiredRole:user.desiredRole}, function(user){resolve(user.msg);}, function(response){reject(response.data.msg);});
 			});
 		}
 

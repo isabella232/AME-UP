@@ -1,4 +1,5 @@
-angular.module('MapController', ['LayerService'])
+//angular.module('MapController', ['LayerService'])
+angular.module('MapController', ['APIService'])
 
 .controller('MapController', function MapController($scope, $http, Layers, LayerGroups, APP_CONFIG) {
 	
