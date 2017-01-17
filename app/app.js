@@ -59,7 +59,7 @@ var app = angular.module('mapApp', [
   });
   
   $rootScope.isAuthenticated = function() {return Auth.isAuthenticated();}
-  $rootScope.logout = function() {Auth.logout(); $state.go('cover');}
+  $rootScope.logout = function() {Auth.logout(); /*$state.go('cover');*/ window.location.reload();} //TODO: Using state has better flow, but does not refresh the api service. Consequently, we end up using the previous user's auth token. Forcing a page reload prevents this. Is there a better way?
    
 });
 
