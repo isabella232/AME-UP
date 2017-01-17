@@ -1,4 +1,3 @@
-//angular.module('AuthService', ['LayerService'])
 angular.module('AuthService', ['APIService'])
  
 	.service('Auth', function($q, $http, User, APP_CONFIG) {
@@ -7,14 +6,13 @@ angular.module('AuthService', ['APIService'])
 		let authToken;
 	 
 		function loadToken() {
-			let token = window.localStorage.getItem(TOKEN_KEY);
+			const token = window.localStorage.getItem(TOKEN_KEY);
 			if (token) {
 				useToken(token);
 			}
 		}
 		
 		function storeToken(token) {
-			console.log("storeToken, token = " + token);
 			window.localStorage.setItem(TOKEN_KEY, token);
 			useToken(token);
 		}
@@ -38,13 +36,11 @@ angular.module('AuthService', ['APIService'])
 
 		let login = function(user) {
 			return $q(function(resolve, reject) {
-				console.log("calling User.authenticate");
 				User.authenticate({username:user.username, password:user.password}, function(user){storeToken(user.token); resolve(user.msg);}, function(response){reject(response.data.msg);});
 			});
 		}
 		
 		let logout = function() {
-			console.log("Auth.logout");
 			destroyToken();
 		}
 		
