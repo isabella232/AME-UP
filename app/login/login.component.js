@@ -35,7 +35,7 @@ angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 				);
 			};
 						
-			$scope.login = function (credentials) {
+			$scope.login = function () {
 				Auth.login($scope.credentials).then(function(msg) {
 					console.log("logged in");
 					$state.go('map');
