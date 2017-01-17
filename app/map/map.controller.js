@@ -239,11 +239,11 @@ angular.module('MapController', ['APIService'])
 		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
-				group.showAll = true;
+				group.showAll = false;
 			});
 		});
 		
-		$scope.showAll = true;
+		$scope.showAll = false;
 		
 		var remoteLayers = Layers.query(function() {
 		//var remoteLayers = Layers.get(function() {
@@ -306,6 +306,14 @@ angular.module('MapController', ['APIService'])
 				group.active = group.active || layer.active;
 			}
 		});
+	};
+
+	$scope.toggleShowAllGroups = function() {
+		$scope.showAll = !$scope.showAll;
+	};
+
+	$scope.toggleShowAllLayers = function(group) {
+		group.showAll = !group.showAll;
 	};
 	
 });
