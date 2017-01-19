@@ -1,4 +1,4 @@
-angular.module('AuthService', ['LayerService'])
+angular.module('AuthService', ['APIService'])
  
 	.service('Auth', function($q, $http, User, APP_CONFIG) {
 		const TOKEN_KEY = APP_CONFIG.tokenKey;
@@ -6,14 +6,13 @@ angular.module('AuthService', ['LayerService'])
 		let authToken;
 	 
 		function loadToken() {
-			let token = window.localStorage.getItem(TOKEN_KEY);
+			const token = window.localStorage.getItem(TOKEN_KEY);
 			if (token) {
 				useToken(token);
 			}
 		}
 		
 		function storeToken(token) {
-			console.log("storeToken, token = " + token);
 			window.localStorage.setItem(TOKEN_KEY, token);
 			useToken(token);
 		}
@@ -31,19 +30,17 @@ angular.module('AuthService', ['LayerService'])
 		
 		let register = function(user) {
 			return $q(function(resolve, reject) {
-				User.register({username:user.username, password:user.password, firstName:user.firstName, lastName:user.lastName, email:user.email}, function(user){resolve(user.msg);}, function(response){reject(response.data.msg);});
+				User.register({username:user.username, password:user.password, firstName:user.firstName, lastName:user.lastName, email:user.email, desiredRole:user.desiredRole}, function(user){resolve(user.msg);}, function(response){reject(response.data.msg);});
 			});
 		}
 
 		let login = function(user) {
 			return $q(function(resolve, reject) {
-				console.log("calling User.authenticate");
 				User.authenticate({username:user.username, password:user.password}, function(user){storeToken(user.token); resolve(user.msg);}, function(response){reject(response.data.msg);});
 			});
 		}
 		
 		let logout = function() {
-			console.log("Auth.logout");
 			destroyToken();
 		}
 		
