@@ -239,11 +239,11 @@ angular.module('MapController', ['APIService'])
 		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
 				group.active = true;
-				group.showAll = false;
+				group.showAll = true;
 			});
 		});
 		
-		$scope.showAll = false;
+		$scope.showAll = true;
 		
 		var remoteLayers = Layers.query(function() {
 		//var remoteLayers = Layers.get(function() {
@@ -254,7 +254,9 @@ angular.module('MapController', ['APIService'])
 					name: remoteLayer.name,
 					group: remoteLayer.layer_group,
 					active: remoteLayer.is_initially_active,
-					opacity: remoteLayer.layer_group === $scope.groups[0] ? 1 : 0.5, //Base maps get full opacity, all others get half
+					//TODO: use opacity from remote
+					opacity: remoteLayer.layer_group === $scope.groups[0].name ? 1 : 0.5, //Base maps get full opacity, all others get half
+					//opacity: remoteLayer.opacity,
 					layerType: remoteLayer.layer_type,
 					source: {
 						type: remoteLayer.source_type,
