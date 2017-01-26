@@ -18,6 +18,7 @@ angular.module('APIService', ['ngResource'])
 		});
 	})
 	.factory('LayerGroups', function($resource, APP_CONFIG) {
+		console.log("API LayerGroups enter, token = " + window.localStorage.getItem(APP_CONFIG.tokenKey));
 		return $resource(APP_CONFIG.layersAPI + '/layergroups/:layerGroupID', {layerGroupID:'@id'}, {
 			query: {
 				method: 'GET',
@@ -60,5 +61,33 @@ angular.module('APIService', ['ngResource'])
 				method: 'GET',
 				isArray: false,
 			}
+		});
+	})
+	.factory('Projects', function($resource, APP_CONFIG) {
+		return $resource(APP_CONFIG.layersAPI + '/projects/:projectID', {projectID:'@id'}, {
+			query: {
+				method: 'GET',
+				isArray: true,
+				headers: { 'Authorization': 'Bearer ' + window.localStorage.getItem(APP_CONFIG.tokenKey) } 
+			},
+			/**
+			get: {
+				method: 'GET',
+				isArray: false,
+			}
+			**/
+			create: {
+				method: 'POST',
+				headers: { 'Authorization': 'Bearer ' + window.localStorage.getItem(APP_CONFIG.tokenKey) } 
+			},
+			update: {
+				method: 'PUT',
+				headers: { 'Authorization': 'Bearer ' + window.localStorage.getItem(APP_CONFIG.tokenKey) } 
+			},
+			delete: {
+				method: 'DELETE',
+				headers: { 'Authorization': 'Bearer ' + window.localStorage.getItem(APP_CONFIG.tokenKey) } 
+			}
+			
 		});
 	});

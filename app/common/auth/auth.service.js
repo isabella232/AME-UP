@@ -14,6 +14,7 @@ angular.module('AuthService', ['APIService'])
 		
 		function storeToken(token) {
 			window.localStorage.setItem(TOKEN_KEY, token);
+			console.log("auth, stored token = " + window.localStorage.getItem(TOKEN_KEY));
 			useToken(token);
 		}
 		

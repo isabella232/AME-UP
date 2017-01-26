@@ -9,7 +9,9 @@ var app = angular.module('mapApp', [
   'ngResource',
   'ngMaterialAccordion',
   'ui.router',
-  'AuthService'
+  'AuthService',
+  'ProjectController',
+  'SettingsService'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -25,7 +27,7 @@ var app = angular.module('mapApp', [
   .state('map', {
     url: '/map',
     templateUrl: 'map/map.html',
-	controller: 'MapController'
+	//controller: 'MapController' //TODO: either put this here or in html template, not both or will be called twice
   });
  
   $urlRouterProvider.otherwise('/');
@@ -34,7 +36,7 @@ var app = angular.module('mapApp', [
   //$locationProvider.html5Mode(true); 
 })
 
-.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav) {
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, MapSettings) {
   $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
     Auth.logout();
     $state.go('cover');
@@ -44,6 +46,7 @@ var app = angular.module('mapApp', [
 		$mdSidenav('main').toggle();
 	}
 
+	$scope.data = MapSettings.data;
 
 })
 

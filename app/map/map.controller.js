@@ -1,6 +1,11 @@
-angular.module('MapController', ['APIService'])
+angular.module('MapController', ['APIService', 'SettingsService'])
 
-.controller('MapController', function MapController($scope, $http, Layers, LayerGroups, APP_CONFIG) {
+.controller('MapController', function MapController($scope, $http, Layers, LayerGroups, MapSettings, APP_CONFIG) {
+	function print_call_stack() {
+		var stack = new Error().stack;
+		console.log("PRINTING CALL STACK");
+		console.log( stack );
+	}
 	
 	if (!APP_CONFIG.useRemote) {
 		angular.extend($scope, {
@@ -213,9 +218,19 @@ angular.module('MapController', ['APIService'])
 			}
 		});
 	} else {
-
-		$scope.center = APP_CONFIG.center;
+		console.log("MapController init");
+		print_call_stack();
 		
+		MapSettings.initializeMap();//.then( function() {
+
+		$scope.center = MapSettings.data.center;
+		$scope.groups = MapSettings.data.groups;
+		$scope.layers = MapSettings.data.layers;
+		$scope.showAll = MapSettings.data.showAll;
+
+		/**
+		$scope.center = APP_CONFIG.center;
+		**/
 		
 		$scope.defaults = {
 			interactions: {
@@ -233,7 +248,7 @@ angular.module('MapController', ['APIService'])
                 { name: 'scaleline', active: true }
         ]
 		
-		
+		/***
 		$scope.groups = LayerGroups.query(function() {
 		//$scope.groups = LayerGroups.get(function() {
 			$scope.groups.forEach(function(group) {
@@ -243,11 +258,12 @@ angular.module('MapController', ['APIService'])
 		});
 		
 		$scope.showAll = true;
+		***
 		
 		var remoteLayers = Layers.query(function() {
 		//var remoteLayers = Layers.get(function() {
 			console.log("remoteLayers = " + remoteLayers);
-			$scope.layers = [];
+			//$scope.layers = [];
 			remoteLayers.forEach(function(remoteLayer) {
 				var layer = {
 					name: remoteLayer.name,
@@ -288,11 +304,19 @@ angular.module('MapController', ['APIService'])
 				}
 				
 				$scope.layers.push(layer);
+				console.log("pushed layer = " + layer);
 				
 			});
-		});			
+		});	
+		console.log("scope.layers = " + $scope.layers);
+			/***/
 	};
 
+	$scope.groupActiveChange = MapSettings.groupActiveChange;
+	$scope.layerActiveChange = MapSettings.layerActiveChange;
+	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
+	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
+	/**
 	$scope.groupActiveChange = function(group) {
 		$scope.layers.forEach(function(layer) {
 			if (layer.group == group.name) {
@@ -316,5 +340,5 @@ angular.module('MapController', ['APIService'])
 	$scope.toggleShowAllLayers = function(group) {
 		group.showAll = !group.showAll;
 	};
-	
+	**/
 });
