@@ -56,7 +56,7 @@ angular.module('SettingsService', ['APIService'])
 				data.center.lat = APP_CONFIG.initialLat;
 				data.center.lon = APP_CONFIG.initialLon;
 				data.center.zoom = APP_CONFIG.initialZoom;
-				data.showAll = true;
+				data.showAll = false;
 			}
 			
 			
@@ -81,7 +81,7 @@ angular.module('SettingsService', ['APIService'])
 					console.log("groups call completed");
 					remoteGroups.forEach(function(group) {
 						group.active = true;
-						group.showAll = true;
+						group.showAll = data.showAll;
 						data.groups.push(group);
 					});
 				});

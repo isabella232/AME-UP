@@ -7,21 +7,21 @@
 								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
 									<form>
 									
-										<!-- uncomment to enable Show All
+										<!-- uncomment to enable Show All -->
 										<md-button ng-click="toggleShowAllGroups()" class="md-icon-button md-accent" style="margin-left:90%;" aria-label="ShowAll">
-											<md-icon ng-if="showAll" md-font-icon="fa-list-ul"  class="fa" style="font-size:20px"></md-icon>
-											<md-tooltip ng-if="showAll" md-direction="left" md-autohide="true">
+											<md-icon ng-if="data.showAll" md-font-icon="fa-list-ul"  class="fa" style="font-size:20px"></md-icon>
+											<md-tooltip ng-if="data.showAll" md-direction="left" md-autohide="true">
 												Show Active Groups
 											</md-tooltip>
-											<md-icon ng-if="!showAll" md-font-icon="fa-list"  class="fa" style="font-size:20px"></md-icon>
-											<md-tooltip ng-if="!showAll" md-direction="left" md-autohide="true">
+											<md-icon ng-if="!data.showAll" md-font-icon="fa-list"  class="fa" style="font-size:20px"></md-icon>
+											<md-tooltip ng-if="!data.showAll" md-direction="left" md-autohide="true">
 												Show All Groups
 											</md-tooltip>
 										</md-button>
-										-->
+										<!-- -->
 										
 										<md-accordion>
-											<div ng-repeat="group in groups | filter: (showAll ? '' : {active:true})" ol-layer-properties="group">
+											<div ng-repeat="group in groups | filter: (data.showAll ? '' : {active:true})" ol-layer-properties="group">
 												<md-accordion-group style="position:relative">
 												<div layout="row"  style="width:100%;">
 												
@@ -31,7 +31,7 @@
 													
 														<span flex=""></span>
 
-														<!-- uncomment to enable Show All
+														<!-- uncomment to enable Show All -->
 														<md-button ng-click="toggleShowAllLayers(group)" class="md-icon-button md-accent" style="margin-left:85%;" aria-label="ShowAll">
 															<md-icon ng-if="group.showAll" md-font-icon="fa-list-ul"  class="fa" style="font-size:20px"></md-icon>
 															<md-tooltip ng-if="group.showAll" md-direction="left" md-autohide="true">
@@ -42,7 +42,7 @@
 																Show All Layers
 															</md-tooltip>
 														</md-button>
-														-->
+														<!-- -->
 														
 														<!--<div ng-repeat="layer in layers | filter:{group:group.name}" style="margin-left:10px">-->
 														<!--<div ng-repeat="layer in layers | filter: (group.showAll ? {group:group.name} : {group:group.name, active:true}) | orderBy: '-active'" style="margin-left:10px">-->

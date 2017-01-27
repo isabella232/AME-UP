@@ -225,7 +225,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		$scope.center = MapSettings.data.center;
 		$scope.groups = MapSettings.data.groups;
 		$scope.layers = MapSettings.data.layers;
-		$scope.showAll = MapSettings.data.showAll;
+		//$scope.showAll = MapSettings.data.showAll;
+		$scope.data = MapSettings.data; //Need this for showAll
 
 		$scope.defaults = {
 			interactions: {
