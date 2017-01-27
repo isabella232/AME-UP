@@ -2,7 +2,7 @@
 
 angular.module('APIService', ['ngResource'])
 	.factory('Layers', function($resource, APP_CONFIG) {
-		console.log("layersAPI = " + APP_CONFIG.layersAPI);
+		//console.log("layersAPI = " + APP_CONFIG.layersAPI);
 
 		return $resource(APP_CONFIG.layersAPI + '/layers/:layerID', {layerID:'@id'}, {
 			query: {
@@ -18,7 +18,7 @@ angular.module('APIService', ['ngResource'])
 		});
 	})
 	.factory('LayerGroups', function($resource, APP_CONFIG) {
-		console.log("API LayerGroups enter, token = " + window.localStorage.getItem(APP_CONFIG.tokenKey));
+		console.log("API LayerGroups enter"/*, token = " + window.localStorage.getItem(APP_CONFIG.tokenKey)*/);
 		return $resource(APP_CONFIG.layersAPI + '/layergroups/:layerGroupID', {layerGroupID:'@id'}, {
 			query: {
 				method: 'GET',
