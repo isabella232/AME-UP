@@ -76,8 +76,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			$mdDialog.show(confirm).then(function(result) {
 				//TODO: check preexisting name
 				const name = result;
-				Projects.create(
-					{
+				const project = {
 						name: name, 
 						zoomLevel: MapSettings.data.center.zoom,
 						centerLon: MapSettings.data.center.lon,
@@ -85,10 +84,14 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 						showAll: MapSettings.data.showAll,
 						groups: angular.toJson(MapSettings.data.groups),
 						layers: angular.toJson(MapSettings.data.layers)
-					},
+				}
+				
+				Projects.create(
+					project,
 					function(result) {
-						ProjectSettings.data.currentProjectName = name;
-						ProjectSettings.data.currentProjectID = result.id;
+						//ProjectSettings.data.currentProjectID = result.id;
+						project.id = result.id;
+						ProjectSettings.data.currentProject = project;
 						ProjectSettings.fetchProjects();
 						$scope.showToast('Project saved');
 					},
@@ -100,7 +103,8 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			});
 		} else {
 			Projects.update(
-				{projectID: ProjectSettings.data.currentProjectID},
+				//{projectID: ProjectSettings.data.currentProjectID},
+				{projectID: ProjectSettings.data.currentProject.id},
 				{
 					name: ProjectSettings.data.currentProject.name,
 					zoomLevel: MapSettings.data.center.zoom,
@@ -123,7 +127,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 
 	
 	$scope.deleteProject = function(ev) {
-		if (ProjectSettings.data.currentProjectName) {
+		if (ProjectSettings.data.currentProject) {
 			const confirm = $mdDialog.confirm()
 				.title('Delete Project')
 				.textContent('Are you sure you want to delete this project? This cannot be undone.')
@@ -134,7 +138,8 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 
 			$mdDialog.show(confirm).then(function() {
 				Projects.delete(
-					{projectID: ProjectSettings.data.currentProjectID},
+					//{projectID: ProjectSettings.data.currentProjectID},
+					{projectID: ProjectSettings.data.currentProject.id},
 					function(result) {
 						//TODO: remove from local list?
 						console.log("deleteProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);

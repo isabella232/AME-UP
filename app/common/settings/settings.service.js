@@ -164,8 +164,9 @@ angular.module('SettingsService', ['APIService'])
 		console.log("ProjectSettings init enter");
 
 		let data = {
-			currentProjectID: undefined,
-			projects: undefined,
+			//currentProjectID: undefined,
+			currentProject: undefined,
+			projects: undefined
 		}
 		
 		const fetchProjects = function() {
@@ -205,12 +206,12 @@ angular.module('SettingsService', ['APIService'])
 			if (id) {
 				const tmpProject = getProject(id);
 				if (tmpProject){
-					data.currentProjectID = id;
+					//data.currentProjectID = id;
 					data.currentProject = tmpProject;
 					MapSettings.initializeMap(data.currentProject);
 				}
 			} else {
-				data.currentProjectID = null;
+				//data.currentProjectID = null;
 				data.currentProject = null;
 				MapSettings.initializeMap();
 			}
@@ -218,7 +219,7 @@ angular.module('SettingsService', ['APIService'])
 		
 		const getProject = function(id) {
 			console.log("getProject id = " + id);
-			const projectID = id ? id : currentProjectID;
+			const projectID = id ? id : data.currentProject.id;
 			if (projectID) {
 				//data.projects.forEach( project => {
 				for (let x = 0; x < data.projects.length; x++) {
