@@ -1,11 +1,11 @@
 angular.module('MapController', ['APIService', 'SettingsService'])
 
-.controller('MapController', function MapController($scope, $http, Layers, LayerGroups, MapSettings, APP_CONFIG) {
+.controller('MapController', function MapController($scope, $http, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings) {
 	function print_call_stack() {
 		var stack = new Error().stack;
 		console.log("PRINTING CALL STACK");
 		console.log( stack );
-	}
+	}	
 	
 	if (!APP_CONFIG.useRemote) {
 		angular.extend($scope, {
@@ -219,7 +219,6 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		});
 	} else {
 		console.log("MapController init");
-		print_call_stack();
 		
 		MapSettings.initializeMap();//.then( function() {
 
@@ -228,10 +227,6 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		$scope.layers = MapSettings.data.layers;
 		$scope.showAll = MapSettings.data.showAll;
 
-		/**
-		$scope.center = APP_CONFIG.center;
-		**/
-		
 		$scope.defaults = {
 			interactions: {
 				mouseWheelZoom: true
@@ -248,97 +243,27 @@ angular.module('MapController', ['APIService', 'SettingsService'])
                 { name: 'scaleline', active: true }
         ]
 		
-		/***
-		$scope.groups = LayerGroups.query(function() {
-		//$scope.groups = LayerGroups.get(function() {
-			$scope.groups.forEach(function(group) {
-				group.active = true;
-				group.showAll = true;
-			});
-		});
-		
-		$scope.showAll = true;
-		***
-		
-		var remoteLayers = Layers.query(function() {
-		//var remoteLayers = Layers.get(function() {
-			console.log("remoteLayers = " + remoteLayers);
-			//$scope.layers = [];
-			remoteLayers.forEach(function(remoteLayer) {
-				var layer = {
-					name: remoteLayer.name,
-					group: remoteLayer.layer_group,
-					active: remoteLayer.is_initially_active,
-					opacity: remoteLayer.opacity ? 
-						remoteLayer.opacity : 
-						remoteLayer.layer_group === $scope.groups[0].name ? 1 : 0.5, //Base maps get full opacity, all others get half
-					layerType: remoteLayer.layer_type,
-					source: {
-						type: remoteLayer.source_type,
-						url: remoteLayer.source_url,
-						legend_url: remoteLayer.legend_url,
-						key: remoteLayer.key,
-						layer: remoteLayer.layer,
-						imagery_set: remoteLayer.imagery_set
-					}
-				};
-				
-				layer.source.params = {};
-				remoteLayer.params.forEach(function(remoteParam) {
-					layer.source.params [remoteParam.name] = remoteParam.value;
-				});
-				
-				if (remoteLayer.is_cors_challenged) {
-					layer.source.url = APP_CONFIG.corsProxy + layer.source.url;
-					layer.source.legend_url = APP_CONFIG.corsProxy + layer.source.legend_url;
-				}
-
-				if (layer.source.type === "TileArcGISRest") {
-					$http.get(layer.source.legend_url).
-						success(function(data, status, headers, config) {
-							layer.legend_json = data;
-						}).
-						error(function(data, status, headers, config) {
-							layer.legend_json = "not available";
-						});
-				}
-				
-				$scope.layers.push(layer);
-				console.log("pushed layer = " + layer);
-				
-			});
-		});	
-		console.log("scope.layers = " + $scope.layers);
-			/***/
 	};
 
 	$scope.groupActiveChange = MapSettings.groupActiveChange;
 	$scope.layerActiveChange = MapSettings.layerActiveChange;
 	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
 	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
+	
 	/**
-	$scope.groupActiveChange = function(group) {
-		$scope.layers.forEach(function(layer) {
-			if (layer.group == group.name) {
-				layer.active = group.active;
-			}
-		});
-	};
-		
-	$scope.layerActiveChange = function(layer) {
-		$scope.groups.forEach(function(group) {
-			if (group.name == layer.group) {
-				group.active = group.active || layer.active;
-			}
-		});
-	};
-
-	$scope.toggleShowAllGroups = function() {
-		$scope.showAll = !$scope.showAll;
-	};
-
-	$scope.toggleShowAllLayers = function(group) {
-		group.showAll = !group.showAll;
-	};
+	//TODO: This change detection isn't working correctly. Might be worth another look at some point.
+	$scope.$watch(function(){return MapSettings.data;}, 
+	function(newVal, oldVal){
+		if (newVal == oldVal) {
+			console.log("center changed but initializing");
+		} else {
+			console.log("center change detected");
+			ProjectSettings.data.changed++;
+		}
+	},
+	true);
+	
+	ProjectSettings.data.changed = 0;
 	**/
+	
 });
