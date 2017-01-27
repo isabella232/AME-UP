@@ -1,55 +1,11 @@
 angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMaterial'])
 
-.controller('ProjectController', function ProjectController($scope, Projects, MapSettings, APP_CONFIG, $mdDialog, $mdToast) {
+.controller('ProjectController', function ProjectController($scope, Projects, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast) {
 
-	$scope.projects;
+	$scope.projects = ProjectSettings.data.projects;
 	
-	let getProjects = function() {
-		console.log("getProjects, enter");
-		if ($scope.projects) {
-			$scope.projects.length = 0;
-		} else {
-			$scope.projects = [];
-		}
-		let remoteProjects = Projects.query(function() {
-			console.log("getProjects, remoteProjects:");
-			console.log(remoteProjects);
-			remoteProjects.forEach(function(remoteProject) {
-				let project = {
-					id: remoteProject.id,
-					name: remoteProject.name,
-					zoom: remoteProject.zoom_level,
-					centerLon: remoteProject.center_lon,
-					centerLat: remoteProject.center_lat,
-					showAll: remoteProject.show_all,
-					groups: angular.fromJson(remoteProject.groups),
-					layers: angular.fromJson(remoteProject.layers),
-					modifiedDate: remoteProject.modified_date
-				}
-				console.log(project);
-				$scope.projects.push(project);
-			});
-		});
-		console.log("getProjects, projects:");
-		console.log($scope.projects);
-	}
-	
-	getProjects();
-
-	/**
-	$scope.showAlert = function(titleText, bodyText) {
-		$mdDialog.show(
-			$mdDialog.alert()
-				.parent(angular.element(document.querySelector('#popupContainer')))
-				.clickOutsideToClose(true)
-				.title(titleText)
-				.textContent(bodyText)
-				.ariaLabel(titleText)
-				.ok('Ok')
-		);
-	};
-	**/
-	
+	//ProjectSettings.fetchProjects();
+		
 	$scope.showToast = function(message) {
 		$mdToast.show(
 			$mdToast.simple()
@@ -58,98 +14,56 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 		);
 	};
 
-	setMap = function(selectedProject) {
-		if (selectedProject) {
-			console.log("resetMap, selectedProject = " + selectedProject);
-			let theProject;
-			console.log("resetMap, projects.length = " + $scope.projects.length);
-			$scope.projects.forEach( project => {
-				console.log("resetMap, project = " + project.name);
-				if (project.id == selectedProject) {
-					theProject = project;
-					//TODO: throw here to break loop?
-				}
-			});
-			console.log("resetMap, theProject = " + theProject.name);
-			MapSettings.initializeMap(theProject.id, theProject.name, theProject.zoom, theProject.centerLon, theProject.centerLat, theProject.showAll, theProject.groups, theProject.layers);
-		} else {
-			MapSettings.initializeMap();
-		}
-	};
+	function getChangesDialog (ev, title) {
+		return $mdDialog.confirm()
+				.title(title)
+				.textContent('Are you sure? Unsaved changes will be lost')
+				.ariaLabel(title)
+				.targetEvent(ev)
+				.ok('Yes')
+				.cancel('No');
+	}
 	
-	/**
-	$scope.resetMap = function(selectedProject) {
-		if (selectedProject) {
-			console.log("resetMap, selectedProject = " + selectedProject);
-			let theProject;
-			console.log("resetMap, projects.length = " + $scope.projects.length);
-			$scope.projects.forEach( project => {
-				console.log("resetMap, project = " + project.name);
-				if (project.id == selectedProject) {
-					theProject = project;
-					//TODO: throw here to break loop?
-				}
-			});
-			console.log("resetMap, theProject = " + theProject.name);
-			MapSettings.resetMap(theProject.id, theProject.name, theProject.zoom, theProject.centerLon, theProject.centerLat, theProject.layers, theProject.showAll);
-		} else {
-			MapSettings.resetMap();
-			$scope.showToast('New project created');
-		}
-	};
-	**/
-
 	$scope.newProject = function(ev) {
-		console.log("openProject enter");
-		setMap();
-		$scope.showToast('New project created');
+		console.log("openProject enter, ProjectSettings.data.changed = " + ProjectSettings.data.changed);
+		
+		$mdDialog.show(getChangesDialog(ev, 'New Project')).then(function() {
+			ProjectSettings.setCurrentProject(null);
+			$scope.showToast('New project created');
+		},
+		function() {});
 	}
 	
 	$scope.openProject = function(ev) {
 		console.log("openProject enter");
 		
-		$mdDialog.show({
-			parent: angular.element(document.body),
-			targetEvent: ev,
-			templateUrl: 'project/open.project.html',
-			controller: ($scope, $mdDialog) => {
-				$scope.tmpSelect;
-		
-				$scope.cancel = function() {
-					$mdDialog.cancel();
-				};
-				$scope.answer = function(answer) {
-					$mdDialog.hide(answer);
+			$mdDialog.show(getChangesDialog(ev, 'Open Project')).then(function() {
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				templateUrl: 'project/open.project.html',
+				controller: ($scope, $mdDialog) => {
+					$scope.tmpSelect;
+			
+					$scope.cancel = function() {
+						$mdDialog.cancel();
+					};
+					$scope.answer = function(answer) {
+						$mdDialog.hide(answer);
+					}
 				}
-			}
-		})
-		.then((answer) => {
-			setMap(answer);
-		}, {});
+			})
+			.then((answer) => {
+				ProjectSettings.setCurrentProject(answer);
+			}, {});
+		},
+		function(){});
 		
   };
-  
-  /**
-  $scope.showTabDialog = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'tabDialog.tmpl.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose:true
-    })
-        .then(function(answer) {
-          $scope.status = 'You said the information was "' + answer + '".';
-        }, function() {
-          $scope.status = 'You cancelled the dialog.';
-        });
-		
-	}
-	**/
-	
+  	
 	$scope.saveProject = function(ev) {
-		console.log("saveProject, MapSettings.data.projectName = " + MapSettings.data.projectName);
-		if (!MapSettings.data.projectName) {
+		console.log("saveProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);
+		if (!ProjectSettings.data.currentProject) {
 			const confirm = $mdDialog.prompt()
 				.title('Project Name')
 				.textContent('What would you like to call this project?')
@@ -161,11 +75,10 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 
 			$mdDialog.show(confirm).then(function(result) {
 				//TODO: check preexisting name
-				//MapSettings.data.projectName = result;
 				const name = result;
 				Projects.create(
 					{
-						name: name, //MapSettings.data.projectName,
+						name: name, 
 						zoomLevel: MapSettings.data.center.zoom,
 						centerLon: MapSettings.data.center.lon,
 						centerLat: MapSettings.data.center.lat,
@@ -174,9 +87,9 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 						layers: angular.toJson(MapSettings.data.layers)
 					},
 					function(result) {
-						MapSettings.data.projectName = name;
-						MapSettings.data.projectID = result.id;
-						getProjects();
+						ProjectSettings.data.currentProjectName = name;
+						ProjectSettings.data.currentProjectID = result.id;
+						ProjectSettings.fetchProjects();
 						$scope.showToast('Project saved');
 					},
 					function() {
@@ -187,9 +100,9 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			});
 		} else {
 			Projects.update(
-				{projectID: MapSettings.data.projectID},
+				{projectID: ProjectSettings.data.currentProjectID},
 				{
-					name: MapSettings.data.projectName,
+					name: ProjectSettings.data.currentProject.name,
 					zoomLevel: MapSettings.data.center.zoom,
 					centerLon: MapSettings.data.center.lon,
 					centerLat: MapSettings.data.center.lat,
@@ -199,7 +112,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 				},
 				function() {
 					$scope.showToast('Project saved');
-					getProjects();
+					ProjectSettings.fetchProjects();
 				},
 				function() {
 					$scope.showToast('There was a problem. Project not saved.');
@@ -210,7 +123,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 
 	
 	$scope.deleteProject = function(ev) {
-		if (MapSettings.data.projectName) {
+		if (ProjectSettings.data.currentProjectName) {
 			const confirm = $mdDialog.confirm()
 				.title('Delete Project')
 				.textContent('Are you sure you want to delete this project? This cannot be undone.')
@@ -221,12 +134,12 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 
 			$mdDialog.show(confirm).then(function() {
 				Projects.delete(
-					{projectID: MapSettings.data.projectID},
+					{projectID: ProjectSettings.data.currentProjectID},
 					function(result) {
 						//TODO: remove from local list?
-						console.log("deleteProject, MapSettings.data.projectName = " + MapSettings.data.projectName);
-						getProjects();
-						setMap();
+						console.log("deleteProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);
+						ProjectSettings.fetchProjects();
+						ProjectSettings.setCurrentProject(null);
 						$scope.showToast('Project deleted');
 					},
 					function() {
@@ -242,4 +155,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 	}
 
 	
+})//;
+.controller('ProjectListController', function ProjectListController($scope, ProjectSettings, $mdDialog) {
+	$scope.projects = ProjectSettings.data.projects;
 });
