@@ -36,7 +36,7 @@ var app = angular.module('mapApp', [
   //$locationProvider.html5Mode(true); 
 })
 
-.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, MapSettings) {
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, ProjectSettings) {
   $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
     Auth.logout();
     $state.go('cover');
@@ -46,8 +46,8 @@ var app = angular.module('mapApp', [
 		$mdSidenav('main').toggle();
 	}
 
-	$scope.data = MapSettings.data;
-
+	$scope.data = ProjectSettings.data;
+	
 })
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
