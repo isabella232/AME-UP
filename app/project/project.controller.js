@@ -142,7 +142,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 					{projectID: ProjectSettings.data.currentProject.id},
 					function(result) {
 						//TODO: remove from local list?
-						console.log("deleteProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);
+						//console.log("deleteProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);
 						ProjectSettings.fetchProjects();
 						ProjectSettings.setCurrentProject(null);
 						$scope.showToast('Project deleted');

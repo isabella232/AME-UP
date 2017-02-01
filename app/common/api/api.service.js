@@ -1,5 +1,6 @@
 'use strict';
 
+//Note: The returns from each of these factories are built statically. This means that the token is assigned when the service is spun up and not again after. And this means that when a user logs in, this service must be restarted. This is ugly, but I haven't yet found a way around it.
 angular.module('APIService', ['ngResource'])
 	.factory('Layers', function($resource, APP_CONFIG) {
 		//console.log("layersAPI = " + APP_CONFIG.layersAPI);

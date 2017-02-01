@@ -36,17 +36,29 @@ var app = angular.module('mapApp', [
   //$locationProvider.html5Mode(true); 
 })
 
-.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, ProjectSettings) {
-  $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
-    Auth.logout();
-    $state.go('cover');
-  });
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, ProjectSettings, $mdToast) {
+
+	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+		Auth.logout();
+		$state.go('cover');
+	});
   
 	$scope.toggleSideNav = function() {
 		$mdSidenav('main').toggle();
 	}
+	
+	$scope.notImplemented = function() {
+		$mdToast.show(
+			$mdToast.simple()
+				.textContent("Not yet implemented")
+				.hideDelay(3000)
+		);
+	}
 
-	$scope.data = ProjectSettings.data;
+	$scope.projectData = ProjectSettings.data;
+	$scope.authData = Auth.data;
+	
+	}
 	
 })
 
