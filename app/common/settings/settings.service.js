@@ -38,31 +38,106 @@ angular.module('SettingsService', ['APIService'])
 		//const initializeMap = function (/*projectID, projectName,*/ zoom, lon, lat, showAll, groups, layers) {
 		let initializeMap = function (project) {
 			console.log("initializeMap enter");
-			/**
-			data.center = APP_CONFIG.center;
-			data.center.lat = lat || APP_CONFIG.initialLat;
-			data.center.lon = lon || APP_CONFIG.initialLon;
-			data.center.zoom = zoom || APP_CONFIG.initialZoom;
-			data.showAll = showAll || true;
-			**/
+
+			if (data.groups) {
+				console.log("resetting groups array");
+				data.groups.length = 0;
+			} else {
+				console.log("creating new groups array");
+				data.groups = [];
+			}
+
+			if (data.layers) {
+				console.log("resetting layers array");
+				data.layers.length = 0;
+			} else {
+				console.log("creating new layers array");
+				data.layers = [];
+			}
 			
-			data.center = APP_CONFIG.center;
+			data.center = APP_CONFIG.center;			
+			
+			//console.log("resetMap, data.center:");
+			//console.log(data.center);
+		
 			if (project) {
 				data.center.lat = project.centerLat;
 				data.center.lon = project.centerLon;
 				data.center.zoom = project.zoom;
 				data.showAll = project.showAll;
+				project.groups.forEach(group => {
+					data.groups.push(JSON.parse(JSON.stringify(group)));
+				});
+				project.layers.forEach(layer => {
+					data.layers.push(JSON.parse(JSON.stringify(layer)));
+				});
 			} else {
 				data.center.lat = APP_CONFIG.initialLat;
 				data.center.lon = APP_CONFIG.initialLon;
 				data.center.zoom = APP_CONFIG.initialZoom;
 				data.showAll = false;
+				console.log("calling API for groups");
+				let remoteGroups = LayerGroups.query(function() {
+					console.log("groups call completed");
+					remoteGroups.forEach(function(group) {
+						group.active = true;
+						group.showAll = data.showAll;
+						data.groups.push(group);
+					});
+					
+					console.log("calling API for layers");
+					let remoteLayers = Layers.query(function() {
+						console.log("layers call completed");
+						remoteLayers.forEach(function(remoteLayer) {
+							let layer = {
+								name: remoteLayer.name,
+								group: remoteLayer.layer_group,
+								active: remoteLayer.is_initially_active,
+								opacity: remoteLayer.opacity ? 
+									remoteLayer.opacity : 
+									remoteLayer.layer_group === data.groups[0].name ? 1 : 0.5, //Base maps get full opacity, all others get half
+								layerType: remoteLayer.layer_type,
+								source: {
+									type: remoteLayer.source_type,
+									url: remoteLayer.source_url,
+									legend_url: remoteLayer.legend_url,
+									key: remoteLayer.key,
+									layer: remoteLayer.layer,
+									imagery_set: remoteLayer.imagery_set
+								}
+							};
+							
+							layer.source.params = {};
+							remoteLayer.params.forEach(function(remoteParam) {
+								layer.source.params [remoteParam.name] = remoteParam.value;
+							});
+							
+							if (remoteLayer.is_cors_challenged) {
+								layer.source.url = APP_CONFIG.corsProxy + layer.source.url;
+								layer.source.legend_url = APP_CONFIG.corsProxy + layer.source.legend_url;
+							}
+
+							if (layer.source.type === "TileArcGISRest") {
+								$http.get(layer.source.legend_url).
+									success(function(data, status, headers, config) {
+										layer.legend_json = data;
+									}).
+									error(function(data, status, headers, config) {
+										layer.legend_json = "not available";
+									});
+							}
+
+							//console.log("layer:");
+							//console.log(layer);
+							data.layers.push(layer);
+							
+						});
+					});
+					
+				});
 			}
-			
-			
-			//console.log("resetMap, data.center:");
-			//console.log(data.center);
-						
+		
+/**		
 			if (data.groups) {
 				console.log("resetting groups array");
 				data.groups.length = 0;
@@ -149,6 +224,7 @@ angular.module('SettingsService', ['APIService'])
 					});
 				});
 			}
+**/
 		}
 					
 		return {
