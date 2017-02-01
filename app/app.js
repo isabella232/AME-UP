@@ -57,9 +57,6 @@ var app = angular.module('mapApp', [
 
 	$scope.projectData = ProjectSettings.data;
 	$scope.authData = Auth.data;
-	
-	}
-	
 })
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
