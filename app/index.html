@@ -22,8 +22,10 @@
 	<script src="app.config.js"></script>
 	<script src="map/map.controller.js"></script>
 	<script src="login/login.component.js"></script>
+	<script src="project/project.controller.js"></script>
 	<script src="common/auth/auth.service.js"></script>
 	<script src="common/api/api.service.js"></script>
+	<script src="common/settings/settings.service.js"></script>
 	<link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
@@ -48,7 +50,17 @@
 
 				<span class="md-toolbar-title">AME-UP Arizona Military Energy Land Use Plan</span>
 				<span flex=""></span>
-				<md-button ng-if="isAuthenticated()" class="md-raised" aria-label="Logout" ng-click="logout()">Logout</md-button>
+				<h2>{{projectData.currentProject.name}}</h2>
+				<md-menu ng-if="isAuthenticated()" md-position-mode="target-right target" md-offset="0 40">
+					<md-button ng-click="$mdOpenMenu($event)" style="min-width:60px" class="md-icon-button" aria-label="User" >
+						<md-icon md-menu-origin="" md-font-icon="fa-user-circle-o"  class="fa" style="font-size:40px"></md-icon>
+					</md-button>
+					<md-menu-content>
+						<md-menu-item><md-button style="font-size: 120%; font-weight: bold;" ng-click="notImplemented()">{{authData.username}}</md-button></md-menu-item>
+						<md-divider></md-divider>
+						<md-menu-item><md-button ng-click="logout()">Logout</md-button></md-menu-item>
+					</md-menu-content>
+				</md-menu>
 			</div>
 		</md-toolbar>
  
@@ -70,22 +82,22 @@
 				<span flex=""></span>
 			</div>
 		</md-toolbar>
-		<md-content layout-margin="">
-			<md-button class="md-primary">
+		<md-content layout-margin=""  ng-controller="ProjectController">
+			<md-button class="md-primary" ng-click="newProject()">
 				 <md-icon md-font-icon="fa-plus-square-o"  class="fa" style="font-size:25px"></md-icon>
 				 New Project
 			</md-button><br/>
-			<md-button class="md-primary">
+			<md-button class="md-primary" ng-click="openProject($event)">
 				 <md-icon md-font-icon="fa-folder-open-o"  class="fa" style="font-size:25px"></md-icon>
 				 Open project...
 			</md-button><br/>
-			<md-button class="md-primary">
+			<md-button class="md-primary" ng-click="saveProject($event)">
 				 <md-icon md-font-icon="fa-save"  class="fa" style="font-size:25px"></md-icon>
 				 Save project...
 			</md-button><br/>
-			<md-button class="md-primary">
-				 <md-icon md-font-icon="fa-folder-o"  class="fa" style="font-size:25px"></md-icon>
-				 Close project
+			<md-button class="md-primary"  ng-click="deleteProject($event)">
+				 <md-icon md-font-icon="fa-trash-o"  class="fa" style="font-size:25px"></md-icon>
+				 Delete project
 			</md-button><br/>
 		</md-content>
 	</md-sidenav>

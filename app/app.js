@@ -9,7 +9,9 @@ var app = angular.module('mapApp', [
   'ngResource',
   'ngMaterialAccordion',
   'ui.router',
-  'AuthService'
+  'AuthService',
+  'ProjectController',
+  'SettingsService'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -25,7 +27,7 @@ var app = angular.module('mapApp', [
   .state('map', {
     url: '/map',
     templateUrl: 'map/map.html',
-	controller: 'MapController'
+	//controller: 'MapController' //TODO: either put this here or in html template, not both or will be called twice
   });
  
   $urlRouterProvider.otherwise('/');
@@ -34,17 +36,27 @@ var app = angular.module('mapApp', [
   //$locationProvider.html5Mode(true); 
 })
 
-.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav) {
-  $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
-    Auth.logout();
-    $state.go('cover');
-  });
+.controller('AuthCatcher', function($scope, $state, Auth, AUTH_EVENTS, $mdSidenav, ProjectSettings, $mdToast) {
+
+	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+		Auth.logout();
+		$state.go('cover');
+	});
   
 	$scope.toggleSideNav = function() {
 		$mdSidenav('main').toggle();
 	}
+	
+	$scope.notImplemented = function() {
+		$mdToast.show(
+			$mdToast.simple()
+				.textContent("Not yet implemented")
+				.hideDelay(3000)
+		);
+	}
 
-
+	$scope.projectData = ProjectSettings.data;
+	$scope.authData = Auth.data;
 })
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {

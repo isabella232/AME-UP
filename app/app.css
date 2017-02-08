@@ -36,6 +36,11 @@
 	font-style: italic;
 }
 
+.md-toolbar-text {
+	font-size: 24px;
+	font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+}
+
 .md-accordion-toggle.md-active .accordion-arrow {
 	transform: rotate(-180deg) translateZ(0);
 }
