@@ -118,13 +118,19 @@ angular.module('SettingsService', ['APIService'])
 							}
 
 							if (layer.source.type === "TileArcGISRest") {
-								$http.get(layer.source.legend_url).
+								$http.get(layer.source.legend_url)/*.
 									success(function(data, status, headers, config) {
 										layer.legend_json = data;
 									}).
 									error(function(data, status, headers, config) {
 										layer.legend_json = "not available";
-									});
+									});*/
+									.then(function success(response){
+											layer.legend_json = response.data;
+										  },
+										  function error(response){
+											layer.legend_json = "not available";
+										  });
 							}
 
 							//console.log("layer:");
