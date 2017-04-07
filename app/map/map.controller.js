@@ -268,7 +268,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			console.log("groups[0].name = " + $scope.groups[0].name);
 			for (x = 0; x < $scope.layers.length; x++) {
 				console.log("layers.group = " + $scope.layers[x].group);
-				if ($scope.layers[x].group !== $scope.groups[0].name) { //assumes first group is always base maps
+				if ($scope.layers[x].group === $scope.groups[1].name) { //assumes first group is always base maps
 					$scope.queryLayer = $scope.layers[x].name;
 					break;
 				}
