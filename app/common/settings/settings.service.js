@@ -64,13 +64,14 @@ angular.module('SettingsService', ['APIService'])
 				data.center.lat = project.centerLat;
 				data.center.lon = project.centerLon;
 				data.center.zoom = project.zoom;
-				data.showAll = project.showAll;
+				data.showAll = true; //project.showAll;
+			} else {
+				data.center.lat = APP_CONFIG.initialLat;
+				data.center.lon = APP_CONFIG.initialLon;
+				data.center.zoom = APP_CONFIG.initialZoom;
+				data.showAll = true;
 			}
 			
-			//data.center.lat = APP_CONFIG.initialLat;
-			//data.center.lon = APP_CONFIG.initialLon;
-			//data.center.zoom = APP_CONFIG.initialZoom;
-			data.showAll = true;
 			console.log("calling API for groups");
 			let remoteGroups = LayerGroups.query(function() {
 				console.log("groups call completed");
