@@ -257,6 +257,34 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
 	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
 	
+	$scope.layerClicked = function(layerName) {
+		console.log("layer clicked = " + layerName);
+		$scope.queryLayer = layerName;
+	}
+
+	$scope.infoClicked = function() {
+		console.log("info clicked");
+		if (!$scope.infoMode) {
+			console.log("groups[0].name = " + $scope.groups[0].name);
+			for (x = 0; x < $scope.layers.length; x++) {
+				console.log("layers.group = " + $scope.layers[x].group);
+				if ($scope.layers[x].group !== $scope.groups[0].name) { //assumes first group is always base maps
+					$scope.queryLayer = $scope.layers[x].name;
+					break;
+				}
+			}
+			$scope.infoMode = true;
+		} else {
+			$scope.infoMode = false;
+			$scope.selectedIndex = 0;
+			$scope.queryLayer = undefined;
+		}
+	}
+	
+	$scope.infoMode = false;
+	$scope.queryLayer = undefined;
+	$scope.selectedIndex = 0;
+	
 	/**
 	//TODO: This change detection isn't working correctly. Might be worth another look at some point.
 	$scope.$watch(function(){return MapSettings.data;}, 

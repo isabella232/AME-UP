@@ -2,11 +2,11 @@
 			
 				<!--<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" style="width: 35%;height:100%">-->
 				<md-content style="width: 29%;height:100%">
-					<md-tabs layout-fill>
+					<md-tabs md-selected="selectedIndex" layout-fill>
 						<md-tab label="Layers">
 							<md-tab-body>
 								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
-									<form>
+									<!--<form>-->
 									
 										<!-- uncomment to enable Show All
 										<md-button ng-click="toggleShowAllGroups()" class="md-icon-button md-accent" style="margin-left:90%;" aria-label="ShowAll">
@@ -20,7 +20,6 @@
 											</md-tooltip>
 										</md-button>
 										-->
-										
 										<md-accordion>
 											<div ng-repeat="group in groups | filter: (data.showAll ? '' : {active:true})" ol-layer-properties="group">
 												<md-accordion-group style="position:relative">
@@ -55,7 +54,8 @@
 																		</md-checkbox>
 																	</div>
 																	<div style="display:table-cell;width:70%">
-																		<span class="layer-name">{{ layer.name }}</span>
+																		<span ng-if="infoMode" class="layer-name" ng-click="infoMode && layerClicked(layer.name)">{{ layer.name }}</span>
+																		<span ng-if="!infoMode" class="layer-name">{{ layer.name }}</span>
 																	</div>
 																	<div style="display:table-cell;width:20%;">
 																		<md-input-container class="md-opacity">
@@ -76,7 +76,16 @@
 												<md-divider style="margin-bottom:15px"></md-divider>
 											</div>
 										</md-accordion>
-									</form>
+									<!--</form>-->
+								</md-content>
+							</md-tab-body>								
+						</md-tab>
+						<md-tab ng-if="infoMode" label="Attributes" md-active="true">
+							<md-tab-body >
+								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
+									<p class="md-title" ng-if="queryLayer != undefined">Attribute data for {{ queryLayer }}</h3>
+									<p>(Not yet implemented)</p>
+
 								</md-content>
 							</md-tab-body>
 						</md-tab>
@@ -131,5 +140,17 @@
 							<ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers|filter: { active: true}"></ol-layer>
 					</openlayers>
+						<md-button class="md-primary md-fab md-mini" ng-click="infoClicked()" style="position:absolute; top: 10px; left:90%;">
+							<md-icon ng-if="!infoMode" md-font-icon="fa-info"  class="fa" style="font-size:30px">
+								<md-tooltip md-direction="left" md-autohide="true">
+									Enter query mode
+								</md-tooltip>
+							</md-icon>
+							<md-icon ng-if="infoMode" md-font-icon="fa-map"  class="fa" style="font-size:25px">
+								<md-tooltip md-direction="left" md-autohide="true">
+									Leave query mode
+								</md-tooltip>							
+							</md-icon>
+						</md-button><br/>
 				</md-content>
 			</div>	
