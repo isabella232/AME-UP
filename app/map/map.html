@@ -84,7 +84,14 @@
 							<md-tab-body >
 								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
 									<p class="md-title" ng-if="queryLayer != undefined">Attribute data for {{ queryLayer }}</h3>
-									<p>(Not yet implemented)</p>
+									<!--<div style="font-size:small">{{ queryResults }}</div>-->
+									
+									<div ng-repeat="queryResult in queryResults">
+										<pre>{</pre> <!-- temporary hack. Angular/pre aren't rendering the opening curly brace for some reason-->
+										<pre>
+										{{ queryResult }}
+										</pre>
+									</div>
 
 								</md-content>
 							</md-tab-body>
@@ -152,5 +159,6 @@
 							</md-tooltip>							
 						</md-icon>
 					</md-button>
+					<div id="positionDisplay" class="ol-scale-line ol-unselectable" style="position:absolute; top: 96.5%; left:90%; visibility:hidden;"></div>
 				</md-content>
 			</div>	
