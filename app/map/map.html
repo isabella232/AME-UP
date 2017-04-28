@@ -103,7 +103,7 @@
 									{{group.name}}
 									<div ng-repeat="layer in layers | filter: {group: group.name, active:true}" style="margin-left:20px; margin-top:10px">
 											<span class="layer-name">{{layer.name}}<span>
-											<div ng-if="layer.source.type === 'ImageWMS'">
+											<div ng-if="layer.source.type === 'ImageWMS' || layer.source.type === 'TileWMS'">
 												<img ng-src="{{layer.source.legend_url}}"/>
 											</div>
 											<div ng-if="layer.source.type === 'TileArcGISRest'">
