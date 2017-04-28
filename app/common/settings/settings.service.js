@@ -104,12 +104,14 @@ angular.module('SettingsService', ['APIService'])
 				let remoteLayers = Layers.query(function() {
 					console.log("layers call completed");
 					remoteLayers.forEach(function(remoteLayer) {
+						console.log("remoteLayer");console.log(remoteLayer);
+						console.log("remoteLayer.initial_opacity = " + remoteLayer.initial_opacity);
 						let layer = {
 							name: remoteLayer.name,
 							group: remoteLayer.layer_group,
 							active: remoteLayer.is_initially_active,
-							opacity: remoteLayer.opacity ? 
-								remoteLayer.opacity : 
+							opacity: remoteLayer.initial_opacity != undefined ? 
+								remoteLayer.initial_opacity : 
 								remoteLayer.layer_group === data.groups[0].name ? 1 : 0.5, //Base maps get full opacity, all others get half
 							layerType: remoteLayer.layer_type,
 							source: {
