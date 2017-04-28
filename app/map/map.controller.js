@@ -26,6 +26,20 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 
 		map.addControl(mousePosition);
 
+		/**
+		selectSingleClick = new ol.interaction.Select();
+		selectSingleClick.on('select', event => {
+			console.log("single click received");
+			console.log(event);
+			map.removeLayer(layer);
+			$scope.selectPoint = event.mapBrowserEvent.coordinate;
+			if ($scope.infoMode) {
+				$scope.layerClicked($scope.queryLayer);
+			}
+		});
+		map.addInteraction(selectSingleClick);
+		**/
+		
 		let dragBox = new ol.interaction.DragBox({
 			condition: ol.events.condition.shiftKeyOnly,
 			style: new ol.style.Style({
@@ -77,6 +91,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 
 		// To remove the layer when you start drawing a new dragbox
 		dragBox.on('boxstart', (evt) => {
+			$scope.selectPoint = undefined;
 			//document.getElementById('positionDisplay').style.visibility = "visible";
 			map.removeLayer(layer);
 			$scope.boxExtent = map.getView().calculateExtent(map.getSize());
@@ -395,6 +410,14 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		}
 		console.log("featureType = " + featureType);
 
+		/**
+		let filter;
+		if ($scope.selectPoint != undefined) {
+			filter = ol.format.ogc.filter.intersects(paramStub.geometryName, new ol.geom.Point($scope.selectPoint), 'urn:ogc:def:crs:EPSG::3857')
+		} else {
+			filter = ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
+		}
+		**/
 		let featureRequest = new ol.format.WFS().writeGetFeature({
 			srsName: 'EPSG:3857',
 			featureNS: paramStub.featureNamespace,
@@ -403,6 +426,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			outputFormat: 'application/json',
 			//ogc is not in most of the examples and docs online, but is necessary (https://github.com/openlayers/openlayers/pull/5653)
 			filter: ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
+			//filter: filter
 		});
 			
 		//make sure its good to go
