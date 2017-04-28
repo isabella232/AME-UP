@@ -260,7 +260,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		let layer = $scope.layers.find(l => {return l.name === layerName;});
 		if (layer != null) {
 			console.log(layer);
-			queryFeatures(layer);
+			//Disabling this for now
+			//queryFeatures(layer); 
 		}
 	}
 
