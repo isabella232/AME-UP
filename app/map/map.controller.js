@@ -26,6 +26,11 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 
 		map.addControl(mousePosition);
 
+		let scaleLine = new ol.control.ScaleLine({ 
+			units: 'us'
+		});
+		map.addControl(scaleLine);
+		
 		/**
 		//TODO: Get single point select working
 		selectSingleClick = new ol.interaction.Select();
@@ -136,7 +141,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		
 	//scaleline does not work when added via the defaults above. Instead, we must create this object then use it with ol-control in the html
 	$scope.controls = [
-			{ name: 'scaleline', active: true }
+			//{ name: 'scaleline', active: true}
 	]
 	
 	$scope.groupActiveChange = MapSettings.groupActiveChange;
