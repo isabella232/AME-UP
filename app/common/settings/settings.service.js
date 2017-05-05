@@ -213,14 +213,14 @@ angular.module('SettingsService', ['APIService'])
 			let remoteProjects = Projects.query(function() {
 				//console.log("fetchProjects, remoteProjects:");
 				//console.log(remoteProjects);
-				let aoiGeoJSON;
+				let aoi;
 				remoteProjects.forEach(function(remoteProject) {
 					//TODO: For now, aoi is saved as a box extent. This will change to a geometry in the future.
 					if (remoteProject.aoi != undefined) {
-						aoiGeoJSON = new ol.format.GeoJSON().readGeometry(remoteProject.aoi);
-						console.log('aoiGeoJSON = ');
-						console.log(aoiGeoJSON);
-						console.log(aoiGeoJSON.getExtent()); 
+						aoi = new ol.format.GeoJSON().readGeometry(remoteProject.aoi);
+						console.log('aoi = ');
+						console.log(aoi);
+						console.log(aoi.getExtent()); 
 					}
 					
 					let project = {
@@ -232,7 +232,7 @@ angular.module('SettingsService', ['APIService'])
 						showAll: remoteProject.show_all,
 						groups: angular.fromJson(remoteProject.groups),
 						layers: angular.fromJson(remoteProject.layers),
-						aoi: aoiGeoJSON.getExtent(),
+						aoi: aoi.getExtent(),
 						modifiedDate: remoteProject.modified_date
 					}
 					//console.log(project);
