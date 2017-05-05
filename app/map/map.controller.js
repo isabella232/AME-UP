@@ -74,10 +74,12 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		let layer;
 		dragBox.on('boxend', (evt) => {
 			document.getElementById('positionDisplay').style.visibility = "hidden";
-			$scope.data.aoi = dragBox.getGeometry().getExtent();
+			//$scope.data.aoi = dragBox.getGeometry().getExtent();
+			$scope.data.aoi = dragBox.getGeometry();
 			console.log("$scope.data.aoi"); console.log($scope.data.aoi);
 			
-			let polygonFeature = new ol.Feature(new ol.geom.Polygon.fromExtent($scope.data.aoi));
+			//let polygonFeature = new ol.Feature(new ol.geom.Polygon.fromExtent($scope.data.aoi));
+			let polygonFeature = new ol.Feature($scope.data.aoi);
 			layer = new ol.layer.Vector({
 				source: new ol.source.Vector({
 					features: [polygonFeature]
@@ -123,7 +125,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			if ($scope.data.aoi != undefined) {
 				console.log("adding layer");
 				console.log($scope.data.aoi);
-				let polygonFeature = new ol.Feature(new ol.geom.Polygon.fromExtent($scope.data.aoi));
+				let polygonFeature = new ol.Feature($scope.data.aoi);
 				layer = new ol.layer.Vector({
 					source: new ol.source.Vector({
 						features: [polygonFeature]

@@ -232,7 +232,8 @@ angular.module('SettingsService', ['APIService'])
 						showAll: remoteProject.show_all,
 						groups: angular.fromJson(remoteProject.groups),
 						layers: angular.fromJson(remoteProject.layers),
-						aoi: aoi.getExtent(),
+						//aoi: aoi.getExtent(),
+						aoi: aoi,
 						modifiedDate: remoteProject.modified_date
 					}
 					//console.log(project);

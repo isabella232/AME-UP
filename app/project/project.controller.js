@@ -1,17 +1,21 @@
 angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMaterial'])
 
-.controller('ProjectController', function ProjectController($scope, Projects, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast) {
+.controller('ProjectController', function ProjectController($scope, $rootScope, Projects, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast) {
 
 	$scope.projects = ProjectSettings.data.projects;
 	
 	//ProjectSettings.fetchProjects();
 		
-	$scope.showToast = function(message) {
+	$scope.showToast = function(message, closeSideNav) {
 		$mdToast.show(
 			$mdToast.simple()
 				.textContent(message)
 				.hideDelay(3000)
-		);
+		).then( function() {
+			if (closeSideNav) {
+				$rootScope.toggleSideNav();
+			}
+		});
 	};
 
 	function getChangesDialog (ev, title) {
@@ -29,7 +33,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 		
 		$mdDialog.show(getChangesDialog(ev, 'New Project')).then(function() {
 			ProjectSettings.setCurrentProject(null);
-			$scope.showToast('New project created');
+			$scope.showToast('New project created', true);
 		},
 		function() {});
 	}
@@ -55,6 +59,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			})
 			.then((answer) => {
 				ProjectSettings.setCurrentProject(answer);
+				$scope.showToast('Opening project', true);
 			}, {});
 		},
 		function(){});
@@ -69,7 +74,8 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			let aoiGeom = new ol.geom.Polygon.fromExtent(MapSettings.data.aoi); //TODO: For now, aoi is saved as a box extent. This will change to a geometry in the future.
 			console.log('aoiGeom = ');
 			console.log(aoiGeom);
-			aoiGeoJSON = new ol.format.GeoJSON().writeGeometry(aoiGeom);
+			//aoiGeoJSON = new ol.format.GeoJSON().writeGeometry(aoiGeom);
+			aoiGeoJSON = new ol.format.GeoJSON().writeGeometry(MapSettings.data.aoi);
 			console.log(aoiGeoJSON);
 		}
 		
@@ -109,7 +115,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 						project.id = result.id;
 						ProjectSettings.data.currentProject = project;
 						ProjectSettings.fetchProjects();
-						$scope.showToast('Project saved');
+						$scope.showToast('Project saved', true);
 					},
 					function() {
 						$scope.showToast('There was a problem. Project not saved.');
@@ -124,7 +130,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 				{projectID: ProjectSettings.data.currentProject.id},
 				project,
 				function() {
-					$scope.showToast('Project saved');
+					$scope.showToast('Project saved', true);
 					ProjectSettings.fetchProjects();
 				},
 				function() {
