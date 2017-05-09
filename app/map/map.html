@@ -78,7 +78,7 @@
 										</md-accordion>
 									<!--</form>-->
 								</md-content>
-							</md-tab-body>								
+							</md-tab-body>		
 						</md-tab>
 						<md-tab ng-if="infoMode" label="Attributes" md-active="true">
 							<md-tab-body >
@@ -120,6 +120,7 @@
 							</md-tab-body>
 						</md-tab>
 						<md-tab label="Reports">
+						<div ng-controller="ReportsTabController">
 							<md-tab-body>
 								<md-content layout="column" layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
 									<p>First, select an Area of Interest by pulling a bounding box (shift-click-drag) on the map. Then generate reports by clicking on the buttons below.</p>
@@ -155,6 +156,7 @@
 									</md-button>
 								</md-content>
 							</md-tab-body>
+						</div>
 						</md-tab>
 						<md-tab label="Results">
 							<md-tab-body >
@@ -175,7 +177,7 @@
 							<ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers"></ol-layer>
 					</openlayers>
-					<!--
+					<!-- 
 					<md-button class="md-primary md-fab md-mini" ng-click="infoClicked()" style="position:absolute; top: 10px; left:90%;">
 						<md-icon ng-if="!infoMode" md-font-icon="fa-info"  class="fa" style="font-size:30px">
 							<md-tooltip md-direction="left" md-autohide="true">

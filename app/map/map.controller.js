@@ -177,8 +177,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			//{ name: 'scaleline', active: true}
 	]
 	
-	$scope.groupActiveChange = MapSettings.groupActiveChange;
-	$scope.layerActiveChange = MapSettings.layerActiveChange;
+	$scope.groupActiveChange = MapSettings.groupActiveChange;  //TODO: Move to LayerTabController?
+	$scope.layerActiveChange = MapSettings.layerActiveChange; //TODO: Move to LayerTabController?
 	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
 	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
 	
@@ -207,7 +207,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		geometryName:		undefined,
 		queryURL:			undefined
 	}
-	
+
+	//TODO: Move this to a LayerTabController?
 	let queryFeatures = (layer => {
 		//TODO: parse fields of layer to fill out below.
 		console.log(layer);
@@ -248,7 +249,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			featureTypes: [featureType], 
 			outputFormat: 'application/json',
 			//ogc is not in most of the examples and docs online, but is necessary (https://github.com/openlayers/openlayers/pull/5653)
-			filter: ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
+			//filter: ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
+			filter: ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.data.aoi.getExtent(), 'urn:ogc:def:crs:EPSG::3857')
 			//filter: filter
 		});
 			
@@ -291,6 +293,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 
 	});
 	
+	//TODO: Move this to a LayerTabController?
 	$scope.layerClicked = function(layerName) {
 		console.log("layer clicked = " + layerName);
 		$scope.queryLayer = layerName;
@@ -299,7 +302,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		if (layer != null) {
 			console.log(layer);
 			//Disabling this for now
-			//queryFeatures(layer); 
+			queryFeatures(layer); 
 		}
 	}
 
@@ -315,6 +318,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 				});
 			}
 
+			//TODO: Showing first group is kinda dumb I think
 			console.log("groups[0].name = " + $scope.groups[0].name);
 			for (x = 0; x < $scope.layers.length; x++) {
 				console.log("layers.group = " + $scope.layers[x].group);
@@ -336,6 +340,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 	$scope.queryResults = [];
 	$scope.selectedIndex = 0;
 	
+	/***
+	//TODO: Move this to a ReportTabController?
 	$scope.reportClicked = function(event, type) {
 		//console.log("reportClicked, boxExtent = " + $scope.boxExtent);
 		console.log(event);
@@ -347,6 +353,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		}
 	}
 	
+	//TODO: Move this to a ReportTabController?
     $scope.showAOIalert = function(event) {
  		console.log("show AOI alert");
 		alert = $mdDialog.alert({
@@ -363,6 +370,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			});
     }
 	
+	//TODO: Move this to a ReportTabController?
     function showReportDialog(event, type) {
 		//TODO: The alert dialog here is just a stub. This will need to be a custom dialog.
  		console.log("show report");
@@ -379,7 +387,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 				alert = undefined;
 			});
 	}
-	
+	***/
 	
 	/**
 	//TODO: This change detection isn't working correctly. Might be worth another look at some point.
