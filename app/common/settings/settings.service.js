@@ -285,4 +285,16 @@ angular.module('SettingsService', ['APIService'])
 		}
 		
 		
+	})
+	.factory('LayersTabSettings', function() {
+		console.log("LayersTabSettings init enter");
+
+		let data = {
+			queryLayer: undefined,
+			queryResults: []
+		}
+		return {
+			data: data
+		}
+		
 	});

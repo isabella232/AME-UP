@@ -1,11 +1,13 @@
 angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMaterial'])
 
-.controller('LayersTabController', function LayersTabController($scope, $rootScope, Projects, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast)
+.controller('LayersTabController', function LayersTabController($scope, $rootScope, Projects, LayersTabSettings, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast)
 {
-	$scope.queryLayer = undefined;
-	$scope.queryResults = [];
-	$scope.selectedIndex = 0;
-
+	
+	$scope.groupActiveChange = MapSettings.groupActiveChange;  
+	$scope.layerActiveChange = MapSettings.layerActiveChange; 
+	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
+	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
+	
 	//TODO: move all this into layers table and pull from each layer
 	let bogiFeatureParams = {
 		featureNamespace:	'section368',
@@ -57,14 +59,6 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 		}
 		console.log("featureType = " + featureType);
 
-		/**
-		let filter;
-		if ($scope.selectPoint != undefined) {
-			filter = ol.format.ogc.filter.intersects(paramStub.geometryName, new ol.geom.Point($scope.selectPoint), 'urn:ogc:def:crs:EPSG::3857')
-		} else {
-			filter = ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
-		}
-		**/
 		let featureRequest = new ol.format.WFS().writeGetFeature({
 			srsName: 'EPSG:3857',
 			featureNS: paramStub.featureNamespace,
@@ -72,9 +66,7 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 			featureTypes: [featureType], 
 			outputFormat: 'application/json',
 			//ogc is not in most of the examples and docs online, but is necessary (https://github.com/openlayers/openlayers/pull/5653)
-			//filter: ol.format.ogc.filter.bbox(paramStub.geometryName, $scope.boxExtent, 'urn:ogc:def:crs:EPSG::3857')
 			filter: ol.format.ogc.filter.bbox(paramStub.geometryName, MapSettings.data.aoi.getExtent(), 'urn:ogc:def:crs:EPSG::3857')
-			//filter: filter
 		});
 			
 		//make sure its good to go
@@ -96,13 +88,13 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 				
 				//$scope.queryResults[0] = ["No features"];
 				json.features.forEach((feature, index, array) => {
-					$scope.queryResults[index] = JSON.stringify(feature.properties, null, 4);
-					console.log($scope.queryResults[index]);
+					LayersTabSettings.data.queryResults[index] = JSON.stringify(feature.properties, null, 4);
+					console.log('queryResults = ');console.log(LayersTabSettings.data.queryResults[index]);
 				});
 	
 				$scope.$apply();
 	
-				//TODO: see if this works for feature display
+				//TODO: Add features to map? Something like this:
 				/**
 				var features = new ol.format.GeoJSON().readFeatures(json);
 				vectorSource.addFeatures(features);
@@ -111,25 +103,27 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 			});
 		} else {
 			let noData = {noData:"Layer cannot be queried"};
-			$scope.queryResults[0] = JSON.stringify(noData, null, 4);//"Layer cannot be queried";
+			LayersTabSettings.data.queryResults[0] = JSON.stringify(noData, null, 4);//"Layer cannot be queried";
+			console.log('queryResults = ');console.log(LayersTabSettings.data.queryResults[0]);
 		}
 
 	});
 	
 	$scope.layerClicked = function(layerName) {
 		console.log("layer clicked = " + layerName);
-		$scope.queryLayer = layerName;
-		$scope.queryResults = [];
-		let layer = MapSettings.layers.find(l => {return l.name === layerName;});
+		LayersTabSettings.data.queryLayer = layerName;
+		LayersTabSettings.data.queryResults = [];
+		let layer = MapSettings.data.layers.find(l => {return l.name === layerName;});
 		if (layer != null) {
 			console.log(layer);
-			//Disabling this for now
 			queryFeatures(layer); 
 		}
 	}
 	
+	//Refresh on AOI change
     $rootScope.$on("AOIchanged", function(){
-		$scope.layerClicked($scope.queryLayer);
+		console.log("received AOIchanged");
+		$scope.layerClicked(LayersTabSettings.data.queryLayer);
 	});
 	
 });

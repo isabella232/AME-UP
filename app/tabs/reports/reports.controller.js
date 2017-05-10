@@ -5,7 +5,6 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 	$scope.reportClicked = function(event, type) {
 		//console.log("reportClicked, boxExtent = " + $scope.boxExtent);
 		console.log(event);
-		//if ($scope.boxExtent == undefined) {
 		if (MapSettings.data.aoi == undefined) {
 			showAOIalert(event);
 		} else {
