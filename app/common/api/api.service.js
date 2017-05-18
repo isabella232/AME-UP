@@ -64,6 +64,14 @@ angular.module('APIService', ['ngResource'])
 			}
 		});
 	})
+	.factory('Reports', function($resource, APP_CONFIG) {
+		return $resource(APP_CONFIG.layersAPI + '/reports', {}, {
+			get: {
+				method: 'GET',
+				isArray: true,
+			}
+		});
+	})
 	.factory('Projects', function($resource, APP_CONFIG) {
 		return $resource(APP_CONFIG.layersAPI + '/projects/:projectID', {projectID:'@id'}, {
 			query: {

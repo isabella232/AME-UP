@@ -1,6 +1,6 @@
 angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMaterial'])
 
-.controller('ReportsTabController', function ReportsTabController($scope, $rootScope, Projects, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast)
+.controller('ReportsTabController', function ReportsTabController($scope, $rootScope, Projects, MapSettings, ProjectSettings, Reports, APP_CONFIG, $mdDialog, $mdToast)
 {
 	$scope.reportClicked = function(event, type) {
 		//console.log("reportClicked, boxExtent = " + $scope.boxExtent);
@@ -33,10 +33,24 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
  		console.log("show report");
 		alert = $mdDialog.alert({
 			title: type.charAt(0).toUpperCase() + type.slice(1) + ' Report',
-			textContent: '<tabular results here>',
+			//textContent: '<tabular results here>',
+			locals: { reportName: type.charAt(0).toUpperCase() + type.slice(1) },
+			controller: DialogController,
+			templateUrl: 'tabs/reports/report_dialog.html',
 			targetEvent: event,
 			ok: 'Done'
 		});
+		function DialogController($scope, $mdDialog, reportName) {
+			$scope.reportName = reportName;
+			//$scope.results = '<tabular results here>';
+			//TODO: Probably should hit the Reports endpoing from a service rather than here
+			//TODO: Show a spinner in dialog until results come back
+			//TODO: Process returned json into a tabular structure of some sort
+			$scope.results = Reports.get({report: 'contact', filter: '{"type":"Polygon","coordinates":[[[-110.71287778,32.27194444],[-109.19132222,32.27194444],[-109.19132222,33.01055556],[-110.71287778,33.01055556],[-110.71287778,32.27194444]]]}'});
+			$scope.closeDialog = function() {
+				$mdDialog.hide();
+			}
+		}
 
 		$mdDialog
 			.show( alert )
