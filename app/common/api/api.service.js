@@ -69,6 +69,17 @@ angular.module('APIService', ['ngResource'])
 			get: {
 				method: 'GET',
 				isArray: true,
+				//The result from the endpoint is an array nested three deep. It is more convenient to the html to flatten this 
+				//and this seems to be the best place to do it.
+				transformResponse: function(data, headers){
+					function flatten(arr) {
+					  return arr.reduce(function (flat, toFlatten) {
+						return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+					  }, []);
+					}			
+					let flattened = flatten(angular.fromJson(data));
+					return flattened;
+				}
 			}
 		});
 	})
