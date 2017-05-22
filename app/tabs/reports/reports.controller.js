@@ -45,11 +45,12 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 			$scope.implemented = (reportName === 'Contact');
 			//TODO: Probably should hit the Reports endpoint from a service rather than here
 			//TODO: Column headers should not be hard-coded in report_dialog.html if that file is to be generic.
+			if (reportName === 'Contact') {
+				//$scope.results = Reports.get({report: 'contact', filter: '{"type":"Polygon","coordinates":[[[-110.71287778,32.27194444],[-109.19132222,32.27194444],[-109.19132222,33.01055556],[-110.71287778,33.01055556],[-110.71287778,32.27194444]]]}'});
+				$scope.results = Reports.get({report: 'contact', filter: new ol.format.GeoJSON().writeGeometry(MapSettings.data.aoi.clone().transform("EPSG:3857", "EPSG:4326"))});
+				$scope.results.$promise.catch(()=>{$scope.error = "There was a problem communicating with the server"; console.log($scope.error);});
+			}
 			
-			//$scope.results = Reports.get({report: 'contact', filter: '{"type":"Polygon","coordinates":[[[-110.71287778,32.27194444],[-109.19132222,32.27194444],[-109.19132222,33.01055556],[-110.71287778,33.01055556],[-110.71287778,32.27194444]]]}'});
-			$scope.results = Reports.get({report: 'contact', filter: new ol.format.GeoJSON().writeGeometry(MapSettings.data.aoi.clone().transform("EPSG:3857", "EPSG:4326"))});
-			$scope.results.$promise.catch(()=>{$scope.error = "There was a problem communicating with the server"; console.log($scope.error);});
-
 			$scope.closeDialog = function() {
 				$mdDialog.hide();
 			}
