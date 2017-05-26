@@ -45,6 +45,8 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				showToast("Info mode not yet implemented");
 				data.polyMode = false;
 				data.bboxMode = false;
+				clearPolyInteraction();
+				clearBboxInteraction();
 			}
 		}
 		
