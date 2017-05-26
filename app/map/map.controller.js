@@ -1,12 +1,13 @@
-angular.module('MapController', ['APIService', 'SettingsService'])
+angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsService'])
 
-.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $mdToast, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings) {
+.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $mdToast, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings, MapTools) {
 	function print_call_stack() {
 		var stack = new Error().stack;
 		console.log("PRINTING CALL STACK");
 		console.log( stack );
 	}	
 	
+	//TODO: delete this when not needed
 	let showToast = function(message) {
 		$mdToast.show(
 			$mdToast.simple()
@@ -15,9 +16,8 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		);
 	};
 	
-	let theMap;
 	olData.getMap().then(map => {
-		theMap = map;
+		MapSettings.data.theMap = map;
 		
 		/**
 		//Just playing with geometry here
@@ -64,21 +64,6 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		map.addInteraction(selectSingleClick);
 		**/
 				
-		$scope.$on('initializingMap', function(event, data) {
-			console.log('received initializingMap');
-			clearBboxInteraction();
-			clearPolyInteraction();
-		})
-
-		$scope.$on('mapInitialized', function(event, data) {
-			console.log('received mapInitialized');
-			if ($scope.data.aoi != undefined) {
-				features.push(new ol.Feature($scope.data.aoi));
-				featureOverlay.setMap(theMap);
-			}
-		});
-		
-		
 	});
 					
 	MapSettings.initializeMap();
@@ -111,7 +96,7 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 			//{ name: 'scaleline', active: true}
 	]
 	
-	//TODO: Overhaul this to combine with iMode below
+	//TODO: Overhaul this to combine with iMode in MapTools
 	$scope.infoMode = false;
 	$scope.infoClicked = function() {
 		console.log("info clicked");
@@ -142,182 +127,15 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		}
 	}
 	
-	$scope.iMode = false;
-	$scope.iClicked = function() {
-		console.log("info clicked");
-		$scope.iMode = !$scope.iMode;
-		if ($scope.iMode) {
-			showToast("Info mode not yet implemented");
-			$scope.polyMode = false;
-			$scope.bboxMode = false;
-		}
-	}
+	$scope.toolsData = MapTools.data;
+	$scope.iMode = MapTools.data.iMode;
+	$scope.iClicked = MapTools.iClicked;
+	$scope.bboxMode = MapTools.data.bboxMode;
+	$scope.bboxClicked = MapTools.bboxClicked;
+	$scope.polyMode = MapTools.data.polyMode;
+	$scope.polyClicked = MapTools.polyClicked;
 
-	$scope.bboxMode = false;
-	$scope.bboxClicked = function() {
-		$scope.bboxMode = !$scope.bboxMode;
-		if ($scope.bboxMode) {
-			$scope.polyMode = false;
-			$scope.iMode = false;		
-			clearPolyInteraction();
-			addBboxInteraction();
-		} else {
-			theMap.removeInteraction(dragBox);		
-		}
-	}
-	
-	let dragBox = new ol.interaction.DragBox({
-		//condition: ol.events.condition.shiftKeyOnly,
-		style: new ol.style.Style({
-			stroke: new ol.style.Stroke({
-				color: [0, 0, 255, 1]
-			})
-		})
-	});
-	let layer;
 
-	let addBboxInteraction = function() {
-		console.log("add bbox interaction");
-		if (theMap === undefined) {
-			return;
-		}
-
-		if ($scope.data.aoi != undefined) {
-			features.push(new ol.Feature($scope.data.aoi));
-		}
-		featureOverlay.setMap(theMap);
-		
-		dragBox.on('boxend', (evt) => {
-			console.log("boxend");
-			document.getElementById('positionDisplay').style.visibility = "hidden";
-			$scope.data.aoi = dragBox.getGeometry();			
-			
-			features.push(new ol.Feature($scope.data.aoi));
-			featureOverlay.setMap(theMap);
-			
-			//TODO: This old code. Not sure it will be relevant to next implementation of info mode
-			if ($scope.infoMode) {
-				//$scope.layerClicked($scope.queryLayer);
-				$rootScope.$emit('AOIchanged');
-			}
-			
-		});
-
-		// To remove the layer when start drawing a new dragbox
-		dragBox.on('boxstart', (evt) => {
-			$scope.selectPoint = undefined;
-			features.clear();
-			featureOverlay.setMap(null);
-			$scope.data.aoi = undefined;
-		});		
-
-		dragBox.on('boxdrag', (evt) => {
-			document.getElementById('positionDisplay').style.visibility = "visible";
-		});		
-		
-		theMap.addInteraction(dragBox);
-	}
-	
-	let clearBboxInteraction = function() {
-		console.log("clearBboxInteraction");
-		$scope.bboxMode = false;
-		if (theMap === undefined) {
-			console.log("clearBboxInteraction, no map");
-			return;
-		}
-		features.clear();
-		featureOverlay.setMap(null);
-		theMap.removeInteraction(dragBox);		
-	}
-
-	$scope.polyMode = false;
-	$scope.polyClicked = function() {
-		$scope.polyMode = !$scope.polyMode;
-		if ($scope.polyMode) {
-			$scope.bboxMode = false;
-			$scope.iMode = false;		
-			clearBboxInteraction();
-			addPolyInteraction();		
-		} else {
-			theMap.removeInteraction(draw);		
-			theMap.removeInteraction(modify);		
-		}
-	}
-	
-	let features = new ol.Collection();
-	let featureOverlay = new ol.layer.Vector({
-		source: new ol.source.Vector({features: features}),
-		style: new ol.style.Style({
-			fill: new ol.style.Fill({
-				color: 'rgba(255, 255, 255, 0.2)'
-			}),
-			stroke: new ol.style.Stroke({
-				color: '#ffcc33',
-				width: 2
-			}),
-			image: new ol.style.Circle({
-				radius: 7,
-				fill: new ol.style.Fill({
-					color: '#ffcc33'
-				})
-			})
-		})
-	});
-	
-	let modify = new ol.interaction.Modify({
-		features: features,
-	});
-	
-	modify.on('changed', function(evt) {
-		console.log("changed");
-		$scope.data.aoi = evt.feature.getGeometry();
-	});
-	
-		
-	let draw = new ol.interaction.Draw({
-		features: features,
-		type: "Polygon"
-	}); 
-	
-	draw.on('drawstart', function(evt) {
-		console.log("drawstart");
-		$scope.data.aoi = undefined;
-		features.clear();
-	});
-
-	draw.on('drawend', function(evt) {
-		console.log("drawend");
-		$scope.data.aoi = evt.feature.getGeometry();
-	});
-	
-	let addPolyInteraction = function() {
-		if (theMap === undefined) {
-			return;
-		}
-		
-		if ($scope.data.aoi != undefined) {
-			features.push(new ol.Feature($scope.data.aoi));
-		}
-		featureOverlay.setMap(theMap);
-		theMap.addInteraction(modify);
-		theMap.addInteraction(draw);
-	}
-	
-	let clearPolyInteraction = function() {
-		console.log("clearPolyInteraction");
-		$scope.polyMode = false;
-		if (theMap === undefined) {
-			return;
-		}
-		
-		featureOverlay.setMap(null);
-		features.clear();
-		theMap.removeInteraction(modify);
-		theMap.removeInteraction(draw);
-	}
-
-	$scope.selectedIndex = 0;
-		
 	/**
 	//TODO: This change detection isn't working correctly. Might be worth another look at some point.
 	$scope.$watch(function(){return MapSettings.data;}, 

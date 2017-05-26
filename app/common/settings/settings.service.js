@@ -10,6 +10,7 @@ angular.module('SettingsService', ['APIService'])
 			groups: undefined,
 			layers: undefined,
 			aoi: undefined, 
+			theMap: undefined
 		}
 		
 		let groupActiveChange = function(group) {
