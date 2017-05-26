@@ -60,6 +60,11 @@
 	line-height:0;
 }
 
+.md-button.md-small {
+    min-width: 1%;
+}
+
+
 .fa-chevron-down:before {
 	color:#607D8B;
 	font-weight: 500;

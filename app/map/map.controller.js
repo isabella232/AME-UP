@@ -1,13 +1,23 @@
-angular.module('MapController', ['APIService', 'SettingsService'])
+angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsService'])
 
-.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings) {
+.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $mdToast, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings, MapTools) {
 	function print_call_stack() {
 		var stack = new Error().stack;
 		console.log("PRINTING CALL STACK");
 		console.log( stack );
 	}	
 	
+	//TODO: delete this when not needed
+	let showToast = function(message) {
+		$mdToast.show(
+			$mdToast.simple()
+				.textContent(message)
+				.hideDelay(3000)
+		);
+	};
+	
 	olData.getMap().then(map => {
+		MapSettings.data.theMap = map;
 		
 		/**
 		//Just playing with geometry here
@@ -53,99 +63,10 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		});
 		map.addInteraction(selectSingleClick);
 		**/
-		
-		let dragBox = new ol.interaction.DragBox({
-			condition: ol.events.condition.shiftKeyOnly,
-			style: new ol.style.Style({
-				stroke: new ol.style.Stroke({
-					color: [0, 0, 255, 1]
-				})
-			})
-		});
-
-		//The following from https://gis.stackexchange.com/questions/136068/keep-dragbox-visible
-		let layer;
-		dragBox.on('boxend', (evt) => {
-			document.getElementById('positionDisplay').style.visibility = "hidden";
-			//$scope.data.aoi = dragBox.getGeometry().getExtent();
-			$scope.data.aoi = dragBox.getGeometry();
-			console.log("$scope.data.aoi"); console.log($scope.data.aoi);
-			
-			//let polygonFeature = new ol.Feature(new ol.geom.Polygon.fromExtent($scope.data.aoi));
-			let polygonFeature = new ol.Feature($scope.data.aoi);
-			//let gml = new ol.format.GML('', '','EPSG::3857');
-			//console.log("BBOX GML = "); console.log(gml.writeFeatures([polygonFeature], {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:4326'}));
-			let geom_GeoJSON = new ol.format.GeoJSON().writeGeometry($scope.data.aoi);
-			console.log("BBOX GeoJSON (Polygon) = "); console.log(geom_GeoJSON);
-			layer = new ol.layer.Vector({
-				source: new ol.source.Vector({
-					features: [polygonFeature]
-				}),
-				style: new ol.style.Style({
-					stroke: new ol.style.Stroke({
-						width: 1,
-						color: [0, 0, 0, 1]
-					}),
-					fill: new ol.style.Fill({
-						color: [127, 166, 59, 0.3]
-					})
-				})
-			});
-			map.addLayer(layer);
-			
-			if ($scope.infoMode) {
-				//$scope.layerClicked($scope.queryLayer);
-				$rootScope.$emit('AOIchanged');
-			}
-			
-		});
-
-		// To remove the layer when you start drawing a new dragbox
-		dragBox.on('boxstart', (evt) => {
-			$scope.selectPoint = undefined;
-			map.removeLayer(layer);
-			$scope.data.aoi = undefined;
-		});		
-
-		dragBox.on('boxdrag', (evt) => {
-			document.getElementById('positionDisplay').style.visibility = "visible";
-		});		
-		
-		map.addInteraction(dragBox);
-		
-		$scope.$on('initializingMap', function(event, data) {
-			console.log('received initializingMap');
-			map.removeLayer(layer);
-		})
-
-		$scope.$on('mapInitialized', function(event, data) {
-			console.log('received mapInitialized');
-			if ($scope.data.aoi != undefined) {
-				console.log("adding layer");
-				console.log($scope.data.aoi);
-				let polygonFeature = new ol.Feature($scope.data.aoi);
-				layer = new ol.layer.Vector({
-					source: new ol.source.Vector({
-						features: [polygonFeature]
-					}),
-					style: new ol.style.Style({
-						stroke: new ol.style.Stroke({
-							width: 1,
-							color: [0, 0, 0, 1]
-						}),
-						fill: new ol.style.Fill({
-							color: [127, 166, 59, 0.3]
-						})
-					})
-				});
-				map.addLayer(layer);
-			}
-		})
-		
-		
+				
 	});
 					
-	MapSettings.initializeMap();//.then( function() {
+	MapSettings.initializeMap();
 
 	$scope.center = MapSettings.data.center;
 	$scope.groups = MapSettings.data.groups;
@@ -174,7 +95,9 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 	$scope.controls = [
 			//{ name: 'scaleline', active: true}
 	]
-		
+	
+	//TODO: Overhaul this to combine with iMode in MapTools
+	$scope.infoMode = false;
 	$scope.infoClicked = function() {
 		console.log("info clicked");
 		if (!$scope.infoMode) {
@@ -204,9 +127,15 @@ angular.module('MapController', ['APIService', 'SettingsService'])
 		}
 	}
 	
-	$scope.infoMode = false;
-	$scope.selectedIndex = 0;
-		
+	$scope.toolsData = MapTools.data;
+	$scope.iMode = MapTools.data.iMode;
+	$scope.iClicked = MapTools.iClicked;
+	$scope.bboxMode = MapTools.data.bboxMode;
+	$scope.bboxClicked = MapTools.bboxClicked;
+	$scope.polyMode = MapTools.data.polyMode;
+	$scope.polyClicked = MapTools.polyClicked;
+
+
 	/**
 	//TODO: This change detection isn't working correctly. Might be worth another look at some point.
 	$scope.$watch(function(){return MapSettings.data;}, 
