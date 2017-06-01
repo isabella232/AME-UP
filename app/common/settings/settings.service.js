@@ -147,7 +147,13 @@ angular.module('SettingsService', ['APIService'])
 								legend_url: remoteLayer.legend_url,
 								key: remoteLayer.key,
 								layer: remoteLayer.layer,
-								imagery_set: remoteLayer.imagery_set
+								imagery_set: remoteLayer.imagery_set,
+								wfs: {
+									feature_namespace: remoteLayer.feature_namespace,
+									feature_prefix: remoteLayer.feature_prefix,
+									geometry_name: remoteLayer.geometry_name,
+									url: remoteLayer.wfs_url
+								}
 							}
 						};
 						
