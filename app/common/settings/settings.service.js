@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('SettingsService', ['APIService'])
-	.factory('MapSettings', function($http, $rootScope, Layers, LayerGroups, APP_CONFIG) {
+	.factory('MapSettings', function($http, $rootScope, Layers, LayerGroups, LayersTabSettings, APP_CONFIG) {
 		console.log("MapSettings init enter");
 		
 		let data = {
@@ -27,6 +27,11 @@ angular.module('SettingsService', ['APIService'])
 					group.active = group.active || layer.visible;
 				}
 			});
+			
+			//If layer is not active and it is the selected layer for queries, make it not be
+			if (!layer.visible && layer.name === LayersTabSettings.data.queryLayer) {
+				LayersTabSettings.data.queryLayer = undefined;
+			}
 		};
 
 		let toggleShowAllGroups = function() {
@@ -142,7 +147,13 @@ angular.module('SettingsService', ['APIService'])
 								legend_url: remoteLayer.legend_url,
 								key: remoteLayer.key,
 								layer: remoteLayer.layer,
-								imagery_set: remoteLayer.imagery_set
+								imagery_set: remoteLayer.imagery_set,
+								wfs: {
+									feature_namespace: remoteLayer.feature_namespace,
+									feature_prefix: remoteLayer.feature_prefix,
+									geometry_name: remoteLayer.geometry_name,
+									url: remoteLayer.wfs_url
+								}
 							}
 						};
 						
@@ -305,7 +316,6 @@ angular.module('SettingsService', ['APIService'])
 
 		let data = {
 			queryLayer: undefined,
-			queryResults: []
 		}
 		return {
 			data: data
