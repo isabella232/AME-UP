@@ -164,14 +164,14 @@
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers"></ol-layer>
 					</openlayers>
 					<div layout="row" style="position:absolute; top: 10px; right:1%;">
-					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="iClicked()" >
+					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="infoClicked()" >
 						<md-icon md-font-icon="fa-info"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Enter feature query mode
 							</md-tooltip>
 						</md-icon>
 					</md-button>
-					<md-button ng-if="toolsData.infoMode" class="md-accent md-raised md-small" ng-click="iClicked()">
+					<md-button ng-if="toolsData.infoMode" class="md-accent md-raised md-small" ng-click="infoClicked()">
 						<md-icon md-font-icon="fa-info"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Leave query mode

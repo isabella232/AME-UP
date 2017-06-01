@@ -82,7 +82,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 		
 	$scope.toolsData = MapTools.data;
 	$scope.infoMode = MapTools.data.infoMode;
-	$scope.iClicked = MapTools.iClicked;
+	$scope.infoClicked = MapTools.infoClicked;
 	$scope.bboxMode = MapTools.data.bboxMode;
 	$scope.bboxClicked = MapTools.bboxClicked;
 	$scope.polyMode = MapTools.data.polyMode;

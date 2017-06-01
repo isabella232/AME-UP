@@ -38,7 +38,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			})
 		});
 		
-		let iClicked = function() {
+		let infoClicked = function() {
 			console.log("info clicked");
 			data.infoMode = !data.infoMode;
 			if (data.infoMode) {
@@ -162,18 +162,18 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					console.log(response);
 					return response.json();
 					//return response.text();
-				}).then(function(json) {
-					console.log(json);
+				}).then(function(result) {
+					console.log(result);
 		
 					features.clear();
 					let feature;
 					try {
-						feature = new ol.format.GeoJSON().readFeatures(json)[0];
+						feature = new ol.format.GeoJSON().readFeatures(result)[0];
 					} catch(err) {
 					}
 					if (feature !== undefined) {
 						features.push(feature);
-						showInfoDialog(layer.name, json.features[0].properties, event);
+						showInfoDialog(layer.name, result.features[0].properties, event);
 					} else {
 						const noData = {noData: "There is no feature in that location"};
 						showInfoDialog(layer.name, noData, event);
@@ -188,22 +188,22 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 		});
 	
-		let showInfoDialog = function(title, json, event) {
+		let showInfoDialog = function(title, result, event) {
 			console.log("show results");
-			console.log("object keys"); console.log(Object.keys(json));
 			alert = $mdDialog.alert({
 				title: title,
-				locals: { title: title, json: json, keys: Object.keys(json), values: Object.values(json)  },
+				locals: { title: title, result: result, keys: Object.keys(result), values: Object.values(result)  },
 				controller: DialogController,
 				templateUrl: 'map/maptools/results_dialog.html',
 				targetEvent: event,
 				ok: 'Done'
 			});
 			
-			function DialogController($scope, $mdDialog, title, json, keys, values) {
+			function DialogController($scope, $mdDialog, title, result, keys, values) {
 				$scope.showJson = false;
 				$scope.title = title;
-				$scope.json = json;
+				$scope.result = result;
+				console.log("controller, result = "); console.log(result);
 				$scope.keys = keys;
 				$scope.values = values;
 				$scope.closeDialog = function() {
@@ -373,7 +373,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 		return {
 			data: data,
-			iClicked: iClicked,
+			infoClicked: infoClicked,
 			layerClicked: layerClicked,
 			bboxClicked: bboxClicked,
 			polyClicked: polyClicked
