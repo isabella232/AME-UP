@@ -55,8 +55,12 @@
 																		</md-checkbox>
 																	</div>
 																	<div style="display:table-cell;width:70%">
+																		<!--
 																		<span ng-if="infoMode" class="layer-name" ng-click="infoMode && layerClicked(layer.name)">{{ layer.name }}</span>
 																		<span ng-if="!infoMode" class="layer-name">{{ layer.name }}</span>
+																		-->
+																		<span ng-if="toolsData.iMode" ng-class="{'layer-name': layer.name !== layerSettingsData.queryLayer, 'layer-name-selected': layer.name === layerSettingsData.queryLayer}" ng-click="layerClicked(layer.name)">{{ layer.name }}</span>
+																		<span ng-if="!toolsData.iMode" class="layer-name">{{ layer.name }}</span>
 																	</div>
 																	<div style="display:table-cell;width:20%;">
 																		<md-input-container class="md-opacity">

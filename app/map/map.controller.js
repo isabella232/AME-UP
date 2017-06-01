@@ -15,7 +15,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 				.hideDelay(3000)
 		);
 	};
-	
+		
 	olData.getMap().then(map => {
 		MapSettings.data.theMap = map;
 		
@@ -97,6 +97,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	]
 	
 	//TODO: Overhaul this to combine with iMode in MapTools
+	/***
 	$scope.infoMode = false;
 	$scope.infoClicked = function() {
 		console.log("info clicked");
@@ -126,6 +127,9 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 			LayersTabSettings.data.queryLayer = undefined;
 		}
 	}
+	***/
+	$scope.infoMode = MapTools.data.iMode;
+
 	
 	$scope.toolsData = MapTools.data;
 	$scope.iMode = MapTools.data.iMode;

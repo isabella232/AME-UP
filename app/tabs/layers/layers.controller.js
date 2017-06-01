@@ -1,6 +1,6 @@
-angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMaterial'])
+angular.module('LayersTabController', ['APIService', 'SettingsService', 'MapToolsService', 'ngMaterial'])
 
-.controller('LayersTabController', function LayersTabController($scope, $rootScope, Projects, LayersTabSettings, MapSettings, ProjectSettings, APP_CONFIG, $mdDialog, $mdToast)
+.controller('LayersTabController', function LayersTabController($scope, $rootScope, Projects, LayersTabSettings, MapSettings, ProjectSettings, MapTools, APP_CONFIG, $mdDialog, $mdToast)
 {
 	
 	$scope.groupActiveChange = MapSettings.groupActiveChange;  
@@ -8,6 +8,7 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 	$scope.toggleShowAllGroups = MapSettings.toggleShowAllGroups;
 	$scope.toggleShowAllLayers = MapSettings.toggleShowAllLayers;
 	
+	/***
 	//TODO: move all this into layers table and pull from each layer
 	let bogiFeatureParams = {
 		featureNamespace:	'section368',
@@ -33,7 +34,9 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 		geometryName:		undefined,
 		queryURL:			undefined
 	}
+	***/
 	
+	/***
 	let queryFeatures = (layer => {
 		//TODO: parse fields of layer to fill out below.
 		console.log(layer);
@@ -99,7 +102,7 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 				var features = new ol.format.GeoJSON().readFeatures(json);
 				vectorSource.addFeatures(features);
 				map.getView().fit(vectorSource.getExtent());
-				**/
+				**
 			});
 		} else {
 			let noData = {noData:"Layer cannot be queried"};
@@ -108,7 +111,9 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 		}
 
 	});
+	***/
 	
+	/***
 	$scope.layerClicked = function(layerName) {
 		console.log("layer clicked = " + layerName);
 		LayersTabSettings.data.queryLayer = layerName;
@@ -119,6 +124,9 @@ angular.module('LayersTabController', ['APIService', 'SettingsService', 'ngMater
 			queryFeatures(layer); 
 		}
 	}
+	***/
+	$scope.layerSettingsData = LayersTabSettings.data;
+	$scope.layerClicked = MapTools.layerClicked;
 	
 	//Refresh on AOI change
     $rootScope.$on("AOIchanged", function(){

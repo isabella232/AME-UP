@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('SettingsService', ['APIService'])
-	.factory('MapSettings', function($http, $rootScope, Layers, LayerGroups, APP_CONFIG) {
+	.factory('MapSettings', function($http, $rootScope, Layers, LayerGroups, LayersTabSettings, APP_CONFIG) {
 		console.log("MapSettings init enter");
 		
 		let data = {
@@ -27,6 +27,11 @@ angular.module('SettingsService', ['APIService'])
 					group.active = group.active || layer.visible;
 				}
 			});
+			
+			//If layer is not active and it is the selected layer for queries, make it not be
+			if (!layer.visible && layer.name === LayersTabSettings.data.queryLayer) {
+				LayersTabSettings.data.queryLayer = undefined;
+			}
 		};
 
 		let toggleShowAllGroups = function() {
