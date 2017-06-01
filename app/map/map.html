@@ -55,12 +55,8 @@
 																		</md-checkbox>
 																	</div>
 																	<div style="display:table-cell;width:70%">
-																		<!--
-																		<span ng-if="infoMode" class="layer-name" ng-click="infoMode && layerClicked(layer.name)">{{ layer.name }}</span>
-																		<span ng-if="!infoMode" class="layer-name">{{ layer.name }}</span>
-																		-->
-																		<span ng-if="toolsData.iMode" ng-class="{'layer-name': layer.name !== layerSettingsData.queryLayer, 'layer-name-selected': layer.name === layerSettingsData.queryLayer}" ng-click="layerClicked(layer.name)">{{ layer.name }}</span>
-																		<span ng-if="!toolsData.iMode" class="layer-name">{{ layer.name }}</span>
+																		<span ng-if="toolsData.infoMode" ng-class="{'layer-name': layer.name !== layerSettingsData.queryLayer, 'layer-name-selected': layer.name === layerSettingsData.queryLayer}" ng-click="layerClicked(layer.name)">{{ layer.name }}</span>
+																		<span ng-if="!toolsData.infoMode" class="layer-name">{{ layer.name }}</span>
 																	</div>
 																	<div style="display:table-cell;width:20%;">
 																		<md-input-container class="md-opacity">
@@ -84,24 +80,6 @@
 									<!--</form>-->
 								</md-content>
 							</md-tab-body>		
-						</div>
-						</md-tab>
-						<md-tab ng-if="infoMode" label="Attributes" md-active="true">
-						<div ng-controller="AttributesTabController">
-							<md-tab-body >
-								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
-									<p class="md-title" ng-if="data.queryLayer != undefined">Attribute data for {{ data.queryLayer }}</h3>
-									<!--<div style="font-size:small">{{ queryResults }}</div>-->
-									
-									<div ng-repeat="queryResult in data.queryResults">
-										<pre>{</pre> <!-- temporary hack. Angular/pre aren't rendering the opening curly brace for some reason-->
-										<pre>
-										{{ queryResult }}
-										</pre>
-									</div>
-
-								</md-content>
-							</md-tab-body>
 						</div>
 						</md-tab>
 						<md-tab label="Legend" >
@@ -185,29 +163,15 @@
 							<ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers"></ol-layer>
 					</openlayers>
-					<!--
-					<md-button class="md-primary md-fab md-mini" ng-click="infoClicked()" style="position:absolute; top: 10px; left:90%;">
-						<md-icon ng-if="!infoMode" md-font-icon="fa-info"  class="fa" style="font-size:30px">
-							<md-tooltip md-direction="left" md-autohide="true">
-								Enter query mode
-							</md-tooltip>
-						</md-icon>
-						<md-icon ng-if="infoMode" md-font-icon="fa-map"  class="fa" style="font-size:25px">
-							<md-tooltip md-direction="left" md-autohide="true">
-								Leave query mode
-							</md-tooltip>							
-						</md-icon>
-					</md-button>
-					-->
 					<div layout="row" style="position:absolute; top: 10px; right:1%;">
-					<md-button ng-if="!toolsData.iMode" class="md-primary md-raised md-small" ng-click="iClicked()" >
+					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="iClicked()" >
 						<md-icon md-font-icon="fa-info"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Enter feature query mode
 							</md-tooltip>
 						</md-icon>
 					</md-button>
-					<md-button ng-if="toolsData.iMode" class="md-accent md-raised md-small" ng-click="iClicked()">
+					<md-button ng-if="toolsData.infoMode" class="md-accent md-raised md-small" ng-click="iClicked()">
 						<md-icon md-font-icon="fa-info"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Leave query mode
