@@ -316,7 +316,6 @@ angular.module('SettingsService', ['APIService'])
 
 		let data = {
 			queryLayer: undefined,
-			queryResults: []
 		}
 		return {
 			data: data

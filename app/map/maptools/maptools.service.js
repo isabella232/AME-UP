@@ -58,7 +58,6 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			let selectPoint = event.coordinate;
 			console.log("selectPoint = "); console.log(selectPoint);
 			if (data.infoMode) {
-				LayersTabSettings.data.queryResults = [];
 				let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
 				if (layer != null) {
 					console.log(layer);
