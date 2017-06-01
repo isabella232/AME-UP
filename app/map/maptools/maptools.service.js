@@ -5,7 +5,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 		console.log("MapTools init enter");
 		
 		let data = {
-			iMode: false,
+			infoMode: false,
 			polyMode: false,
 			bboxMode: false
 		}
@@ -40,16 +40,36 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 		
 		let iClicked = function() {
 			console.log("info clicked");
-			data.iMode = !data.iMode;
-			if (data.iMode) {
-				//showToast("Info mode not yet implemented");
+			data.infoMode = !data.infoMode;
+			if (data.infoMode) {
 				data.polyMode = false;
 				data.bboxMode = false;
 				clearPolyInteraction();
 				clearBboxInteraction();
 				addInfoInteraction();
+			} else {
+				clearInfoInteraction();		
 			}
 		}
+		
+		let infoEventHandler = function(event) {
+			console.log("single click received");
+			console.log(event);
+			let selectPoint = event.coordinate;
+			console.log("selectPoint = "); console.log(selectPoint);
+			if (data.infoMode) {
+				LayersTabSettings.data.queryResults = [];
+				let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
+				if (layer != null) {
+					console.log(layer);
+					console.log("original event = "); console.log(event.originalEvent);
+					queryFeatures(layer,selectPoint, event.originalEvent); 
+				} else {
+					const noData = {noData: "Please select a layer to query (click layer name in the Layers tab)."};
+					showInfoDialog("No Layer Selected", noData, event);
+				}
+			}				
+		}		
 		
 		let addInfoInteraction = function() {
 			/***
@@ -59,7 +79,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				console.log(event);
 				let selectPoint = event.mapBrowserEvent.coordinate;
 				console.log("selectPoint = "); console.log(selectPoint);
-				if (data.iMode) {
+				if (data.infoMode) {
 					LayersTabSettings.data.queryResults = [];
 					let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
 					if (layer != null) {
@@ -71,27 +91,24 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			MapSettings.data.theMap.addInteraction(selectSingleClick);
 			***/
 			featureOverlay.setMap(MapSettings.data.theMap);
-
-			MapSettings.data.theMap.on('singleclick', function(event) {
-				console.log("single click received");
-				console.log(event);
-				let selectPoint = event.coordinate;
-				console.log("selectPoint = "); console.log(selectPoint);
-				if (data.iMode) {
-					LayersTabSettings.data.queryResults = [];
-					let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
-					if (layer != null) {
-						console.log(layer);
-						console.log("original event = "); console.log(event.originalEvent);
-						queryFeatures(layer,selectPoint, event.originalEvent); 
-					}
-				}				
-			});
+			MapSettings.data.theMap.on('singleclick', infoEventHandler);
 		}
+		
+		let clearInfoInteraction = function() {
+			console.log("clearInfoInteraction");
+			data.infoMode = false;
+			if (MapSettings.data.theMap === undefined) {
+				console.log("clearInfoInteraction, no map");
+				return;
+			}
+			features.clear();
+			featureOverlay.setMap(null);
+			MapSettings.data.theMap.un('singleclick', infoEventHandler);		
+		}
+		
 		
 		let layerClicked = function(layerName) {
 			console.log("layer clicked = " + layerName);
-			//LayersTabSettings.data.queryLayer = layerName;
 			//only make selected layer if it is visible
 			MapSettings.data.layers.some(function(layer) {
 				if (layer.name === layerName) {
@@ -105,47 +122,6 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 		//TODO: Would prefer to not pass event. Would prefer to not open dialog from in this routine. Maybe return a promise and let caller do it.
 		let queryFeatures = ((layer, thePoint, event) => {
 			
-			//TODO: move all this into layers table and pull from each layer
-			let bogiFeatureParams = {
-				featureNamespace:	'section368',
-				featurePrefix:		'section368',
-				outputFormat:		'application/json',
-				geometryName:		'geom',
-				queryURL:			'https://bogi.evs.anl.gov/map/section368/ows'
-			}
-			
-			let ameupFeatureParams = {
-				featureNamespace:	'http://ameup.usgin.org',
-				featurePrefix:		'AMEUP',
-				outputFormat:		'application/json',
-				geometryName:		'the_geom',
-				queryURL:			'http://ameup.usgin.org:8080/geoserver/wfs'
-			}
-			
-			//The azgs layers are a bit boogered for now so I'm going to ignore them
-			let azgsFeatureParams = {
-				featureNamespace:	undefined,
-				featurePrefix:		undefined,
-				outputFormat:		undefined,
-				geometryName:		undefined,
-				queryURL:			undefined
-			}
-			
-			console.log(layer);
-			console.log(layer.source.url);
-			console.log(layer.source.params);			
-			
-			let paramStub;
-			if (layer.source.url.toLowerCase().includes("bogi")) {
-				paramStub = bogiFeatureParams;
-			} else if (layer.source.url.toLowerCase().includes("ameup")) {
-				paramStub = ameupFeatureParams;
-			} else if (layer.source.url.toLowerCase().includes("azgs")) {
-				paramStub = azgsFeatureParams;
-			} else {
-				paramStub = {};
-			}
-			
 			let featureType = layer.source.params.LAYERS;
 			if (featureType != undefined) {
 				let split = featureType.split(":");
@@ -155,8 +131,8 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 			let featureRequest = new ol.format.WFS().writeGetFeature({
 				srsName: 'EPSG:3857',
-				featureNS: paramStub.featureNamespace,
-				featurePrefix: paramStub.featurePrefix,
+				featureNS: layer.source.wfs.feature_namespace, 
+				featurePrefix: layer.source.wfs.feature_prefix, 
 				featureTypes: [featureType], 
 				outputFormat: 'application/json',
 				//Need to add the following filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive.
@@ -168,17 +144,17 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			//make sure its good to go
 			featureRequest = featureRequest.hasChildNodes() ? featureRequest : undefined;
 			
-			if (featureRequest != undefined && paramStub.queryURL != undefined) {
+			if (featureRequest != undefined && layer.source.wfs.url != undefined) {
 				//TODO: This is a terrible hack. I need to use ol.format.ogc.filter.intersects filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive. I could copy the version of openlayers I want (3.18) over the other one in bower_components, but that would break on any new bower install. So, instead, I'm hacking in the needed XML. It's ugly and I hate it but it does what I need. 
 				let queryString = new XMLSerializer().serializeToString(featureRequest);
 				console.log(queryString);
-				let filterString = '><Filter xmlns="http://www.opengis.net/ogc"><Intersects><PropertyName>' + paramStub.geometryName + '</PropertyName><Point xmlns="http://www.opengis.net/gml" srsName="urn:ogc:def:crs:EPSG::3857"><pos>' + thePoint[0] + ' ' + thePoint[1] + '</pos></Point></Intersects></Filter></Query>';
+				let filterString = '><Filter xmlns="http://www.opengis.net/ogc"><Intersects><PropertyName>' + layer.source.wfs.geometry_name + '</PropertyName><Point xmlns="http://www.opengis.net/gml" srsName="urn:ogc:def:crs:EPSG::3857"><pos>' + thePoint[0] + ' ' + thePoint[1] + '</pos></Point></Intersects></Filter></Query>';
 				console.log(filterString);
 				queryString = queryString.replace("/>", filterString)
 				console.log(queryString);
 				
 				// then post the request and add the received features to a layer
-				fetch('/proxy/' + paramStub.queryURL, {
+				fetch('/proxy/' + layer.source.wfs.url, {
 					method: 'POST',
 					//body: new XMLSerializer().serializeToString(featureRequest) //TODO: this is the one I'd use if I didn't have to hack it as above
 					body: queryString
@@ -247,8 +223,9 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			data.bboxMode = !data.bboxMode;
 			if (data.bboxMode) {
 				data.polyMode = false;
-				data.iMode = false;		
+				data.infoMode = false;		
 				clearPolyInteraction();
+				clearInfoInteraction();
 				addBboxInteraction();
 			} else {
 				MapSettings.data.theMap.removeInteraction(dragBox);		
@@ -315,8 +292,9 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			data.polyMode = !data.polyMode;
 			if (data.polyMode) {
 				data.bboxMode = false;
-				data.iMode = false;		
+				data.infoMode = false;		
 				clearBboxInteraction();
+				clearInfoInteraction();
 				addPolyInteraction();		
 			} else {
 				MapSettings.data.theMap.removeInteraction(draw);		
