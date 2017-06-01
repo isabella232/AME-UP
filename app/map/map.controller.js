@@ -47,23 +47,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 		let scaleLine = new ol.control.ScaleLine({ 
 			units: 'us'
 		});
-		map.addControl(scaleLine);
-		
-		/**
-		//TODO: Get single point select working
-		selectSingleClick = new ol.interaction.Select();
-		selectSingleClick.on('select', event => {
-			console.log("single click received");
-			console.log(event);
-			map.removeLayer(layer);
-			$scope.selectPoint = event.mapBrowserEvent.coordinate;
-			if ($scope.infoMode) {
-				$scope.layerClicked($scope.queryLayer);
-			}
-		});
-		map.addInteraction(selectSingleClick);
-		**/
-				
+		map.addControl(scaleLine);				
 	});
 					
 	MapSettings.initializeMap();
@@ -95,44 +79,9 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	$scope.controls = [
 			//{ name: 'scaleline', active: true}
 	]
-	
-	//TODO: Overhaul this to combine with iMode in MapTools
-	/***
-	$scope.infoMode = false;
-	$scope.infoClicked = function() {
-		console.log("info clicked");
-		if (!$scope.infoMode) {
-			if ($scope.boxExtent == undefined) {
-				olData.getMap().then(map => {
-					$scope.boxExtent = map.getView().calculateExtent(map.getSize());
-					console.log("extent"); console.log($scope.boxExtent);
-					console.log(ol.proj.toLonLat([$scope.boxExtent[0], $scope.boxExtent[1]]));
-					console.log(ol.proj.toLonLat([$scope.boxExtent[2], $scope.boxExtent[3]]));
-				});
-			}
-
-			//TODO: Showing first group is kinda dumb I think
-			console.log("groups[0].name = " + $scope.groups[0].name);
-			for (x = 0; x < $scope.layers.length; x++) {
-				console.log("layers.group = " + $scope.layers[x].group);
-				if ($scope.layers[x].group === $scope.groups[1].name) { //assumes first group is always base maps
-					LayersTabSettings.data.queryLayer = $scope.layers[x].name;
-					break;
-				}
-			}
-			$scope.infoMode = true;
-		} else {
-			$scope.infoMode = false;
-			$scope.selectedIndex = 0;
-			LayersTabSettings.data.queryLayer = undefined;
-		}
-	}
-	***/
-	$scope.infoMode = MapTools.data.iMode;
-
-	
+		
 	$scope.toolsData = MapTools.data;
-	$scope.iMode = MapTools.data.iMode;
+	$scope.infoMode = MapTools.data.infoMode;
 	$scope.iClicked = MapTools.iClicked;
 	$scope.bboxMode = MapTools.data.bboxMode;
 	$scope.bboxClicked = MapTools.bboxClicked;
