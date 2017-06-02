@@ -142,8 +142,9 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 						
 			//make sure its good to go
 			featureRequest = featureRequest.hasChildNodes() ? featureRequest : undefined;
-			
+						
 			if (featureRequest != undefined && layer.source.wfs.url != undefined) {
+				let body;
 				//TODO: This is a terrible hack. I need to use ol.format.ogc.filter.intersects filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive. I could copy the version of openlayers I want (3.18) over the other one in bower_components, but that would break on any new bower install. So, instead, I'm hacking in the needed XML. It's ugly and I hate it but it does what I need. 
 				let queryString = new XMLSerializer().serializeToString(featureRequest);
 				console.log(queryString);
@@ -172,26 +173,29 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					}
 					if (feature !== undefined) {
 						features.push(feature);
-						showInfoDialog(layer.name, result.features[0].properties, event);
+						body = result.features[0].properties;
 					} else {
-						const noData = {noData: "There is no feature in that location"};
-						showInfoDialog(layer.name, noData, event);
+						body = {noData: "There is no feature in that location"};
 					}
 					
 				}).catch(function(err) {
-					const noData = {noData: "There was a problem communicating with the server"};
-					showInfoDialog(layer.name, noData, event);
+					console.log("server problem:"); console.log(err);
+					body = {noData: "There was a problem communicating with the server"};
+				}).then(function(stuff) {
+					showInfoDialog(layer.name, body, event);
 				});
 			} else {
 				console.log("Layer cannot be queried");
 				let notQueryable = {noData:"Layer cannot be queried"};
 				showInfoDialog(layer.name, notQueryable, event);
 			}
+				
+			
 
 		});
 	
 		let showInfoDialog = function(title, result, event) {
-			console.log("show results");
+			console.log("show results");console.log("result = " + result);
 			alert = $mdDialog.alert({
 				title: title,
 				locals: { title: title, result: result, keys: Object.keys(result), values: Object.values(result)  },
