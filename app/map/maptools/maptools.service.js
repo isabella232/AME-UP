@@ -160,7 +160,6 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				}).then(function(response) {
 					console.log(response);
 					return response.json();
-					//return response.text();
 				}).then(function(result) {
 					console.log(result);
 		
@@ -169,6 +168,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					try {
 						feature = new ol.format.GeoJSON().readFeatures(result)[0];
 					} catch(err) {
+						console.log(err);
 					}
 					if (feature !== undefined) {
 						features.push(feature);
@@ -178,6 +178,9 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 						showInfoDialog(layer.name, noData, event);
 					}
 					
+				}).catch(function(err) {
+					const noData = {noData: "There was a problem communicating with the server"};
+					showInfoDialog(layer.name, noData, event);
 				});
 			} else {
 				console.log("Layer cannot be queried");
