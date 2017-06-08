@@ -58,7 +58,19 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			let selectPoint = event.coordinate;
 			console.log("selectPoint = "); console.log(selectPoint);
 			if (data.infoMode) {
-				let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
+				//let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
+				//Yes, I am being obstinate in including this code when the old stuff will work in all browsers. That's me: obstinate.
+				let layer = null;
+				if (MapSettings.data.layers.find) {
+					layer = MapSettings.data.layers.find(function(l) {return l.name === LayersTabSettings.data.queryLayer;});
+				} else { //IE
+					for (let x = 0; x < MapSettings.data.layers.length; x++) {
+						if (MapSettings.data.layers[x].name === LayersTabSettings.data.queryLayer) {
+							layer = MapSettings.data.layers[x];
+							break;
+						}
+					}
+				}
 				if (layer != null) {
 					console.log(layer);
 					console.log("original event = "); console.log(event.originalEvent);
@@ -119,7 +131,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 		}		
 		
 		//TODO: Would prefer to not pass event. Would prefer to not open dialog from in this routine. Maybe return a promise and let caller do it.
-		let queryFeatures = ((layer, thePoint, event) => {
+		let queryFeatures = (function(layer, thePoint, event) {
 			
 			let featureType = layer.source.params.LAYERS;
 			if (featureType != undefined) {
@@ -138,6 +150,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				//filter: ol.format.ogc.filter.intersects(paramStub.geometryName, new ol.geom.Point(thePoint), 'urn:ogc:def:crs:EPSG::3857')
 			});
 				
+			console.log("featureRequest = ");
 			console.log(featureRequest);
 						
 			//make sure its good to go
@@ -147,43 +160,77 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				let body;
 				//TODO: This is a terrible hack. I need to use ol.format.ogc.filter.intersects filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive. I could copy the version of openlayers I want (3.18) over the other one in bower_components, but that would break on any new bower install. So, instead, I'm hacking in the needed XML. It's ugly and I hate it but it does what I need. 
 				let queryString = new XMLSerializer().serializeToString(featureRequest);
+				console.log("queryString = ");
 				console.log(queryString);
 				let filterString = '><Filter xmlns="http://www.opengis.net/ogc"><Intersects><PropertyName>' + layer.source.wfs.geometry_name + '</PropertyName><Point xmlns="http://www.opengis.net/gml" srsName="urn:ogc:def:crs:EPSG::3857"><pos>' + thePoint[0] + ' ' + thePoint[1] + '</pos></Point></Intersects></Filter></Query>';
+				console.log("filterString =");
 				console.log(filterString);
 				queryString = queryString.replace("/>", filterString)
+				console.log("queryString =");
 				console.log(queryString);
 				
 				// then post the request and add the received features to a layer
-				fetch('/proxy/' + layer.source.wfs.url, {
-					method: 'POST',
-					//body: new XMLSerializer().serializeToString(featureRequest) //TODO: this is the one I'd use if I didn't have to hack it as above
-					body: queryString
-				}).then(function(response) {
-					console.log(response);
-					return response.json();
-				}).then(function(result) {
-					console.log(result);
-		
-					features.clear();
-					let feature;
-					try {
-						feature = new ol.format.GeoJSON().readFeatures(result)[0];
-					} catch(err) {
-						console.log(err);
-					}
-					if (feature !== undefined) {
-						features.push(feature);
-						body = result.features[0].properties;
-					} else {
-						body = {noData: "There is no feature in that location"};
-					}
-					
-				}).catch(function(err) {
-					console.log("server problem:"); console.log(err);
-					body = {noData: "There was a problem communicating with the server"};
-				}).then(function(stuff) {
-					showInfoDialog(layer.name, body, event);
-				});
+				try {
+					//Try fetch first (not available in IE)
+					//Yes, I am being obstinate in including this code when the old stuff will work in all browsers. That's me: obstinate.
+					fetch('/proxy/' + layer.source.wfs.url, {
+						method: 'POST',
+						//body: new XMLSerializer().serializeToString(featureRequest) //TODO: this is the one I'd use if I didn't have to hack it as above
+						body: queryString
+					}).then(function(response) {
+						console.log(response);
+						return response.json();
+					}).then(function(result) {
+						console.log(result);
+			
+						features.clear();
+						let feature;
+						try {
+							feature = new ol.format.GeoJSON().readFeatures(result)[0];
+						} catch(err) {
+							console.log(err);
+						}
+						if (feature !== undefined) {
+							features.push(feature);
+							body = result.features[0].properties;
+						} else {
+							body = {noData: "There is no feature in that location"};
+						}	
+					}).catch(function(err) {
+						console.log("server problem:"); console.log(err);
+						body = {noData: "There was a problem communicating with the server"};
+					}).then(function(stuff) {
+						showInfoDialog(layer.name, body, event);
+					});
+				} catch(err) { //If fetch is not available, this is IE
+					let request = new XMLHttpRequest();
+					request.onload = function() {
+						let result = JSON.parse(this.responseText);
+						console.log(result);
+						features.clear();
+						let feature;
+						try {
+							feature = new ol.format.GeoJSON().readFeatures(result)[0];
+						} catch(err) {
+							console.log(err);
+						}
+						if (feature !== undefined) {
+							features.push(feature);
+							body = result.features[0].properties;
+						} else {
+							body = {noData: "There is no feature in that location"};
+						}
+						showInfoDialog(layer.name, body, event);
+					};
+					request.onerror = function(err) {
+						console.log("server problem:"); console.log(err);
+						body = {noData: "There was a problem communicating with the server"};
+						showInfoDialog(layer.name, body, event);
+					};
+					request.open('POST', '/proxy/' + layer.source.wfs.url, true);
+					request.send(queryString);
+				}
+
 			} else {
 				console.log("Layer cannot be queried");
 				let notQueryable = {noData:"Layer cannot be queried"};
@@ -196,9 +243,18 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 	
 		let showInfoDialog = function(title, result, event) {
 			console.log("show results");console.log("result = " + result);
-			alert = $mdDialog.alert({
+			let values;
+			//Yes, I am being obstinate in including this code when the old stuff will work in all browsers. That's me: obstinate.
+			if (Object.values) {
+				values = Object.values(result);
+			} else { //IE
+				values = [];
+				Object.keys(result).forEach(function(key) {values.push(result[key])});
+			}
+			console.log("values = "); console.log(values);
+			let alert = $mdDialog.alert({
 				title: title,
-				locals: { title: title, result: result, keys: Object.keys(result), values: Object.values(result)  },
+				locals: { title: title, result: result, keys: Object.keys(result), values: values/*Object.values(result)*/  },
 				controller: DialogController,
 				templateUrl: 'map/maptools/results_dialog.html',
 				targetEvent: event,
@@ -259,7 +315,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			}
 			featureOverlay.setMap(MapSettings.data.theMap);
 			
-			dragBox.on('boxend', (evt) => {
+			dragBox.on('boxend', function(evt) {
 				console.log("boxend");
 				document.getElementById('positionDisplay').style.visibility = "hidden";
 				MapSettings.data.aoi = dragBox.getGeometry();			
@@ -269,13 +325,13 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			});
 
 			// To remove the layer when start drawing a new dragbox
-			dragBox.on('boxstart', (evt) => {
+			dragBox.on('boxstart', function(evt) {
 				features.clear();
 				featureOverlay.setMap(null);
 				MapSettings.data.aoi = undefined;
 			});		
 
-			dragBox.on('boxdrag', (evt) => {
+			dragBox.on('boxdrag', function(evt) {
 				document.getElementById('positionDisplay').style.visibility = "visible";
 			});		
 			

@@ -122,3 +122,8 @@ table.report-table th, td {
 table.report-table tr:nth-child(even) {
 	background-color: #f2f2f2
 }
+
+
+.md-tab{
+	overflow:visible;
+}
