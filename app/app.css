@@ -127,3 +127,16 @@ table.report-table tr:nth-child(even) {
 .md-tab{
 	overflow:visible;
 }
+
+md-toolbar.md-dialog-toolbar {
+	background-color: white;
+	color:rgba(0,0,0,0.87);
+	/**padding-left:24px;
+	padding-right:24px;*/
+}
+
+md-toolbar.md-dialog-toolbar .md-toolbar-tools {
+	padding-left:24px;
+	padding-right:24px;
+}
+
