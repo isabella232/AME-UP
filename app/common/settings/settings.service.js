@@ -144,8 +144,8 @@ angular.module('SettingsService', ['APIService'])
 				let remoteLayers = Layers.query(function() {
 					console.log("layers call completed");
 					remoteLayers.forEach(function(remoteLayer) {
-						console.log("remoteLayer");console.log(remoteLayer);
-						console.log("remoteLayer.initial_opacity = " + remoteLayer.initial_opacity);
+						//console.log("remoteLayer");console.log(remoteLayer);
+						//console.log("remoteLayer.initial_opacity = " + remoteLayer.initial_opacity);
 						let layer = {
 							name: remoteLayer.name,
 							group: remoteLayer.layer_group,
@@ -267,9 +267,9 @@ angular.module('SettingsService', ['APIService'])
 				remoteProjects.forEach(function(remoteProject) {
 					if (remoteProject.aoi != undefined) {
 						aoi = new ol.format.GeoJSON().readGeometry(remoteProject.aoi);
-						console.log('aoi = ');
-						console.log(aoi);
-						console.log(aoi.getExtent()); 
+						//console.log('aoi = ');
+						//console.log(aoi);
+						//console.log(aoi.getExtent()); 
 					}
 					
 					let project = {
