@@ -140,7 +140,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 							if (ProjectSettings.data.currentProject && projectType.name === ProjectSettings.data.currentProject.type.name) {
 								console.log("found it");
 								data[index] = ProjectSettings.data.currentProject.type;
-								$scope.selectedType = data[index];
+								$scope.selectedType = data[index];//TODO: clone this instead using direct ref to avoid contamination after Cancel
 							}
 							projectType.attributes.forEach(function(attr) {
 								console.log("attr = " + attr.name);
@@ -203,8 +203,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 					function(result) {
 						//ProjectSettings.data.currentProjectID = result.id;
 						project.id = result.id;
-						ProjectSettings.data.currentProject = project;
-						ProjectSettings.fetchProjects();
+						ProjectSettings.setCurrentProject(project.id);
 						$scope.showToast('Project saved', true);
 					},
 					function() {
@@ -217,13 +216,14 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 		} else {
 			project.name = ProjectSettings.data.currentProject.name;
 			project.type = ProjectSettings.data.currentProject.type;
+			project.id = ProjectSettings.data.currentProject.id;
 			Projects.update(
 				//{projectID: ProjectSettings.data.currentProjectID},
 				{projectID: ProjectSettings.data.currentProject.id},
 				project,
 				function() {
 					$scope.showToast('Project saved', true);
-					ProjectSettings.fetchProjects();
+					ProjectSettings.setCurrentProject(project.id); //technically, id is already set, but calling this forces project/map reload and change detection reset
 				},
 				function() {
 					$scope.showToast('There was a problem. Project not saved.');
