@@ -280,6 +280,7 @@ angular.module('SettingsService', ['APIService'])
 						groups: angular.fromJson(remoteProject.groups),
 						layers: angular.fromJson(remoteProject.layers),
 						aoi: aoi,
+						type: angular.fromJson(remoteProject.type),
 						modifiedDate: remoteProject.modified_date
 					}
 					//console.log(project);
