@@ -76,6 +76,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			})
 			.then(function(answer) {
 				ProjectSettings.setCurrentProject(answer);
+				console.log("current project set to "); console.log(ProjectSettings.data.currentProject);
 				$scope.showToast('Opening project', true);
 			}, function() {
 				//$rootScope.toggleSideNav();
@@ -129,12 +130,18 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 					
 					$scope.projectTypes.$promise.then(function(data) {
 						console.log("projectTypes = "); 
-						console.log("projectTypes = "); 
 						console.log($scope.projectTypes);
+						console.log("projectTypes[0] = "); 
 						console.log($scope.projectTypes[0]); 
 						console.log(data);
-						data.forEach(function(projectType) {
-							console.log("projectType = " + projectType.project_type);
+						data.forEach(function(projectType, index) {
+							console.log("projectType = " + projectType.name);
+							console.log("currentProject =");console.log(ProjectSettings.data.currentProject);
+							if (ProjectSettings.data.currentProject && projectType.name === ProjectSettings.data.currentProject.type.name) {
+								console.log("found it");
+								data[index] = ProjectSettings.data.currentProject.type;
+								$scope.selectedType = data[index];
+							}
 							projectType.attributes.forEach(function(attr) {
 								console.log("attr = " + attr.name);
 								console.log("attr.inputType = " + attr.inputType);
@@ -209,6 +216,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			});
 		} else {
 			project.name = ProjectSettings.data.currentProject.name;
+			project.type = ProjectSettings.data.currentProject.type;
 			Projects.update(
 				//{projectID: ProjectSettings.data.currentProjectID},
 				{projectID: ProjectSettings.data.currentProject.id},
