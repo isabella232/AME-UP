@@ -19,7 +19,7 @@
 			</md-input-container>
 			<md-input-container>
 				<md-select ng-model="selectedType" name="projectType" placeholder="Select a project type" required>
-					<md-option ng-value="projectType" ng-repeat="projectType in projectTypes">{{ projectType.project_type }}</md-option>
+					<md-option ng-value="projectType" ng-repeat="projectType in projectTypes">{{ projectType.name }}</md-option>
 				</md-select>
 				<div ng-messages="projectTypeForm.projectType.$error">
 					<div ng-message="required">This is required</div>
