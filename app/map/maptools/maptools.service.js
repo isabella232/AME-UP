@@ -158,7 +158,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				alert = $mdDialog.alert({
 					parent: parent,
 					title: "",
-					textContent: "Please select a layer to query (click layer name in the Layers tab).",
+					textContent: "Select layers to query by clicking the layer name in the Layers tab. Results will appear here. You do not need to close this dialog to select layers.",
 					targetEvent: event,
 					ok: 'OK'
 				});
