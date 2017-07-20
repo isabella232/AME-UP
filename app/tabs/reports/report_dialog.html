@@ -3,6 +3,14 @@
 	<md-toolbar class="md-dialog-toolbar">
 		<div class="md-toolbar-tools">
 			<h2 class="md-title ng-binding">{{ reportName }} Report</h2>
+			<span flex></span>
+			<md-button class="md-primary md-raised md-small"  ng-click="downloadClicked()" >
+				<md-icon md-font-icon="fa-arrow-down"  class="fa" >
+					<md-tooltip md-direction="bottom" md-autohide="true">
+						Download
+					</md-tooltip>
+				</md-icon>
+			</md-button>
 		</div>
 	</md-toolbar>
 
