@@ -198,7 +198,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 				function DialogController($scope, $mdDialog, layer, thePoint) {
 					console.log("dialog enter");
-					$scope.showJson = false;
+					$scope.alternateLayout = false;
 					$scope.title = layer.name;
 					let query = queryFeatures(layer, thePoint).then(function(result) {
 						console.log("result =");console.log(result);
