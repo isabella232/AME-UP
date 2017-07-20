@@ -108,8 +108,6 @@ angular.module('SettingsService', ['APIService'])
 					data.groups.push(group);
 				});
 				
-				console.log("data.groups = ");console.log(data.groups);
-				console.log("data.groups[0].name = " + data.groups[0].name);
 				if (project) {
 					data.groups.forEach(function(group) {group.active = false;}); //set everything to inactive initially
 					console.log("loading project");
