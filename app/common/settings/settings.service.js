@@ -17,6 +17,7 @@ angular.module('SettingsService', ['APIService'])
 			data.layers.forEach(function(layer) {
 				if (layer.group == group.name) {
 					layer.visible = group.active;
+					checkQueryLayer(layer);
 				}
 			});
 		};
@@ -28,11 +29,18 @@ angular.module('SettingsService', ['APIService'])
 				}
 			});
 			
+			checkQueryLayer(layer);
+		};
+		
+		let checkQueryLayer = function(layer) {
 			//If layer is not active and it is the selected layer for queries, make it not be
 			if (!layer.visible && layer.name === LayersTabSettings.data.queryLayer) {
 				LayersTabSettings.data.queryLayer = undefined;
+				$rootScope.$broadcast('queryLayerHidden', {
+					data: ''
+				});
 			}
-		};
+		}
 
 		let toggleShowAllGroups = function() {
 			data.showAll = !data.showAll;
@@ -57,7 +65,7 @@ angular.module('SettingsService', ['APIService'])
 		
 		//const initializeMap = function (/*projectID, projectName,*/ zoom, lon, lat, showAll, groups, layers) {
 		let initializeMap = function (project) {
-			console.log("initializeMap enter");
+			console.log("MapSettings initializeMap enter");
 			
             $rootScope.$broadcast('initializingMap', {
                 data: ''
