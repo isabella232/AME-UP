@@ -79,6 +79,10 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			})
 		});
 		
+		$rootScope.$on('queryLayerHidden', function(event, data) {
+			console.log('received queryLayerHidden');
+			features2.clear();
+		});
 		
 		let infoClicked = function() {
 			console.log("info clicked");
@@ -162,6 +166,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			MapSettings.data.layers.some(function(layer) {
 				if (layer.name === layerName) {
 					layer.visible = true;
+					MapSettings.layerActiveChange(layer);
 					LayersTabSettings.data.queryLayer = layerName;
 					if (markers.getLength() > 0) {
 						showInfoDialog(layer, markers.item(0).getGeometry().getFirstCoordinate());
