@@ -58,7 +58,7 @@
 					 <md-icon md-font-icon="fa-bars"  class="fa" style="font-size:25px"></md-icon>
 				</md-button>
 
-				<img src="assets/images/AMEUP-Logo-2_03-64px.png">
+				<a ui-sref="cover"><img src="assets/images/AMEUP-Logo-2_03-64px.png"></a>
 				
 				<span flex=""></span>
 				<span ng-if="isAuthenticated()"><h2>{{projectData.currentProject.name == undefined ? "(new project)" : projectData.currentProject.name}}</h2></span>
@@ -115,6 +115,14 @@
 				 Delete project
 			</md-button><br/>
 		</md-content>
+		<md-divider></md-divider>
+		<md-content>
+			<md-button class="md-primary"  ng-click="help($event)">
+				 <md-icon md-font-icon="fa-question-circle-o"  class="fa" style="font-size:25px"></md-icon>
+				 Help
+			</md-button><br/>
+		</md-content>
+		
 	</md-sidenav>
 
 </body>
