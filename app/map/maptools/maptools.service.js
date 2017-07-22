@@ -402,6 +402,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 		let addBboxInteraction = function() {
 			console.log("add bbox interaction");
 			if (MapSettings.data.theMap === undefined) {
+				console.log("no map!");
 				return;
 			}
 
@@ -517,6 +518,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 		$rootScope.$on('initializingMap', function(event, data) {
 			console.log('received initializingMap');
+			clearInfoInteraction();
 			clearBboxInteraction();
 			clearPolyInteraction();
 		})
