@@ -18,10 +18,10 @@
 		<span ng-if="!implemented">&lt;{{reportName}} report not yet implemented&gt;</span>
 		<div ng-if="implemented">
 			<md-progress-circular ng-if="!results.$resolved" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
-			<div ng-if="results.$resolved">
+			<div ng-if="results.$resolved" id="reportBody">
 				<span ng-if="error">{{error}}</span>
 				<div ng-if="!error">
-					<div ng-show="results.textBoxContent[0]" ng-bind-html="results.textBoxContent[0]" class="md-body-1" style="padding-bottom:15px;">
+					<div id="introText" ng-show="results.textBoxContent[0]" ng-bind-html="results.textBoxContent[0]" class="md-body-1" style="padding-bottom:15px;">
 					</div>
 					<table class="report-table" ng-show="reportName === 'Contact'">
 						<tr>
