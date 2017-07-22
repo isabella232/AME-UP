@@ -57,6 +57,11 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 			$scope.closeDialog = function() {
 				$mdDialog.hide();
 			}
+			
+			$scope.downloadClicked = function() {
+				$mdToast.show($mdToast.simple().textContent('Download not yet implemented'));			
+			}
+			
 		}
 
 		$mdDialog
@@ -65,5 +70,6 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 				alert = undefined;
 			});
 	}
+	
 	
 });
