@@ -66,13 +66,11 @@ angular.module('SettingsService', ['APIService'])
 		let initializeMap = function (project) {
 			return $q(function(resolve, reject) {
 				console.log("MapSettings initializeMap enter");
-				
-				/*
+
 				$rootScope.$broadcast('initializingMap', {
 					data: ''
 				});
-				*/
-
+				
 				if (data.groups) {
 					console.log("resetting groups array");
 					data.groups.length = 0;
@@ -231,12 +229,10 @@ angular.module('SettingsService', ['APIService'])
 							});
 						}	
 											
-						/**
 						console.log("broadcasting mapInitialized");
 						$rootScope.$broadcast('mapInitialized', {
 							data: ''
 						});
-						**/
 						resolve();
 
 					});
