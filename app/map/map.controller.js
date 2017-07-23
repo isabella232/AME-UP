@@ -68,9 +68,6 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	*/
 					
 	//MapSettings.initializeMap();
-	$rootScope.$broadcast('initializingMap', {
-		data: ''
-	});
 	MapSettings.initializeMap()
 	.then(function() {
 		olData.getMap().then(function(map) {
@@ -91,13 +88,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 			let scaleLine = new ol.control.ScaleLine({ 
 				units: 'us'
 			});
-			map.addControl(scaleLine);	
-
-			console.log("broadcasting mapInitialized");
-			$rootScope.$broadcast('mapInitialized', {
-				data: ''
-			});
-			
+			map.addControl(scaleLine);				
 		});
 	});
 
