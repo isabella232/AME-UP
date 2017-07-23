@@ -1,6 +1,6 @@
-angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMaterial'])
+angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMaterial', 'ngFileSaver'])
 
-.controller('ReportsTabController', function ReportsTabController($scope, $rootScope, Projects, MapSettings, ProjectSettings, Reports, APP_CONFIG, $mdDialog, $mdToast)
+.controller('ReportsTabController', function ReportsTabController($scope, $rootScope, FileSaver, Blob, Projects, MapSettings, ProjectSettings, Reports, APP_CONFIG, $mdDialog, $mdToast)
 {
 	$scope.reportClicked = function(event, type) {
 		//console.log("reportClicked, boxExtent = " + $scope.boxExtent);
@@ -58,7 +58,23 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 				$mdDialog.hide();
 			}
 			
-			$scope.downloadClicked = function() {
+
+			$scope.csvDownloadClicked = function() {
+				let csvStr = 'First Name,Last Name,Title,Department,Agency Name,Agency Type,Phone,Email,Address\n';
+				$scope.results.records.forEach(function(contact) {
+					csvStr += '"' + contact.first_name + '","' + contact.last_name + '","' + contact.position_title + '","' + contact.department + '","' + contact.agency_name + '","' + contact.agency_type + '","' + contact.phone + '","' + contact.email + '","' + contact.street + ", " +contact.city + ", "  + contact.state + ", " + contact.zip_code + '"\n';
+				});
+				
+				console.log("csv = " + csvStr);
+				
+				let data = new Blob([csvStr], { type: 'text/plain;charset=utf-8' });
+				let dateStr = new Date().toLocaleDateString();
+				FileSaver.saveAs(data, "ContactReport - " + dateStr + ".csv");
+				
+			}
+			
+			
+			$scope.pdfDownloadClicked = function() {
 				//$mdToast.show($mdToast.simple().textContent('Download not yet implemented'));	
 					
 				/***
