@@ -142,6 +142,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			});
 			MapSettings.data.theMap.addInteraction(selectSingleClick);
 			***/
+			clearQueryLayerWhenDone = false;
 			featureOverlay2.setMap(MapSettings.data.theMap);
 			markersOverlay.setMap(MapSettings.data.theMap);
 			MapSettings.data.theMap.on('singleclick', infoEventHandler);
@@ -154,6 +155,16 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				console.log("clearInfoInteraction, no map");
 				return;
 			}
+			
+			if (clearQueryLayerWhenDone) {
+				MapSettings.data.layers.some(function(layer) {
+					if (layer.name === LayersTabSettings.data.queryLayer) {
+						layer.visible = false;
+					}
+				});
+				clearQueryLayerWhenDone = false;
+			}
+			
 			features2.clear();
 			featureOverlay2.setMap(null);
 			markers.clear();
@@ -161,10 +172,23 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			MapSettings.data.theMap.un('singleclick', infoEventHandler);		
 		}
 		
+		let clearQueryLayerWhenDone = false;
 		let layerClicked = function(layerName) {
 			console.log("layer clicked = " + layerName);
+			
+			//first clear old layer from map if it wasn't active before
+			if (clearQueryLayerWhenDone) {
+				MapSettings.data.layers.some(function(layer) {
+					if (layer.name === LayersTabSettings.data.queryLayer) {
+						layer.visible = false;
+					}
+				});
+				clearQueryLayerWhenDone = false;
+			}
+						
 			MapSettings.data.layers.some(function(layer) {
 				if (layer.name === layerName) {
+					clearQueryLayerWhenDone = !layer.visible; //If layer is not initially visible then we should clear it when done					
 					layer.visible = true;
 					MapSettings.layerActiveChange(layer);
 					LayersTabSettings.data.queryLayer = layerName;
