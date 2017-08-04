@@ -85,7 +85,7 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 		function() {				
 			//$rootScope.toggleSideNav();
 		});
-  };
+	};
   	
 	$scope.saveProject = function(ev) {
 		console.log("saveProject, ProjectSettings.data.currentProjectName = " + ProjectSettings.data.currentProjectName);
@@ -110,99 +110,51 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 			aoi: aoiGeoJSON
 		}
 
-		if (ev.currentTarget.id == 'saveAs' || !ProjectSettings.data.currentProject) {
-			const confirm = $mdDialog.prompt({
-					title: 'Save Project',
-					locals: {},
-					controller: DialogController,
-					templateUrl: 'project/save_dialog.html',
-					targetEvent: event,
-					ok: 'Submit',
-					cancel: 'Cancel'
-				});
-
-				function DialogController($scope, $mdDialog) {
-					$scope.showJson = false;
-					$scope.title = 'Save Project';
-					$scope.selectedType = null;
-					$scope.name = null;
-					$scope.projectTypes = ProjectTypes.query();
-					
-					$scope.projectTypes.$promise.then(function(data) {
-						console.log("projectTypes = "); 
-						console.log($scope.projectTypes);
-						console.log("projectTypes[0] = "); 
-						console.log($scope.projectTypes[0]); 
-						console.log(data);
-						data.forEach(function(projectType, index) {
-							console.log("projectType = " + projectType.name);
-							console.log("currentProject =");console.log(ProjectSettings.data.currentProject);
-							if (ProjectSettings.data.currentProject && projectType.name === ProjectSettings.data.currentProject.type.name) {
-								console.log("found it");
-								data[index] = ProjectSettings.data.currentProject.type;
-								$scope.selectedType = data[index];//TODO: clone this instead using direct ref to avoid contamination after Cancel
-							}
-							projectType.attributes.forEach(function(attr) {
-								console.log("attr = " + attr.name);
-								console.log("attr.inputType = " + attr.inputType);
-								try {
-									if (attr.inputType.startsWith("[")) {
-										attr.options = JSON.parse(attr.inputType);
-									} else if (attr.inputType.startsWith("regex")) {
-										//attr.regex = attr.inputType.substr(5, attr.inputType.length-5);
-										attr.regex = attr.inputType.substr(5, attr.inputType.length-5);
-										console.log("attr.regex = " + attr.regex);
-									} else if (attr.inputType !== "text" && attr.inputType !== "number") {
-										throw("unknown input type: " + attr.inputType);
-									}
-								} catch(err) {
-									console.log(err);
-									attr.inputType = "text";
-								}
-							});
-						});						
-					}); 
-					
-					$scope.projectTypes.$promise.catch(function() {$scope.error = "There was a problem communicating with the server"; console.log($scope.error);}); //TODO: make use of this in html
-
-					$scope.cancelDialog = function() {
-						console.log("canceling");
-						$mdDialog.cancel();
+		if (ev.currentTarget.id == 'saveAs' || !ProjectSettings.data.currentProject || !ProjectSettings.data.currentProject.id) {
+			
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				templateUrl: 'project/save.project.html',
+				controller: function($scope, $mdDialog) {
+					if (ProjectSettings.data.currentProject) {
+						$scope.selectedType = ProjectSettings.data.currentProject.type;
+						$scope.name = ProjectSettings.data.currentProject.name;
+					} else {
+						$scope.selectedType = null;
+						$scope.name = null;
 					}
 					
-					$scope.submitDialog = function() {
+					$scope.title = 'Save Project';
+					
+					$scope.formValid = false;
+					
+					$scope.setFormValid = function(state) {
+						console.log("setFormValid, state = " + state);
+						$scope.formValid = state;
+					}
+			
+					$scope.cancel = function() {
+						console.log("canceling");
+						$mdDialog.cancel();
+					};
+					$scope.submit = function() {
 						console.log("submitting, selectedType = "); console.log($scope.selectedType);
 						$mdDialog.hide({name: $scope.name, type: $scope.selectedType});
 					}
-
-					$scope.validateForm = function() {
-						let attributeVacantCount;
-						if ($scope.selectedType) {
-							attributeVacantCount = $scope.selectedType.attributes.reduce(function(acc, attribute) {
-								if (attribute.required && !attribute.value) {
-									++acc;
-								} 
-								return acc;
-							}, 0);
-						}
-						return !$scope.name || !$scope.selectedType || attributeVacantCount > 0
-					}
 				}
+			})
+			.then(function(tmpProject) {
+				console.log("back from dialog, name = " + tmpProject.name); console.log(tmpProject.type);
 				
-			console.log('MapSettings.data.aoi = ');console.log(MapSettings.data.aoi);
-
-			$mdDialog.show(confirm).then(function(result) {
-				console.log("resolved, result = ");console.log(result);
-				//TODO: check preexisting name
-				const name = result.name;
-				project.name = name;
-				project.type = result.type;
+				project.name = tmpProject.name;
+				project.type = tmpProject.type;
 				
 				Projects.create(
 					project,
-					function(result) {
+					function(tmpProject) {
 						//ProjectSettings.data.currentProjectID = result.id;
-						project.id = result.id;
+						project.id = tmpProject.id;
 						ProjectSettings.setCurrentProject(project.id);
 						$scope.showToast('Project saved', true);
 					},
@@ -212,7 +164,8 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 				);
 			}, function() {
 				//$rootScope.toggleSideNav();
-			});
+			});				
+						
 		} else {
 			project.name = ProjectSettings.data.currentProject.name;
 			project.type = ProjectSettings.data.currentProject.type;
@@ -267,6 +220,50 @@ angular.module('ProjectController', ['APIService', 'SettingsService', 'ngMateria
 		}
 	}
 
+	$scope.editProject = function(ev) {
+		console.log("editProject enter");
+		$mdDialog.show({
+			parent: angular.element(document.body),
+			targetEvent: ev,
+			templateUrl: 'project/edit.project.html',
+			controller: function($scope, $mdDialog) {
+				$scope.title = 'Edit Project';
+
+				if (ProjectSettings.data.currentProject) {
+					$scope.selectedType = ProjectSettings.data.currentProject.type;
+					$scope.name = ProjectSettings.data.currentProject.name;
+				} else {
+					$scope.selectedType = null;
+					$scope.name = null;
+				}
+		
+				$scope.cancel = function() {
+					console.log("canceling");
+					$mdDialog.cancel();
+				};
+				$scope.submit = function() {
+					console.log("submitting, selectedType = "); console.log($scope.selectedType);
+					$mdDialog.hide({name: $scope.name, type: $scope.selectedType});
+				}
+			}
+		})
+		.then(function(project) {
+			console.log("back from dialog, name = " + project.name); console.log(project.type);
+			if (ProjectSettings.data.currentProject) {
+				ProjectSettings.data.currentProject.name = project.name;
+				ProjectSettings.data.currentProject.type = project.type;
+			} else {
+				ProjectSettings.data.currentProject = project;
+			}
+			console.log("current project set to "); console.log(ProjectSettings.data.currentProject);
+			$scope.showToast('Project properties changed', true);
+		}, function() {
+			//$rootScope.toggleSideNav();
+		});
+		
+
+	}
+	
 	
 })//;
 .controller('ProjectListController', function ProjectListController($scope, ProjectSettings, $mdDialog) {
