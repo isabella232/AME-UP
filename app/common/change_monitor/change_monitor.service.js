@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ChangeMonitorService', ['SettingsService'])
-	.factory('ChangeMonitor', function($rootScope, MapSettings) {
+	.factory('ChangeMonitor', function($rootScope, MapSettings, ProjectSettings) {
 		console.log("ChangeMonitor init enter");
 
 		let data = {
@@ -91,7 +91,22 @@ angular.module('ChangeMonitorService', ['SettingsService'])
 				},
 				true
 			));
+			
+			watchers.push($rootScope.$watch(function(){return ProjectSettings.data.currentProject;},
+				function(newVal, oldVal){
+					if (angular.equals(newVal, oldVal)/*newVal === oldVal*/) {
+						//console.log("values are same");
+					} else {
+						//console.log("values are different");
+						data.changed = true;
+					}							
+				},
+				true
+			));
+			
 		}
+		
+		
 		
 		$rootScope.$on("initializingMap", function() {console.log("ChangeMonitor received initializingMap");clear();});
 		$rootScope.$on("mapInitialized", function() {console.log("ChangeMonitor received mapInitialized");initialize();});
