@@ -40,6 +40,7 @@
 	<script src="common/settings/settings.service.js"></script>
 	<script src="common/change_monitor/change_monitor.service.js"></script>
 	<script src="map/maptools/maptools.service.js"></script>
+	<script src="project/project_properties/project_properties.component.js"></script>
 	<link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
@@ -65,7 +66,9 @@
 				<a ui-sref="cover"><img src="assets/images/AMEUP-Logo-2_03-64px.png"></a>
 				
 				<span flex=""></span>
-				<span ng-if="isAuthenticated()"><h2>{{projectData.currentProject.name == undefined ? "(new project)" : projectData.currentProject.name}}</h2></span>
+				<div ng-if="isAuthenticated()">
+					<h2>{{projectData.currentProject.name == undefined ? "(new project)" : projectData.currentProject.name}}</h2>
+				</div>
 				<md-menu ng-if="isAuthenticated()" md-position-mode="target-right target" md-offset="0 40">
 					<md-button ng-click="$mdOpenMenu($event)" style="min-width:60px" class="md-icon-button" aria-label="User" >
 						<md-icon md-menu-origin="" md-font-icon="fa-user-circle-o"  class="fa" style="font-size:40px"></md-icon>
@@ -105,6 +108,10 @@
 			<md-button class="md-primary" ng-click="openProject($event)">
 				 <md-icon md-font-icon="fa-folder-open-o"  class="fa" style="font-size:25px"></md-icon>
 				 Open project...
+			</md-button><br/>
+			<md-button id="edit" class="md-primary" ng-click="editProject($event)">
+				 <md-icon md-font-icon="fa-plus-square-o"  class="fa" style="font-size:25px"></md-icon>
+				 Edit project properties...
 			</md-button><br/>
 			<md-button id="save" class="md-primary" ng-click="saveProject($event)">
 				 <md-icon md-font-icon="fa-save"  class="fa" style="font-size:25px"></md-icon>
