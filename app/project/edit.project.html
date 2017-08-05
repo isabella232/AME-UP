@@ -1,0 +1,29 @@
+<md-dialog aria-label={{ title }}>
+
+	<md-toolbar class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content  class="md-dialog-content">
+		<project-properties name="name" selected-type="selectedType"></project_properties>
+	</md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+		<md-button class="md-primary md-cancel-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="cancel()">
+			Cancel
+		</md-button>
+		<md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="submit()">
+			Done
+		</md-button>
+    </md-dialog-actions>
+	
+</md-dialog>
+
+		
+
+
+
+
