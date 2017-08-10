@@ -15,7 +15,8 @@
 		<div ng-if="result">
 			<div ng-if="result.noData">{{ result.noData }}</div>
 			<div ng-if="!result.noData">
-				<div class="md-subhead" style="margin-bottom:20px;">There are {{result.length}} features at this location:</div>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length != 1">There are {{result.length}} features at this location:</div>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length == 1">There is {{result.length}} feature at this location:</div>
 				<div ng-if="!alternateLayout">
 					<div ng-repeat="r in result">
 						<table  class="report-table">
