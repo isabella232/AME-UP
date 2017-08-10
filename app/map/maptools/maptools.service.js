@@ -231,18 +231,24 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					$scope.title = layer.name;
 					let query = queryFeatures(layer, thePoint).then(function(result) {
 						console.log("result =");console.log(result);
-						let values;
-						//Yes, I am being obstinate in including this use of Object.values when the old stuff will work in all browsers. That's me: obstinate.
-						if (Object.values) {
-							values = Object.values(result);
-						} else { //IE
-							values = [];
-							Object.keys(result).forEach(function(key) {values.push(result[key])});
+						if (result) {
+							$scope.result = result;
+							$scope.keys = Object.keys(result[0]);
+							$scope.valuesList = [];
+							result.forEach(function(r) {
+								let values;
+								//Yes, I am being obstinate in including this use of Object.values when the old stuff will work in all browsers. That's me: obstinate.
+								if (Object.values) {
+									values = Object.values(r);
+								} else { //IE
+									values = [];
+									Object.keys(result).forEach(function(key) {values.push(r[key])});
+								}
+								$scope.valuesList.push(values);
+							});
+							console.log("keys"); console.log($scope.keys);
+							console.log("valuesList"); console.log($scope.valuesList);
 						}
-						console.log("values = "); console.log(values);
-						$scope.values = values;
-						$scope.keys = Object.keys(result);
-						$scope.result = result;
 					});
 					
 					$scope.closeDialog = function() {
@@ -342,18 +348,23 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 							console.log(result);
 				
 							features2.clear();
-							let feature;
+							let features;
 							try {
-								feature = new ol.format.GeoJSON().readFeatures(result)[0];
+								features = new ol.format.GeoJSON().readFeatures(result);
+								console.log("features");console.log(features);
 							} catch(err) {
 								console.log(err);
 							}
-							if (feature !== undefined) {
-								features2.addFeature(feature);
-								body = result.features[0].properties;
+							if (features.length > 0) {
+								features2.addFeatures(features);
+								body = [];
+								result.features.forEach(function(feature) {
+									body.push(feature.properties);
+								});
 							} else {
 								body = {noData: "There is no feature in that location"};
 							}	
+							
 						}).catch(function(err) {
 							console.log("server problem:"); console.log(err);
 							body = {noData: "There was a problem communicating with the server"};
