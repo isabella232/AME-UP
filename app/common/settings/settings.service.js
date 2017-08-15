@@ -6,6 +6,7 @@ angular.module('SettingsService', ['APIService'])
 		
 		let data = {
 			center: undefined,
+			view: undefined,
 			showAll: undefined,
 			groups: undefined,
 			layers: undefined,
@@ -95,7 +96,8 @@ angular.module('SettingsService', ['APIService'])
 					data.layers = [];
 				}
 				
-				data.center = APP_CONFIG.center;			
+				data.center = APP_CONFIG.center;	
+				data.view = {rotation:0};
 				
 				//console.log("resetMap, data.center:");
 				//console.log(data.center);
