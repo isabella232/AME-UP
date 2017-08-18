@@ -165,7 +165,7 @@
 				</md-content>
 	
 				<md-content id="mapContent" style="width:71%;height:100%">
-					<openlayers  width="71%" height="93%" ol-defaults="defaults" ol-center="center" custom-layers="true" style="position:fixed">
+					<openlayers  width="71%" height="93%" ol-defaults="defaults" ol-center="center" ol-view="view" custom-layers="true" style="position:fixed">
 							<ol-control name="{{ control.name }}" ng-repeat="control in controls|filter: {active: true}"></ol-control>
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers"></ol-layer>
 					</openlayers>
@@ -216,6 +216,16 @@
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Leave polygon mode
 							</md-tooltip>							
+						</md-icon>
+					</md-button>
+					</div>
+					
+					<div layout="row" style="position:absolute; top: 60px; right:1%;">
+					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="homeExtent()" >
+						<md-icon md-font-icon="fa-home"  class="fa" style="font-size:25px">
+							<md-tooltip md-direction="bottom" md-autohide="true">
+								Return to original extent
+							</md-tooltip>
 						</md-icon>
 					</md-button>
 					</div>

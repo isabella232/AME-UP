@@ -6,6 +6,7 @@ angular.module('SettingsService', ['APIService'])
 		
 		let data = {
 			center: undefined,
+			view: undefined,
 			showAll: undefined,
 			groups: undefined,
 			layers: undefined,
@@ -24,8 +25,16 @@ angular.module('SettingsService', ['APIService'])
 			
 		let layerActiveChange = function(layer) {
 			data.groups.forEach(function(group) {
-				if (group.name == layer.group) {
+				if (group.name == layer.group) { // if layer's group is off, turn it on
 					group.active = group.active || layer.visible;
+					if (group.ordinal == 1 && layer.visible) { //if user just turned on a Base Map layer, turn the others off
+						data.layers.forEach(function(thisLayer) {
+							if (thisLayer.group === layer.group && thisLayer.name !== layer.name) {
+								thisLayer.visible = false;
+							}
+						});
+						
+					}
 				}
 			});
 			
@@ -87,7 +96,8 @@ angular.module('SettingsService', ['APIService'])
 					data.layers = [];
 				}
 				
-				data.center = APP_CONFIG.center;			
+				data.center = APP_CONFIG.center;	
+				data.view = {rotation:0};
 				
 				//console.log("resetMap, data.center:");
 				//console.log(data.center);

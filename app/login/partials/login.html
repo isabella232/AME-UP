@@ -15,9 +15,12 @@
 					<div ng-message="required">Password is required</div>
 				</div>
 			</md-input-container>
+	
 		</form>
 		<md-button ng-click="login()" class="md-primary md-raised">Login</md-button>
 		<md-button ng-click="register('show')" class="md-accent">Register</md-button>
+		<md-button ng-click="requestPWReset($event)" class="md-primary"  style="margin-top:30px">Forgot password</md-button>
+
 	</md-whiteframe>
 
 	<md-whiteframe id="registration" ng-if="showRegistration" class="md-whiteframe-12dp" style="padding: 1em 1em 1em 1em">
@@ -77,7 +80,7 @@
 			</md-input-container>
 		</form>
 		<md-button ng-click="register('submit')" class="md-primary md-raised">Register</md-button>
-		<md-button ng-click="register('cancel')" class="md-accent">Cancel</md-button>
+		<md-button ng-click="register('cancel')" class="md-accent">Cancel</md-button>		
 	</md-whiteframe>
 
 	<p layout-padding style="font-size: 12px">

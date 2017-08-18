@@ -93,6 +93,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	});
 
 	$scope.center = MapSettings.data.center;
+	$scope.view = MapSettings.data.view;
 	$scope.groups = MapSettings.data.groups;
 	$scope.layers = MapSettings.data.layers;
 	//$scope.showAll = MapSettings.data.showAll;
@@ -121,6 +122,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	]
 		
 	$scope.toolsData = MapTools.data;
+	$scope.homeExtent = MapTools.homeExtent;
 	$scope.infoMode = MapTools.data.infoMode;
 	$scope.infoClicked = MapTools.infoClicked;
 	$scope.bboxMode = MapTools.data.bboxMode;

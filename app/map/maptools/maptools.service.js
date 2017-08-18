@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('MapToolsService', ['APIService', 'SettingsService'])
-	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings) {
+	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings, APP_CONFIG) {
 		console.log("MapTools init enter");
 		
 		let data = {
@@ -17,6 +17,13 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					.hideDelay(3000)
 			);
 		};
+		
+		let homeExtent = function() {
+			MapSettings.data.center.lat = APP_CONFIG.initialLat;
+			MapSettings.data.center.lon = APP_CONFIG.initialLon;
+			MapSettings.data.center.zoom = APP_CONFIG.initialZoom;
+			MapSettings.data.view.rotation = 0;
+		}
 
 		let features = new ol.Collection();
 		let featureOverlay = new ol.layer.Vector({
@@ -570,6 +577,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 		return {
 			data: data,
+			homeExtent: homeExtent,
 			infoClicked: infoClicked,
 			layerClicked: layerClicked,
 			bboxClicked: bboxClicked,

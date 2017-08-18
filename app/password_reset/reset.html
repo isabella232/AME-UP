@@ -1,0 +1,27 @@
+<div ng-controller="ResetPWController" >
+	<md-content layout-padding ng-show="expired">
+		This reset link in no longer valid.
+	</md-content>
+	<md-content layout-padding ng-show="!expired" >
+		<form name="resetPWForm">
+			<md-input-container>
+				<label>Password</label>
+				<input type="password" name="password1" ng-model="password1" required>
+				<div ng-messages="resetPWForm.password1.$error">
+					<div ng-message="required">Password is required</div>
+				</div>
+			</md-input-container><br/>
+			<md-input-container>
+				<label>Confirm Password</label>
+				<input type="password" name="password2" ng-model="password2" ng-pattern="{{password1}}" required>
+				<div ng-messages="resetPWForm.password2.$error">
+					<div ng-message="required">Password confirmation is required</div>
+					<div ng-message="pattern">Passwords do not match</div>
+				</div>
+			</md-input-container>
+	
+		</form>
+		<md-button ng-click="submit($event, password1, password2)" class="md-primary md-raised" ng-disabled="!resetPWForm.$valid">Submit</md-button>
+	</md-content>
+
+</div>

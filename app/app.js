@@ -16,7 +16,8 @@ var app = angular.module('mapApp', [
   'LayersTabController',
   'AttributesTabController',
   'SettingsService',
-  'ProjectProperties'
+  'ProjectProperties',
+  'ResetPWController'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -47,6 +48,10 @@ var app = angular.module('mapApp', [
     url: '/map',
     templateUrl: 'map/map.html',
 	//controller: 'MapController' //TODO: either put this here or in html template, not both or will be called twice
+  })
+  .state('pwreset', {
+    url: '/pwreset/:time/:token',
+    templateUrl: 'password_reset/reset.html',
   });
  
   $urlRouterProvider.otherwise('/home');
@@ -59,7 +64,9 @@ var app = angular.module('mapApp', [
 
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		Auth.logout();
-		$state.go('cover');
+		if ($state.current.name !== "pwreset")  //don't go to cover if we are here to reset pw
+			$state.go('cover');
+		}
 	});
   
 	$rootScope.toggleSideNav = function() {
