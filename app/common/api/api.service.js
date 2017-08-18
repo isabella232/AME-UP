@@ -52,6 +52,19 @@ angular.module('APIService', ['ngResource'])
 		});
 		
 	})
+	.factory('PWReset', function($resource, APP_CONFIG) {
+		return $resource(APP_CONFIG.layersAPI + '/users/pwreset', {}, {
+			get: {
+				method: 'GET',
+				isArray: false
+			},
+			post: {
+				method: 'POST',
+				isArray: false
+			}
+		});
+		
+	})
 	.factory('Roles', function($resource, APP_CONFIG) {
 		return $resource(APP_CONFIG.layersAPI + '/roles/:roleID', {roleID:'@id'}, {
 			query: {
