@@ -1,0 +1,30 @@
+<md-dialog aria-label="{{ title }}">
+
+	<md-toolbar class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content class="md-dialog-content" ng-form="requestPWRest">
+		<md-input-container>
+			<label>Email address</label>
+			<input name="email" ng-model="email" type="email" required>
+			<div ng-messages="requestPWRest.email.$error">
+				<div ng-message="required">Email is required</div>
+				<div ng-message="email">Invalid email</div>
+			</div>
+		</md-input-container>
+	</md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+      <md-button class="md-primary md-cancel-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="cancel()">
+        Cancel
+      </md-button>
+      <md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="submit()" ng-disabled="!requestPWRest.$valid">
+        Submit
+      </md-button>
+    </md-dialog-actions>
+	
+</md-dialog>
