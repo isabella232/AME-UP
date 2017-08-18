@@ -16,7 +16,8 @@ var app = angular.module('mapApp', [
   'LayersTabController',
   'AttributesTabController',
   'SettingsService',
-  'ProjectProperties'
+  'ProjectProperties',
+  'ResetPWController'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -47,6 +48,10 @@ var app = angular.module('mapApp', [
     url: '/map',
     templateUrl: 'map/map.html',
 	//controller: 'MapController' //TODO: either put this here or in html template, not both or will be called twice
+  })
+  .state('pwreset', {
+    url: '/pwreset/:time/:token',
+    templateUrl: 'password_reset/reset.html',
   });
  
   $urlRouterProvider.otherwise('/home');
