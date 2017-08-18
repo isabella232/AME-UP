@@ -64,7 +64,7 @@ var app = angular.module('mapApp', [
 
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		Auth.logout();
-		if ($state.current.name !== "pwreset")  //don't go to cover if we are here to reset pw
+		if ($state.current.name !== "pwreset") { //don't go to cover if we are here to reset pw
 			$state.go('cover');
 		}
 	});
