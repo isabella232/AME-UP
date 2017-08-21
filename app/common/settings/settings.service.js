@@ -261,7 +261,7 @@ angular.module('SettingsService', ['APIService'])
 			toggleShowAllLayers: toggleShowAllLayers
 		}
 	})
-	.factory('ProjectSettings', function($http, $q, Projects, MapSettings, APP_CONFIG) {
+	.factory('ProjectSettings', function($http, $q, Projects, MapSettings, APP_CONFIG, Auth) {
 		console.log("ProjectSettings init enter");
 
 		let data = {
@@ -312,7 +312,10 @@ angular.module('SettingsService', ['APIService'])
 			});
 		}
 		
-		fetchProjects();
+		if (Auth.isAuthenticated()) {
+			console.log("fetching Projects");
+			fetchProjects();
+		}
 		
 		const setCurrentProject = function(id) {
 			console.log("setCurrentProject id = " + id);
