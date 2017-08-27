@@ -1,0 +1,50 @@
+<md-dialog aria-label="{{ title }}">
+
+	<md-toolbar class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+			<md-checkbox ng-show="result && !result.noData" class="md-checkbox-small right" ng-model="alternateLayout" ng-change="layerActiveChange(layer)" aria-label="alternateLayout">
+				horizontal
+			</md-checkbox>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content  class="md-dialog-content">
+		<md-progress-circular ng-if="!result" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
+		<div ng-if="result">
+			<div ng-if="result.noData">{{ result.noData }}</div>
+			<div ng-if="!result.noData">
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length != 1">There are {{result.length}} features at this location:</div>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length == 1">There is {{result.length}} feature at this location:</div>
+				<div ng-if="!alternateLayout">
+					<div ng-repeat="r in result">
+						<table  class="report-table">
+							<tr ng-repeat="key in keys">
+								<td><b>{{ key }}</b></td>
+								<td>{{r[key]}}</td>
+							</tr>
+						</table>
+						<div style="height:40px;"></div>
+					</div>
+				</div>
+				<table ng-if="alternateLayout" class="report-table">
+					<tr>
+						<th ng-repeat="key in keys">{{ key }}</th>
+					</tr>
+					<tr ng-repeat="values in valuesList">
+						<td ng-repeat="value in values track by $index">{{ value }}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+	</md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+      <md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="closeDialog()">
+        Done
+      </md-button>
+    </md-dialog-actions>
+	
+</md-dialog>
