@@ -125,6 +125,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	$scope.homeExtent = MapTools.homeExtent;
 	$scope.infoMode = MapTools.data.infoMode;
 	$scope.infoClicked = MapTools.infoClicked;
+	$scope.otherInfoClicked = MapTools.otherInfoClicked;
 	$scope.bboxMode = MapTools.data.bboxMode;
 	$scope.bboxClicked = MapTools.bboxClicked;
 	$scope.polyMode = MapTools.data.polyMode;
