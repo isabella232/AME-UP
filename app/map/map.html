@@ -185,6 +185,21 @@
 						</md-icon>
 					</md-button>
 
+					<md-button ng-if="!toolsData.otherInfoMode" class="md-primary md-raised md-small" ng-click="otherInfoClicked()" >
+						<md-icon md-font-icon="fa-info-circle"  class="fa" style="font-size:25px">
+							<md-tooltip md-direction="bottom" md-autohide="true">
+								Enter other feature query mode
+							</md-tooltip>
+						</md-icon>
+					</md-button>
+					<md-button ng-if="toolsData.otherInfoMode" class="md-accent md-raised md-small" ng-click="otherInfoClicked()">
+						<md-icon md-font-icon="fa-info-circle"  class="fa" style="font-size:25px">
+							<md-tooltip md-direction="bottom" md-autohide="true">
+								Leave other query mode
+							</md-tooltip>							
+						</md-icon>
+					</md-button>
+					
 					<md-button ng-if="!toolsData.bboxMode" class="md-primary md-raised md-small" ng-click="bboxClicked()" >
 						<md-icon  class="material-icons md-primary" >
 							aspect_ratio
