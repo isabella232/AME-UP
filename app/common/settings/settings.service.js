@@ -11,7 +11,10 @@ angular.module('SettingsService', ['APIService'])
 			groups: undefined,
 			layers: undefined,
 			aoi: undefined, 
-			theMap: undefined
+			theMap: undefined,
+			selectedTabIndex: 0,
+			showResultsTab: false
+
 		}
 		
 		let groupActiveChange = function(group) {
@@ -20,6 +23,9 @@ angular.module('SettingsService', ['APIService'])
 					layer.visible = group.active;
 					checkQueryLayer(layer);
 				}
+			});
+			$rootScope.$broadcast('visibilityChanged', {
+				data: ''
 			});
 		};
 			
@@ -36,6 +42,9 @@ angular.module('SettingsService', ['APIService'])
 						
 					}
 				}
+			});
+			$rootScope.$broadcast('visibilityChanged', {
+				data: ''
 			});
 			
 			checkQueryLayer(layer);
