@@ -2,7 +2,7 @@
 			
 				<!--<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" style="width: 35%;height:100%">-->
 				<md-content style="width: 29%;height:100%">
-					<md-tabs md-selected="selectedIndex" layout-fill>
+					<md-tabs md-selected="data.selectedTabIndex" layout-fill>
 						<md-tab label="Layers">
 						<div ng-controller="LayersTabController">
 							<md-tab-body>
@@ -150,15 +150,55 @@
 							</md-tab-body>
 						</div>
 						</md-tab>
-						<md-tab label="Results">
-							<md-tab-body >
-								<md-content layout-padding style="background: #f6f6f6;border: 1px solid #e1e1e1;">
-									<p>Maecenas vel fermentum purus. Duis ac sagittis erat, non consequat felis. Nullam bibendum iaculis ante vel suscipit. Suspendisse tincidunt maximus purus nec scelerisque. Aliquam hendrerit, lacus non luctus auctor, metus dui tristique mauris, at sagittis neque sem et nisi. Vivamus ultricies efficitur ante. Nullam ipsum eros, pulvinar ut congue vitae, ornare vitae est. Sed suscipit a lorem at lacinia. Mauris eu ante dui. Sed diam nunc, ultricies non neque quis, facilisis sodales velit. Sed hendrerit facilisis odio scelerisque eleifend. Proin nec mi sit amet elit congue sodales sed sit amet erat. Aliquam commodo, lacus id vulputate volutpat, dolor nisi tincidunt ipsum, vitae sollicitudin odio justo sit amet sem. Sed non fermentum lacus. Vivamus ipsum nulla, tristique nec laoreet at, rhoncus in magna.</p>
-
-									<p>Vivamus placerat velit ac justo hendrerit, ac dapibus metus efficitur. Donec gravida dui lectus, et feugiat odio tempor sed. Donec eu auctor mauris. Vestibulum maximus libero ac congue commodo. Integer tempor ante odio. Nullam sit amet ex pellentesque erat faucibus eleifend id in velit. Fusce tincidunt libero nunc, a aliquet nisi gravida ut. Vestibulum luctus tortor libero, eu venenatis ipsum tempus venenatis. Praesent non risus ac sapien convallis gravida vitae eget turpis. Cras eleifend odio et enim eleifend, sed vestibulum enim maximus. Sed volutpat augue in porttitor tristique.</p>
-
-								</md-content>
+						<md-tab ng-if="data.showResultsTab" label="Results">
+						<div ng-controller="ResultsTabController" style="height:100%">
+							<md-tab-body>
+								<div layout-padding ng-if="!data.result && !data.showProgressSpinner" class="md-body-2" style="opacity:0.7;margin-bottom:20px;">
+									Click a point on the map to see what's there.
+								</div>
+								<md-progress-circular ng-if="data.showProgressSpinner" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;margin-top:50px"></md-progress-circular>
+								<div ng-if="data.result" layout="column"  style="height:100%;">
+									<md-content layout-padding flex=25>
+										<!--<md-subheader>Choose layer to display:</md-subheader>-->
+										<p class="md-body-2" style="opacity:0.7; margin-bottom:0px">Choose layer to display:</p>
+										<div ng-repeat="r in data.result">
+											<div ng-class="{'layer-name': $index !== data.selectedIndex, 'layer-name-selected': $index === data.selectedIndex}" ng-click="layerClicked($index)">{{r.name}}</div>
+										</div>
+									</md-content>
+									<md-divider></md-divider>
+									<md-divider></md-divider>
+									<md-divider></md-divider>
+									<md-content layout-padding flex=75>
+										<div ng-show="!data.features" class="md-body-2" style="opacity:0.7;margin-bottom:20px;">(feature data will display here)</div>
+										<div ng-show="data.features">
+										<div class="md-body-2" style="opacity:0.7;margin-bottom:20px;" ng-if="data.features.length != 1">There are {{data.features.length}} features at this location:</div>
+										<div class="md-body-2" style="opacity:0.7;margin-bottom:20px;" ng-if="data.features.length == 1">There is {{data.features.length}} feature at this location:</div>
+											<div ng-if="!alternateLayout">
+												<div ng-repeat="r in data.features">
+													<table  class="report-table">
+														<tr ng-repeat="key in data.keys">
+															<td><b>{{ key }}</b></td>
+															<td>{{r.properties[key]}}</td>
+														</tr>
+													</table>
+													<div style="height:40px;"></div>
+													<md-divider></md-divider>
+													<div style="height:40px;"></div>
+												</div>
+											</div>
+											<table ng-if="alternateLayout" class="report-table">
+												<tr>
+													<th ng-repeat="key in data.keys">{{ key }}</th>
+												</tr>
+												<tr ng-repeat="values in data.valuesList">
+													<td ng-repeat="value in values track by $index">{{ value }}</td>
+												</tr>
+											</table>
+										</div>
+									</md-content>
+								</div>
 							</md-tab-body>
+						</div>
 						</md-tab>
 					</md-tabs>
 				<!--</md-sidenav>-->
@@ -170,6 +210,7 @@
 							<ol-layer name="{{ layer.name }}" ol-layer-properties="layer" ng-repeat="layer in layers"></ol-layer>
 					</openlayers>
 					<div layout="row" style="position:absolute; top: 10px; right:1%;">
+					<!--
 					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="infoClicked()" >
 						<md-icon md-font-icon="fa-info"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
@@ -184,7 +225,7 @@
 							</md-tooltip>							
 						</md-icon>
 					</md-button>
-
+					-->
 					<md-button ng-if="!toolsData.otherInfoMode" class="md-primary md-raised md-small" ng-click="otherInfoClicked()" >
 						<md-icon md-font-icon="fa-info-circle"  class="fa" style="font-size:25px">
 							<md-tooltip md-direction="bottom" md-autohide="true">
@@ -237,7 +278,9 @@
 					
 					<div layout="row" style="position:absolute; top: 60px; right:1%;">
 					<md-button ng-if="!toolsData.infoMode" class="md-primary md-raised md-small" ng-click="homeExtent()" >
-						<md-icon md-font-icon="fa-home"  class="fa" style="font-size:25px">
+						<!--<md-icon md-font-icon="fa-home"  class="fa" style="font-size:25px">-->
+						<md-icon class="material-icons md-accent">
+							zoom_out_map
 							<md-tooltip md-direction="bottom" md-autohide="true">
 								Return to original extent
 							</md-tooltip>
