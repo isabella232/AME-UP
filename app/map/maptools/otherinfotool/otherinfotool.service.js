@@ -5,9 +5,17 @@ angular.module('MapToolsService')
 		console.log("OtherInfoTool init enter");
 
 		let data = {
-			active: false //TODO: Not fully used outside of this file. I'm thinking it should replace the mode booleans in MapTools.
+			active: false, //TODO: Not fully used outside of this file. I'm thinking it should replace the mode booleans in MapTools.
+			showProgressSpinner: false,
+			result: null,
+			selectedIndex: -1,
+			features: null,
+			keys: null,
+			valuesList: null
 		}
 
+		const myHomeTab = 3; //Results tab
+		
 		//TODO: Had to abandon use of ol.Collection because it has performance issues on clear(). This is probably a better way to go anyhow. But, it conflicts with my use of features in the bbox and poly tools. For now, I'm fixing the obvious problem. Look into making this consistent throughout.
 		let features2 = new ol.source.Vector();
 		let featureOverlay2 = new ol.layer.Vector({
@@ -54,30 +62,51 @@ angular.module('MapToolsService')
 			features2.clear();
 		});
 
+		$rootScope.$on('visibilityChanged', function(event, data) {
+			console.log('received visibilityChanged');
+			infoEventHandler();
+		});
+		
+		let selectPoint = null;
 		let infoEventHandler = function(event) {
 			console.log("single click received");
 			console.log(event);
-			let selectPoint = event.coordinate;
+			features2.clear();
+			//let selectPoint = event.coordinate;
+			if (event) {
+				selectPoint = event.coordinate;
+			}
 			console.log("selectPoint = "); console.log(selectPoint);
 			markers.clear();
 			markers.push(new ol.Feature({geometry: new ol.geom.Point(selectPoint)}));
 			if (data.active) {
-				/*
-				getLayersAtCoord(selectPoint).then(function(res) { //TODO: Move this to showInfoDialog
-					console.log("Done!");console.log(res)}
-				);
-				*/
-				showInfoDialog(selectPoint, event.originalEvent);
+				data.result = null;
+				data.showProgressSpinner = true;
+				data.selectedIndex = -1;
+				data.features = null;
+				data.keys = null;
+				data.valuesList = null;
+				if (event) { //This chokes if we are updating due to a layer visibility change
+					$rootScope.$apply();
+				}
+				getLayersAtCoord(selectPoint).then(function(result) { 
+					console.log("Done!");console.log(result)
+					if (result) {
+						data.showProgressSpinner = false;
+						data.result = result;
+					}
+				});
 				
 			}				
 		}		
 		
 		let addInteraction = function() {
 			data.active = true;
-			clearQueryLayerWhenDone = false;
 			featureOverlay2.setMap(MapSettings.data.theMap);
 			markersOverlay.setMap(MapSettings.data.theMap);
 			MapSettings.data.theMap.on('singleclick', infoEventHandler);
+			MapSettings.data.showResultsTab = true;
+			MapSettings.data.selectedTabIndex = myHomeTab;
 		}
 		
 		let clearInteraction = function() {
@@ -88,127 +117,63 @@ angular.module('MapToolsService')
 				return;
 			}
 			
-			if (clearQueryLayerWhenDone) {
-				MapSettings.data.layers.some(function(layer) {
-					if (layer.name === LayersTabSettings.data.queryLayer) {
-						layer.visible = false;
-					}
-				});
-				clearQueryLayerWhenDone = false;
-			}
+			data.result = null;
+			data.showProgressSpinner = false;
+			data.selectedIndex = -1;
+			data.features = null;
+			data.keys = null;
+			data.valuesList = null;
 			
 			features2.clear();
 			featureOverlay2.setMap(null);
 			markers.clear();
 			markersOverlay.setMap(null);
 			MapSettings.data.theMap.un('singleclick', infoEventHandler);		
+			MapSettings.data.showResultsTab = false;
+			MapSettings.data.selectedTabIndex = 0; //Layers tab
 		}
 		
-		let clearQueryLayerWhenDone = false;
-		let layerClicked = function(layerName) {
-			console.log("layer clicked = " + layerName);
-			
-			//first clear old layer from map if it wasn't active before
-			if (clearQueryLayerWhenDone) {
-				MapSettings.data.layers.some(function(layer) {
-					if (layer.name === LayersTabSettings.data.queryLayer) {
-						layer.visible = false;
-					}
-				});
-				clearQueryLayerWhenDone = false;
-			}
-						
-			MapSettings.data.layers.some(function(layer) {
-				if (layer.name === layerName) {
-					clearQueryLayerWhenDone = !layer.visible; //If layer is not initially visible then we should clear it when done					
-					layer.visible = true;
-					MapSettings.layerActiveChange(layer);
-					LayersTabSettings.data.queryLayer = layerName;
-					if (markers.getLength() > 0) {
-						showInfoDialog(layer, markers.item(0).getGeometry().getFirstCoordinate());
-					}
+		let layerClicked = function(index) {
+			console.log("layer clicked, index = " + index);
+			data.selectedIndex = index;
+			data.features = data.result[index].featuresAtCoord;
+			data.keys = Object.keys(data.features[0].properties);
+			data.valuesList = [];
+			data.features.forEach(function(r) {
+				let values;
+				//Yes, I am being obstinate in including this use of Object.values when the old stuff will work in all browsers. That's me: obstinate.
+				if (Object.values) {
+					values = Object.values(r.properties);
+				} else { //IE
+					values = [];
+					Object.keys(features[0].properties).forEach(function(key) {values.push(r.properties[key])});
 				}
+				data.valuesList.push(values);
 			});
-		}		
-		
-		let showInfoDialog = function(selectPoint, event) { //TODO: Modify to use getLayersAtCoord
-			console.log("show info dialog");
+			console.log("features -- "); console.log(data.features);
+			console.log("keys"); console.log(data.keys);
+			console.log("valuesList"); console.log(data.valuesList);
 			
-			let parent = angular.element(document.querySelector('#mapContent'));
-			console.log("parent");console.log(parent);
-			
-			let	alert = $mdDialog.alert({
-					//parent: parent,
-					title: "Layers here",
-					locals: { thePoint: selectPoint },
-					controller: DialogController,
-					templateUrl: 'map/maptools/otherinfotool/results_dialog.html',
-					targetEvent: event,
-					ok: 'Done'
-			});
-
-			function DialogController($scope, $mdDialog, thePoint) {
-				console.log("dialog enter");
-				$scope.alternateLayout = false;
-				$scope.title = "Layers here";
-				$scope.selectedIndex = -1;
-				getLayersAtCoord(selectPoint).then(function(result) { 
-					console.log("Done!");console.log(result)
-					if (result) {
-						$scope.result = result;
-					}
-				});
-				$scope.closeDialog = function() {
-					$mdDialog.hide();
-				}
-				
-				$scope.layerClicked = function(index) {
-					console.log("layer clicked, index = " + index);
-					$scope.selectedIndex = index;
-					$scope.features = $scope.result[index].featuresAtCoord;
-					$scope.keys = Object.keys($scope.features[0].properties);
-					$scope.valuesList = [];
-					$scope.features.forEach(function(r) {
-						let values;
-						//Yes, I am being obstinate in including this use of Object.values when the old stuff will work in all browsers. That's me: obstinate.
-						if (Object.values) {
-							values = Object.values(r.properties);
-						} else { //IE
-							values = [];
-							Object.keys(features[0].properties).forEach(function(key) {values.push(r.properties[key])});
-						}
-						$scope.valuesList.push(values);
-					});
-					console.log("keys"); console.log($scope.keys);
-					console.log("valuesList"); console.log($scope.valuesList);
-					
-					//TODO: add features to map
-					/***
-					features2.clear();
-					let features;
-					try {
-						features = new ol.format.GeoJSON().readFeatures($scope.features);
-						console.log("features");console.log(features);
-					} catch(err) {
-						console.log(err);
-					}
-					if (features.length > 0) {
-						features2.addFeatures(features);
-					}
-					***/
-					
-				}
+			//TODO: add features to map
+			/***/
+			features2.clear();
+			let features = [];
+			try {
+				//features = new ol.format.GeoJSON().readFeatures(data.features);
+				//features.push(new ol.format.GeoJSON().readFeature(data.features[0]));
+				features = data.features.map(function(feature) {
+					return new ol.format.GeoJSON().readFeature(feature);
+				}, []);
+				console.log("features");console.log(features);
+			} catch(err) {
+				console.log(err);
 			}
-
-			$mdDialog
-				.show( alert )
-				.catch(function() {}) //swallows reject error when we programmatically open new dialog over old
-				.finally(function() {
-					alert = undefined;
-				});
+			if (features.length > 0) {
+				features2.addFeatures(features);
+			}
+			/***/
 			
-		}
-					
+		}					
 
 		let getLayersAtCoord = (function(thePoint) {
 			return $q(function(resolve, reject) {
@@ -400,7 +365,8 @@ angular.module('MapToolsService')
 			data: data,
 			addInteraction: addInteraction,
 			clearInteraction: clearInteraction,
-			layerClicked: layerClicked
+			layerClicked: layerClicked,
+			getLayersAtCoord: getLayersAtCoord
 		}
 		
 	});
