@@ -1,0 +1,56 @@
+<md-dialog aria-label="{{ title }}">
+
+	<md-toolbar ng-drag-handle="true" class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+			<md-checkbox ng-show="result && !result.noData" class="md-checkbox-small right" ng-model="alternateLayout" ng-change="layerActiveChange(layer)" aria-label="alternateLayout">
+				horizontal
+			</md-checkbox>
+		</div>
+	</md-toolbar>
+	
+		<md-progress-circular ng-if="!result" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
+		<div ng-if="result" layout="row" flex style="height:100%;">
+			<md-content layout-padding flex="35">
+				<md-subheader>Choose layer to display:</md-subheader>
+				<div ng-repeat="r in result">
+					<div ng-class="{'layer-name': $index !== selectedIndex, 'layer-name-selected': $index === selectedIndex}" ng-click="layerClicked($index)">{{r.name}}</div>
+				</div>
+			</md-content>
+			<md-divider></md-divider>
+			<md-content layout-padding flex="60">
+				<div ng-show="!features" style="opacity:0.5;">(feature data will display here)</div>
+				<div ng-show="features">
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="features.length != 1">There are {{features.length}} features at this location:</div>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="features.length == 1">There is {{features.length}} feature at this location:</div>
+					<div ng-if="!alternateLayout">
+						<div ng-repeat="r in features">
+							<table  class="report-table">
+								<tr ng-repeat="key in keys">
+									<td><b>{{ key }}</b></td>
+									<td>{{r.properties[key]}}</td>
+								</tr>
+							</table>
+							<div style="height:40px;"></div>
+						</div>
+					</div>
+					<table ng-if="alternateLayout" class="report-table">
+						<tr>
+							<th ng-repeat="key in keys">{{ key }}</th>
+						</tr>
+						<tr ng-repeat="values in valuesList">
+							<td ng-repeat="value in values track by $index">{{ value }}</td>
+						</tr>
+					</table>
+				</div>
+			</md-content>
+		</div>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="closeDialog()">
+        Done
+      </md-button>
+    </md-dialog-actions>
+	
+</md-dialog>

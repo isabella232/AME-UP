@@ -15,6 +15,7 @@ var app = angular.module('mapApp', [
   'ReportsTabController',
   'LayersTabController',
   'AttributesTabController',
+  'ResultsTabController',
   'SettingsService',
   'ProjectProperties',
   'ResetPWController'
