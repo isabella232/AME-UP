@@ -93,7 +93,8 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				OtherInfoTool.clearInteraction();
 				addBboxInteraction();
 			} else {
-				MapSettings.data.theMap.removeInteraction(dragBox);		
+				//MapSettings.data.theMap.removeInteraction(dragBox);
+				clearBboxInteraction();
 			}
 		}
 	
@@ -142,6 +143,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			});		
 			
 			MapSettings.data.theMap.addInteraction(dragBox);
+			MapSettings.data.selectedTabIndex = 2;
 		}
 		
 		let clearBboxInteraction = function() {
@@ -154,6 +156,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			features.clear();
 			featureOverlay.setMap(null);
 			MapSettings.data.theMap.removeInteraction(dragBox);		
+			MapSettings.data.selectedTabIndex = 0;
 		}
 
 		let polyClicked = function() {
@@ -167,8 +170,9 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 				OtherInfoTool.clearInteraction();
 				addPolyInteraction();		
 			} else {
-				MapSettings.data.theMap.removeInteraction(draw);		
-				MapSettings.data.theMap.removeInteraction(modify);		
+				//MapSettings.data.theMap.removeInteraction(draw);		
+				//MapSettings.data.theMap.removeInteraction(modify);		
+				clearPolyInteraction();
 			}
 		}
 		
@@ -210,6 +214,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			featureOverlay.setMap(MapSettings.data.theMap);
 			MapSettings.data.theMap.addInteraction(modify);
 			MapSettings.data.theMap.addInteraction(draw);
+			MapSettings.data.selectedTabIndex = 2;
 		}
 		
 		let clearPolyInteraction = function() {
@@ -223,6 +228,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			features.clear();
 			MapSettings.data.theMap.removeInteraction(modify);
 			MapSettings.data.theMap.removeInteraction(draw);
+			MapSettings.data.selectedTabIndex = 0;
 		}
 		
 
