@@ -69,6 +69,79 @@
 							<td>{{contact.street}}, {{contact.city}}, {{contact.state}} {{contact.zip_code}}</td>
 						</tr>
 					</table>
+					<!-- simple table version
+					<table class="report-table" ng-show="reportName === 'Military Encroachment'">
+						<tr>
+							<th>Mil Zone ID</th>
+							<th>Restriction Type</th>
+							<th>Service</th>
+							<th>Minimum Altitude</th>
+							<th>Description</th>
+							<th>Office</th>
+							<th>Contact</th>
+						</tr>
+						<tr ng-repeat="r in results.records">
+							<td>{{r.military_zone_id}}</td>
+							<td>{{r.restriction_type}}</td>
+							<td>{{r.service}}</td>
+							<td>{{r.minimum_altitude}}</td>
+							<td><div ng-bind-html="r.comment"></div></td>
+							<td>{{r.office}}</td>
+							<td>{{r.contact_name}}, {{r.contact_email}}, {{r.contact_phone}}</td>
+						</tr>
+					</table>
+					-->
+					<div ng-show="reportName === 'Military Encroachment'">
+						<div ng-repeat="r in results.records">
+							<table style="border:1px solid black;">
+								<tr>
+									<td>
+										<table width="100%" style="border:1px solid black;border-collapse: collapse;">
+											<tr>
+												<th style="border:1px solid black;border-collapse: collapse;">Mil Zone ID</th>
+												<th style="border:1px solid black;border-collapse: collapse;">Restriction Type</th>
+												<th style="border:1px solid black;border-collapse: collapse;">Service</th>
+												<th style="border:1px solid black;border-collapse: collapse;">Minimum Altitude</th>
+											</tr>
+											<tr>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.military_zone_id}}</td>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.restriction_type}}</td>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.service}}</td>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.minimum_altitude}}</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<table  width="100%">
+											<tr>
+												<td><div ng-bind-html="r.comment"></div></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<table  width="100%"  style="border:1px solid black;border-collapse: collapse;">
+											<tr>
+												<th style="border:1px solid black;border-collapse: collapse;">Office</th>
+												<th style="border:1px solid black;border-collapse: collapse;">Contact</th>
+											</tr>
+											<tr>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.office}}</td>
+												<td style="border:1px solid black;border-collapse: collapse;">{{r.contact_name}}, {{r.contact_email}}, {{r.contact_phone}}</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div id="endText" ng-show="results.textBoxContent[1]" ng-bind-html="results.textBoxContent[1]" class="md-body-1" style="padding-top:15px;">
+					</div>
+					
 				</div>
 			</div>
 		</div>
