@@ -262,6 +262,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 										}
 												
 										docDef.content.push(table);
+										docDef.content.push({text:' ', marginTop: 15});
 									});
 									
 									docDef.content.push({image: endData, width: 740});
