@@ -1,6 +1,6 @@
 angular.module('ResetPWController', ['APIService', 'ngMaterial'])
 
-.controller('ResetPWController', function ResetPWController($scope, $mdDialog, $mdToast, $stateParams, $q, $state, PWReset) {
+.controller('ResetPWController', function ResetPWController($scope, $mdDialog, $mdToast, $stateParams, $q, $state, PWReset, Auth) {
 
 	const token = $stateParams.token;
 	const time = $stateParams.time;
@@ -41,6 +41,7 @@ angular.module('ResetPWController', ['APIService', 'ngMaterial'])
 				
 				$scope.submit = function() {
 					$mdDialog.hide();
+					Auth.logout();
 					$state.go('cover');
 				}
 			}
