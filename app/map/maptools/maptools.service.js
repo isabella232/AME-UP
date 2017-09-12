@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('MapToolsService', ['APIService', 'SettingsService'])
-	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings) {
+	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings, APP_CONFIG, InfoTool, OtherInfoTool) {
 		console.log("MapTools init enter");
 		
 		let data = {
 			infoMode: false,
+			otherInfoMode: false,
 			polyMode: false,
 			bboxMode: false
 		}
@@ -17,6 +18,13 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 					.hideDelay(3000)
 			);
 		};
+		
+		let homeExtent = function() {
+			MapSettings.data.center.lat = APP_CONFIG.initialLat;
+			MapSettings.data.center.lon = APP_CONFIG.initialLon;
+			MapSettings.data.center.zoom = APP_CONFIG.initialZoom;
+			MapSettings.data.view.rotation = 0;
+		}
 
 		let features = new ol.Collection();
 		let featureOverlay = new ol.layer.Vector({
@@ -38,51 +46,6 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			})
 		});
 
-		//TODO: Had to abandon use of ol.Collection because it has performance issues on clear(). This is probably a better way to go anyhow. But, it conflicts with my use of features in the bbox and poly tools. For now, I'm fixing the obvious problem. Look into making this consistent throughout.
-		let features2 = new ol.source.Vector();
-		let featureOverlay2 = new ol.layer.Vector({
-			source: features2,
-			style: new ol.style.Style({
-				fill: new ol.style.Fill({
-					color: 'rgba(255, 255, 255, 0.2)'
-				}),
-				stroke: new ol.style.Stroke({
-					color: '#ffcc33',
-					width: 2
-				}),
-				image: new ol.style.Circle({
-					radius: 7,
-					fill: new ol.style.Fill({
-						color: '#ffcc33'
-					})
-				})
-			})
-		});
-		
-		let markers = new ol.Collection();
-		let markersOverlay = new ol.layer.Vector({
-			source: new ol.source.Vector({features: markers}),
-			style: new ol.style.Style({
-				fill: new ol.style.Fill({
-					color: 'rgba(255, 255, 255, 0.2)'
-				}),
-				stroke: new ol.style.Stroke({
-					color: '#ffcc33',
-					width: 2
-				}),
-				image: new ol.style.Circle({
-					radius: 7,
-					fill: new ol.style.Fill({
-						color: '#ff0000'//'#ffcc33'
-					})
-				})
-			})
-		});
-		
-		$rootScope.$on('queryLayerHidden', function(event, data) {
-			console.log('received queryLayerHidden');
-			features2.clear();
-		});
 		
 		let infoClicked = function() {
 			console.log("info clicked");
@@ -90,302 +53,48 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			if (data.infoMode) {
 				data.polyMode = false;
 				data.bboxMode = false;
+				data.otherInfoMode = false;
 				clearPolyInteraction();
 				clearBboxInteraction();
-				addInfoInteraction();
+				OtherInfoTool.clearInteraction();
+				InfoTool.addInteraction();
 			} else {
-				clearInfoInteraction();		
+				InfoTool.clearInteraction();		
 			}
 		}
 		
-		let infoEventHandler = function(event) {
-			console.log("single click received");
-			console.log(event);
-			let selectPoint = event.coordinate;
-			console.log("selectPoint = "); console.log(selectPoint);
-			markers.clear();
-			markers.push(new ol.Feature({geometry: new ol.geom.Point(selectPoint)}));
-			if (data.infoMode) {
-				//let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
-				//Yes, I am being obstinate in including this use of find when the old stuff will work in all browsers. That's me: obstinate.
-				let layer;
-				if (MapSettings.data.layers.find) {
-					layer = MapSettings.data.layers.find(function(l) {return l.name === LayersTabSettings.data.queryLayer;});
-				} else { //IE
-					for (let x = 0; x < MapSettings.data.layers.length; x++) {
-						if (MapSettings.data.layers[x].name === LayersTabSettings.data.queryLayer) {
-							layer = MapSettings.data.layers[x];
-							break;
-						}
-					}
-				}
-				showInfoDialog(layer, selectPoint, event.originalEvent);
-			}				
-		}		
+		let layerClicked = InfoTool.layerClicked;
 		
-		let addInfoInteraction = function() {
-			/***
-			let selectSingleClick = new ol.interaction.Select();
-			selectSingleClick.on('select', event => {
-				console.log("single click received");
-				console.log(event);
-				let selectPoint = event.mapBrowserEvent.coordinate;
-				console.log("selectPoint = "); console.log(selectPoint);
-				if (data.infoMode) {
-					LayersTabSettings.data.queryResults = [];
-					let layer = MapSettings.data.layers.find(l => {return l.name === LayersTabSettings.data.queryLayer;});
-					if (layer != null) {
-						console.log(layer);
-						queryFeatures(layer,selectPoint); 
-					}
-				}
-			});
-			MapSettings.data.theMap.addInteraction(selectSingleClick);
-			***/
-			featureOverlay2.setMap(MapSettings.data.theMap);
-			markersOverlay.setMap(MapSettings.data.theMap);
-			MapSettings.data.theMap.on('singleclick', infoEventHandler);
-		}
-		
-		let clearInfoInteraction = function() {
-			console.log("clearInfoInteraction");
-			data.infoMode = false;
-			if (MapSettings.data.theMap === undefined) {
-				console.log("clearInfoInteraction, no map");
-				return;
-			}
-			features2.clear();
-			featureOverlay2.setMap(null);
-			markers.clear();
-			markersOverlay.setMap(null);
-			MapSettings.data.theMap.un('singleclick', infoEventHandler);		
-		}
-		
-		let layerClicked = function(layerName) {
-			console.log("layer clicked = " + layerName);
-			MapSettings.data.layers.some(function(layer) {
-				if (layer.name === layerName) {
-					layer.visible = true;
-					MapSettings.layerActiveChange(layer);
-					LayersTabSettings.data.queryLayer = layerName;
-					if (markers.getLength() > 0) {
-						showInfoDialog(layer, markers.item(0).getGeometry().getFirstCoordinate());
-					}
-				}
-			});
-		}		
-		
-		let showInfoDialog = function(layer, selectPoint, event) {
-			console.log("show info dialog");
-			
-			let parent = angular.element(document.querySelector('#mapContent'));
-			console.log("parent");console.log(parent);
-			
-			let alert;
-			if (layer == null) {
-				alert = $mdDialog.alert({
-					parent: parent,
-					title: "",
-					textContent: "Select layers to query by clicking the layer name in the Layers tab. Results will appear here. You do not need to close this dialog to select layers.",
-					targetEvent: event,
-					ok: 'OK'
-				});
+		let otherInfoClicked = function() {
+			console.log("otherinfo clicked");
+			data.otherInfoMode = !data.otherInfoMode;
+			if (data.otherInfoMode) {
+				data.polyMode = false;
+				data.bboxMode = false;
+				data.infoMode = false;
+				clearPolyInteraction();
+				clearBboxInteraction();
+				InfoTool.clearInteraction();
+				OtherInfoTool.addInteraction();
 			} else {
-				alert = $mdDialog.alert({
-					parent: parent,
-					title: layer.name,
-					locals: { layer: layer, thePoint: selectPoint },
-					controller: DialogController,
-					templateUrl: 'map/maptools/results_dialog.html',
-					targetEvent: event,
-					ok: 'Done'
-				});
-
-				function DialogController($scope, $mdDialog, layer, thePoint) {
-					console.log("dialog enter");
-					$scope.alternateLayout = false;
-					$scope.title = layer.name;
-					let query = queryFeatures(layer, thePoint).then(function(result) {
-						console.log("result =");console.log(result);
-						let values;
-						//Yes, I am being obstinate in including this use of Object.values when the old stuff will work in all browsers. That's me: obstinate.
-						if (Object.values) {
-							values = Object.values(result);
-						} else { //IE
-							values = [];
-							Object.keys(result).forEach(function(key) {values.push(result[key])});
-						}
-						console.log("values = "); console.log(values);
-						$scope.values = values;
-						$scope.keys = Object.keys(result);
-						$scope.result = result;
-					});
-					
-					$scope.closeDialog = function() {
-						$mdDialog.hide();
-					}
-				}
+				OtherInfoTool.clearInteraction();		
 			}
-
-			$mdDialog
-				.show( alert )
-				.catch(function() {}) //swallows reject error when we programmatically open new dialog over old
-				.finally(function() {
-					alert = undefined;
-				});
-			
 		}
-					
-		let queryFeatures = (function(layer, thePoint) {
-			return $q(function(resolve, reject) {	
-			
-				let featureType = layer.source.params.LAYERS;
-				if (featureType != undefined) {
-					let split = featureType.split(":");
-					featureType = split.length == 1 ? featureType : split[1];
-				}
-				console.log("featureType = " + featureType);
-
-				console.log("zoom level = " + MapSettings.data.theMap.getView().getZoom());
-				let buffer;
-				switch (MapSettings.data.theMap.getView().getZoom()) {
-					case 7: {
-						buffer = 10000;
-						break;
-					}
-					case 8: {
-						buffer = 5000;
-						break;
-					}
-					case 9: {
-						buffer = 1000;
-						break;
-					} 
-					case 10: {
-						buffer = 700;
-						break;
-					}
-					default: {
-						buffer = 500;
-						break;
-					}
-				}
-				 
-				let featureRequest = new ol.format.WFS().writeGetFeature({
-					srsName: 'EPSG:3857',
-					featureNS: layer.source.wfs.feature_namespace, 
-					featurePrefix: layer.source.wfs.feature_prefix, 
-					featureTypes: [featureType], 
-					outputFormat: 'application/json',
-					//Need to add the following filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive.
-					//filter: ol.format.ogc.filter.intersects(paramStub.geometryName, new ol.geom.Point(thePoint), 'urn:ogc:def:crs:EPSG::3857')
-					filter: ol.format.ogc.filter.bbox(layer.source.wfs.geometry_name, [thePoint[0]-buffer, thePoint[1]-buffer, thePoint[0]+buffer, thePoint[1]+buffer], 'urn:ogc:def:crs:EPSG::3857')
-				});
-					
-				console.log("featureRequest = ");
-				console.log(featureRequest);
-							
-				//make sure its good to go
-				featureRequest = featureRequest.hasChildNodes() ? featureRequest : undefined;
-							
-				if (featureRequest != undefined && layer.source.wfs.url != undefined) {
-					let body;
-					/*
-					//TODO: This is a terrible hack. I need to use ol.format.ogc.filter.intersects filter, but it doesn't exist in the version of OpenLayers (3.16.0) loaded by the bower install of angular-openlayers-directive. I could copy the version of openlayers I want (3.18) over the other one in bower_components, but that would break on any new bower install. So, instead, I'm hacking in the needed XML. It's ugly and I hate it but it does what I need. 
-					let queryString = new XMLSerializer().serializeToString(featureRequest);
-					console.log("queryString = ");
-					console.log(queryString);
-					let filterString = '><Filter xmlns="http://www.opengis.net/ogc"><Intersects><PropertyName>' + layer.source.wfs.geometry_name + '</PropertyName><Point xmlns="http://www.opengis.net/gml" srsName="urn:ogc:def:crs:EPSG::3857"><pos>' + thePoint[0] + ' ' + thePoint[1] + '</pos></Point></Intersects></Filter></Query>';
-					console.log("filterString =");
-					console.log(filterString);
-					queryString = queryString.replace("/>", filterString)
-					console.log("queryString =");
-					console.log(queryString);
-					*/
-					
-					// then post the request and add the received features to a layer
-					try {
-						//Try fetch first (not available in IE)
-						//Yes, I am being obstinate in including this code when the old stuff will work in all browsers. That's me: obstinate.
-						fetch('/proxy/' + layer.source.wfs.url, {
-							method: 'POST',
-							body: new XMLSerializer().serializeToString(featureRequest) //TODO: this is the one I'd use if I didn't have to hack the filter as above
-							//body: queryString //For use with the xml hack above
-						}).then(function(response) {
-							console.log(response);
-							return response.json();
-						}).then(function(result) {
-							console.log(result);
-				
-							features2.clear();
-							let feature;
-							try {
-								feature = new ol.format.GeoJSON().readFeatures(result)[0];
-							} catch(err) {
-								console.log(err);
-							}
-							if (feature !== undefined) {
-								features2.addFeature(feature);
-								body = result.features[0].properties;
-							} else {
-								body = {noData: "There is no feature in that location"};
-							}	
-						}).catch(function(err) {
-							console.log("server problem:"); console.log(err);
-							body = {noData: "There was a problem communicating with the server"};
-						}).then(function(stuff) {
-							resolve(body);
-						});
-					} catch(err) { //If fetch is not available, this is IE
-						let request = new XMLHttpRequest();
-						request.onload = function() {
-							let result = JSON.parse(this.responseText);
-							console.log(result);
-							features2.clear();
-							let feature;
-							try {
-								feature = new ol.format.GeoJSON().readFeatures(result)[0];
-							} catch(err) {
-								console.log(err);
-							}
-							if (feature !== undefined) {
-								features2.addFeature(feature);
-								body = result.features[0].properties;
-							} else {
-								body = {noData: "There is no feature in that location"};
-							}
-							resolve(body);
-						};
-						request.onerror = function(err) {
-							console.log("server problem:"); console.log(err);
-							body = {noData: "There was a problem communicating with the server"};
-							resolve(body);
-							
-						};
-						request.open('POST', '/proxy/' + layer.source.wfs.url, true);
-						request.send(new XMLSerializer().serializeToString(featureRequest));
-					}
-
-				} else {
-					console.log("Layer cannot be queried");
-					let notQueryable = {noData:"Layer cannot be queried"};
-					resolve(notQueryable);
-				}	
-				
-			});
-		});
-
+		
 		
 		let bboxClicked = function() {
 			data.bboxMode = !data.bboxMode;
 			if (data.bboxMode) {
 				data.polyMode = false;
 				data.infoMode = false;		
+				data.otherInfoMode = false;		
 				clearPolyInteraction();
-				clearInfoInteraction();
+				InfoTool.clearInteraction();
+				OtherInfoTool.clearInteraction();
 				addBboxInteraction();
 			} else {
-				MapSettings.data.theMap.removeInteraction(dragBox);		
+				//MapSettings.data.theMap.removeInteraction(dragBox);
+				clearBboxInteraction();
 			}
 		}
 	
@@ -434,6 +143,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			});		
 			
 			MapSettings.data.theMap.addInteraction(dragBox);
+			MapSettings.data.selectedTabIndex = 2;
 		}
 		
 		let clearBboxInteraction = function() {
@@ -446,6 +156,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			features.clear();
 			featureOverlay.setMap(null);
 			MapSettings.data.theMap.removeInteraction(dragBox);		
+			MapSettings.data.selectedTabIndex = 0;
 		}
 
 		let polyClicked = function() {
@@ -453,12 +164,15 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			if (data.polyMode) {
 				data.bboxMode = false;
 				data.infoMode = false;		
+				data.otherInfoMode = false;		
 				clearBboxInteraction();
-				clearInfoInteraction();
+				InfoTool.clearInteraction();
+				OtherInfoTool.clearInteraction();
 				addPolyInteraction();		
 			} else {
-				MapSettings.data.theMap.removeInteraction(draw);		
-				MapSettings.data.theMap.removeInteraction(modify);		
+				//MapSettings.data.theMap.removeInteraction(draw);		
+				//MapSettings.data.theMap.removeInteraction(modify);		
+				clearPolyInteraction();
 			}
 		}
 		
@@ -500,6 +214,7 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			featureOverlay.setMap(MapSettings.data.theMap);
 			MapSettings.data.theMap.addInteraction(modify);
 			MapSettings.data.theMap.addInteraction(draw);
+			MapSettings.data.selectedTabIndex = 2;
 		}
 		
 		let clearPolyInteraction = function() {
@@ -513,12 +228,13 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			features.clear();
 			MapSettings.data.theMap.removeInteraction(modify);
 			MapSettings.data.theMap.removeInteraction(draw);
+			MapSettings.data.selectedTabIndex = 0;
 		}
 		
 
 		$rootScope.$on('initializingMap', function(event, data) {
 			console.log('received initializingMap');
-			clearInfoInteraction();
+			InfoTool.clearInteraction();
 			clearBboxInteraction();
 			clearPolyInteraction();
 		})
@@ -535,11 +251,12 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 
 		return {
 			data: data,
+			homeExtent: homeExtent,
 			infoClicked: infoClicked,
+			otherInfoClicked: otherInfoClicked,
 			layerClicked: layerClicked,
 			bboxClicked: bboxClicked,
 			polyClicked: polyClicked
 		}
 		
 	});
-

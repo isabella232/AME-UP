@@ -15,7 +15,9 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 				.hideDelay(3000)
 		);
 	};
-		
+	
+	$scope.showResultsTab = false;
+	
 	//TODO: seems like we might have to do this to make sure map handle is reset after navigation. Look at this more closely and make sure.
 	/**
 	$rootScope.$on('mapInitialized', function(event, data) {
@@ -93,6 +95,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	});
 
 	$scope.center = MapSettings.data.center;
+	$scope.view = MapSettings.data.view;
 	$scope.groups = MapSettings.data.groups;
 	$scope.layers = MapSettings.data.layers;
 	//$scope.showAll = MapSettings.data.showAll;
@@ -121,8 +124,10 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	]
 		
 	$scope.toolsData = MapTools.data;
+	$scope.homeExtent = MapTools.homeExtent;
 	$scope.infoMode = MapTools.data.infoMode;
 	$scope.infoClicked = MapTools.infoClicked;
+	$scope.otherInfoClicked = MapTools.otherInfoClicked;
 	$scope.bboxMode = MapTools.data.bboxMode;
 	$scope.bboxClicked = MapTools.bboxClicked;
 	$scope.polyMode = MapTools.data.polyMode;

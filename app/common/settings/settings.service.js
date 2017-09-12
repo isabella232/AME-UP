@@ -6,11 +6,15 @@ angular.module('SettingsService', ['APIService'])
 		
 		let data = {
 			center: undefined,
+			view: undefined,
 			showAll: undefined,
 			groups: undefined,
 			layers: undefined,
 			aoi: undefined, 
-			theMap: undefined
+			theMap: undefined,
+			selectedTabIndex: 0,
+			showResultsTab: false
+
 		}
 		
 		let groupActiveChange = function(group) {
@@ -20,13 +24,27 @@ angular.module('SettingsService', ['APIService'])
 					checkQueryLayer(layer);
 				}
 			});
+			$rootScope.$broadcast('visibilityChanged', {
+				data: ''
+			});
 		};
 			
 		let layerActiveChange = function(layer) {
 			data.groups.forEach(function(group) {
-				if (group.name == layer.group) {
+				if (group.name == layer.group) { // if layer's group is off, turn it on
 					group.active = group.active || layer.visible;
+					if (group.ordinal == 1 && layer.visible) { //if user just turned on a Base Map layer, turn the others off
+						data.layers.forEach(function(thisLayer) {
+							if (thisLayer.group === layer.group && thisLayer.name !== layer.name) {
+								thisLayer.visible = false;
+							}
+						});
+						
+					}
 				}
+			});
+			$rootScope.$broadcast('visibilityChanged', {
+				data: ''
 			});
 			
 			checkQueryLayer(layer);
@@ -87,7 +105,8 @@ angular.module('SettingsService', ['APIService'])
 					data.layers = [];
 				}
 				
-				data.center = APP_CONFIG.center;			
+				data.center = APP_CONFIG.center;	
+				data.view = {rotation:0};
 				
 				//console.log("resetMap, data.center:");
 				//console.log(data.center);
@@ -251,7 +270,7 @@ angular.module('SettingsService', ['APIService'])
 			toggleShowAllLayers: toggleShowAllLayers
 		}
 	})
-	.factory('ProjectSettings', function($http, $q, Projects, MapSettings, APP_CONFIG) {
+	.factory('ProjectSettings', function($http, $q, Projects, MapSettings, APP_CONFIG, Auth) {
 		console.log("ProjectSettings init enter");
 
 		let data = {
@@ -302,7 +321,10 @@ angular.module('SettingsService', ['APIService'])
 			});
 		}
 		
-		fetchProjects();
+		if (Auth.isAuthenticated()) {
+			console.log("fetching Projects");
+			fetchProjects();
+		}
 		
 		const setCurrentProject = function(id) {
 			console.log("setCurrentProject id = " + id);

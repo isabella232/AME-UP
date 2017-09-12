@@ -2,8 +2,8 @@
 
 angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 	.component('login', {
-		templateUrl: 'login/login.html',
-		controller: function LoginController($scope, Auth, $state, $mdDialog, Roles) {
+		templateUrl: 'login/partials/login.html',
+		controller: function LoginController($scope, Auth, $state, $mdDialog, Roles, PWReset, $q) {
 			$scope.credentials = {
 				username: '',
 				password: '',
@@ -70,5 +70,61 @@ angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 					$scope.showRegistration = false;
 				}
 			}
+			
+			$scope.requestPWReset = function(ev) {
+				$mdDialog.show({
+					parent: angular.element(document.body),
+					targetEvent: ev,
+					templateUrl: 'login/partials/request.dialog.html',
+					controller: function($scope, $mdDialog) {
+						$scope.title = "Request Password Reset";
+						$scope.email = null;
+				
+						$scope.cancel = function() {
+							$mdDialog.cancel();
+						};
+						$scope.submit = function() {
+							$mdDialog.hide($scope.email);
+						}
+					}
+				})
+				.then(function(email) {
+					$mdDialog.show({
+						parent: angular.element(document.body),
+						targetEvent: ev,
+						templateUrl: 'login/partials/request_status.dialog.html',
+						controller: function($scope, $mdDialog) {
+							$scope.title = "Request Status";
+							$scope.showProgress = true;
+							$scope.error = false;
+							
+							$scope.email = email;
+
+							$q(function(resolve, reject) {
+								PWReset.get({"email": email}, function() {resolve();}, function() {reject();});
+							})
+							.then(function() {
+								$scope.showProgress = false; 
+								$scope.error = false;
+							})
+							.catch(function() {
+								$scope.showProgress = false;
+								$scope.error = true;
+							});
+							
+							$scope.cancel = function() {
+								$mdDialog.cancel();
+							};
+							$scope.submit = function() {
+								$mdDialog.hide();
+							}
+						}
+					})
+
+
+				}, function() {
+				});
+			}
 		}
 	});
+	

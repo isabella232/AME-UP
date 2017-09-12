@@ -15,7 +15,10 @@ var app = angular.module('mapApp', [
   'ReportsTabController',
   'LayersTabController',
   'AttributesTabController',
-  'SettingsService'
+  'ResultsTabController',
+  'SettingsService',
+  'ProjectProperties',
+  'ResetPWController'
 ])
 .config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default')
@@ -25,9 +28,19 @@ var app = angular.module('mapApp', [
 .config(function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
   .state('cover', {
-    url: '/',
-    templateUrl: 'cover/cover.html'
+    url: '/home',
+    templateUrl: 'cover/cover.html',
+	redirectTo: 'cover.info'
   })
+  .state('cover.info', {
+    url: '/info',
+    templateUrl: 'cover/partials/info.html'
+  })
+  .state('cover.additional', {
+    url: '/additional',
+    templateUrl: 'cover/partials/additional.html'
+  })
+ 
   .state('help', {
     url: '/help',
     templateUrl: 'help/help.html'
@@ -36,9 +49,13 @@ var app = angular.module('mapApp', [
     url: '/map',
     templateUrl: 'map/map.html',
 	//controller: 'MapController' //TODO: either put this here or in html template, not both or will be called twice
+  })
+  .state('pwreset', {
+    url: '/pwreset/:time/:token',
+    templateUrl: 'password_reset/reset.html',
   });
  
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/home');
   
   //TODO: This leads to reload/url-paste issues. Apparently needs url rewriting installed as well. Maybe later.
   //$locationProvider.html5Mode(true); 
@@ -48,7 +65,9 @@ var app = angular.module('mapApp', [
 
 	$scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
 		Auth.logout();
-		$state.go('cover');
+		if ($state.current.name !== "pwreset") { //don't go to cover if we are here to reset pw
+			$state.go('cover');
+		}
 	});
   
 	$rootScope.toggleSideNav = function() {
@@ -102,6 +121,14 @@ var app = angular.module('mapApp', [
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS) {
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
+	  
+	//redirect method from this thread: https://github.com/angular-ui/ui-router/issues/1584
+	if (next.redirectTo) {
+		console.log("redirecting");
+		event.preventDefault();
+		$state.go(next.redirectTo, nextParams)
+	}
+	  
     if (!Auth.isAuthenticated()) {
       console.log(next.name);
       if (next.name == 'map') {

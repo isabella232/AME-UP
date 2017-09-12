@@ -1,0 +1,44 @@
+<md-progress-circular ng-if="!projectTypes" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
+<div ng-show="projectTypes" ng-form="projectTypeForm" layout="column">
+	<md-input-container>
+		<label>Project name</label>
+		<input type="text" name="projectName" ng-model="$ctrl.name" required ng-change="validateForm()">
+		<div ng-messages="projectTypeForm.projectName.$error">
+			<div ng-message="required">This is required</div>
+		</div>
+	</md-input-container>
+	<md-input-container>
+		<md-select ng-model="$ctrl.selectedType" name="projectType" placeholder="Select a project type" required ng-change="validateForm()">
+			<md-option ng-value="projectType" ng-repeat="projectType in projectTypes">{{ projectType.name }}</md-option>
+		</md-select>
+		<div ng-messages="projectTypeForm.projectType.$error">
+			<div ng-message="required">This is required</div>
+		</div>
+	</md-input-container>	
+	
+	
+	<div ng-show="$ctrl.selectedType" layout="column">
+		<md-input-container ng-repeat="attribute in $ctrl.selectedType.attributes">
+			<div ng-if="attribute.options">
+				<md-select ng-if="attribute.required" ng-model="attribute.value" name="inputField{{$index}}" placeholder="{{attribute.caption}}" required ng-change="validateForm()">
+					<md-option ng-value="attrOption" ng-repeat="attrOption in attribute.options">{{ attrOption }}</md-option>
+				</md-select>
+				<md-select ng-if="!attribute.required" ng-model="attribute.value" name="inputField{{$index}}" placeholder="{{attribute.caption}}">
+					<md-option ng-value="attrOption" ng-repeat="attrOption in attribute.options">{{ attrOption }}</md-option>
+				</md-select>
+				<div ng-messages="projectTypeForm['inputField' + $index].$error">
+					<div ng-message="required">This is required</div>
+				</div>
+			</div>
+			<div ng-if="!attribute.options">
+				<label>{{attribute.caption}}</label>
+				<input ng-if="attribute.required" type="{{attribute.inputType}}" name="inputField{{$index}}" ng-model="attribute.value" ng-pattern="attribute.regex" required ng-change="validateForm()">
+				<input ng-if="!attribute.required" type="{{attribute.inputType}}" name="inputField{{$index}}" ng-model="attribute.value" ng-pattern="attribute.regex">
+				<div ng-messages="projectTypeForm['inputField' + $index].$error">
+					<div ng-message="required">This is required</div>
+					<ng-message when="pattern">Wrong format</ng-message>						
+				</div>
+			</div>
+		</md-input-container>
+	</div>
+</div>

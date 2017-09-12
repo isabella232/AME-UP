@@ -22,24 +22,28 @@
 	<script src="/bower_components/pdfmake/build/pdfmake.min.js"></script>
 	<script src='/bower_components/pdfmake/build/vfs_fonts.js'></script>
 	<script src='/bower_components/angular-file-saver/dist/angular-file-saver.bundle.min.js'></script>
+    <script src="/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 	
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-    <script src="/bower_components/angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 	<script src="app.js"></script>
 	<script src="app.config.js"></script>
 	<script src="map/map.controller.js"></script>
 	<script src="tabs/reports/reports.controller.js"></script>
 	<script src="tabs/layers/layers.controller.js"></script>
 	<script src="tabs/attributes/attributes.controller.js"></script>
+	<script src="tabs/results/results.controller.js"></script>
 	<script src="login/login.component.js"></script>
+	<script src="password_reset/resetpw.controller.js"></script>
 	<script src="project/project.controller.js"></script>
 	<script src="common/auth/auth.service.js"></script>
 	<script src="common/api/api.service.js"></script>
 	<script src="common/settings/settings.service.js"></script>
 	<script src="common/change_monitor/change_monitor.service.js"></script>
 	<script src="map/maptools/maptools.service.js"></script>
+	<script src="map/maptools/infotool/infotool.service.js"></script>
+	<script src="map/maptools/otherinfotool/otherinfotool.service.js"></script>
+	<script src="project/project_properties/project_properties.component.js"></script>
 	<link rel="stylesheet" href="/bower_components/openlayers/ol.css" />
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 
@@ -65,7 +69,9 @@
 				<a ui-sref="cover"><img src="assets/images/AMEUP-Logo-2_03-64px.png"></a>
 				
 				<span flex=""></span>
-				<span ng-if="isAuthenticated()"><h2>{{projectData.currentProject.name == undefined ? "(new project)" : projectData.currentProject.name}}</h2></span>
+				<div ng-if="isAuthenticated()">
+					<h2>{{projectData.currentProject.name == undefined ? "(new project)" : projectData.currentProject.name}}</h2>
+				</div>
 				<md-menu ng-if="isAuthenticated()" md-position-mode="target-right target" md-offset="0 40">
 					<md-button ng-click="$mdOpenMenu($event)" style="min-width:60px" class="md-icon-button" aria-label="User" >
 						<md-icon md-menu-origin="" md-font-icon="fa-user-circle-o"  class="fa" style="font-size:40px"></md-icon>
@@ -105,6 +111,10 @@
 			<md-button class="md-primary" ng-click="openProject($event)">
 				 <md-icon md-font-icon="fa-folder-open-o"  class="fa" style="font-size:25px"></md-icon>
 				 Open project...
+			</md-button><br/>
+			<md-button id="edit" class="md-primary" ng-click="editProject($event)">
+				 <md-icon md-font-icon="fa-edit"  class="fa" style="font-size:25px"></md-icon>
+				 Edit project properties...
 			</md-button><br/>
 			<md-button id="save" class="md-primary" ng-click="saveProject($event)">
 				 <md-icon md-font-icon="fa-save"  class="fa" style="font-size:25px"></md-icon>

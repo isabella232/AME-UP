@@ -15,17 +15,24 @@
 		<div ng-if="result">
 			<div ng-if="result.noData">{{ result.noData }}</div>
 			<div ng-if="!result.noData">
-				<table ng-if="!alternateLayout" class="report-table">
-					<tr ng-repeat="key in keys">
-						<td><b>{{ key }}</b></td>
-						<td>{{result[key]}}</td>
-					</tr>
-				<table>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length != 1">There are {{result.length}} features at this location:</div>
+				<div class="md-subhead" style="margin-bottom:20px;" ng-if="result.length == 1">There is {{result.length}} feature at this location:</div>
+				<div ng-if="!alternateLayout">
+					<div ng-repeat="r in result">
+						<table  class="report-table">
+							<tr ng-repeat="key in keys">
+								<td><b>{{ key }}</b></td>
+								<td>{{r[key]}}</td>
+							</tr>
+						</table>
+						<div style="height:40px;"></div>
+					</div>
+				</div>
 				<table ng-if="alternateLayout" class="report-table">
 					<tr>
 						<th ng-repeat="key in keys">{{ key }}</th>
 					</tr>
-					<tr>
+					<tr ng-repeat="values in valuesList">
 						<td ng-repeat="value in values track by $index">{{ value }}</td>
 					</tr>
 				</table>

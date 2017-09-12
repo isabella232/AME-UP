@@ -1,0 +1,28 @@
+<md-dialog aria-label="{{ title }}">
+
+	<md-toolbar class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content class="md-dialog-content" ng-form="requestPWRest">
+		<md-progress-circular ng-show="showProgress" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
+		<div ng-show="!showProgress">
+			<div ng-show="!error">
+				Password reset successful
+			</div>
+			<div ng-show="error">
+				There was a problem with resetting your password. Please try again.
+			</div>
+		</div>
+	</md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+      <md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="submit()">
+        OK
+      </md-button>
+    </md-dialog-actions>
+	
+</md-dialog>
