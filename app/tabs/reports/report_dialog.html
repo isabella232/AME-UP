@@ -13,7 +13,7 @@
 					</md-icon>
 				</md-button>
 				<md-menu-content>
-					<md-menu-item>
+					<md-menu-item ng-show="reportName === 'Contact'"">
 						<md-button ng-click="csvDownloadClicked()">
 							<md-tooltip md-direction="right" md-autohide="true">
 								Download as csv file
@@ -43,6 +43,25 @@
 			<div ng-if="results.$resolved" id="reportBody">
 				<span ng-if="error">{{error}}</span>
 				<div ng-if="!error">
+					<div id="header" class="md-body-1">
+						<div style="padding-bottom:10px"><b>Date generated:</b> {{date.toString()}}</div>
+						<div style="padding-bottom:10px"><b>User:</b> {{userName}}</div>
+						<div id="projectInfo" ng-show="project" style="padding-bottom:10px">
+							<div><b>Project Info</b></div>
+							<div style="margin-left:15px">
+								<div><b>Name:</b> {{project.name}}</div>
+								<div><b>Type:</b> {{project.type.name}}</div>
+								
+								<div style="margin-left:15px">
+									<div ng-repeat="attribute in project.type.attributes">
+										<div>
+											<b>{{attribute.caption}}:</b> {{attribute.value}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div id="introText" ng-show="results.textBoxContent[0]" ng-bind-html="results.textBoxContent[0]" class="md-body-1" style="padding-bottom:15px;">
 					</div>
 					<table class="report-table" ng-show="reportName === 'Contact'">
@@ -92,7 +111,7 @@
 					</table>
 					-->
 					<div ng-show="reportName === 'Military Encroachment'">
-						<div ng-repeat="r in results.records">
+						<div ng-repeat="r in results.records" id="me_rec_{{$index}}">
 							<table style="border:1px solid black; margin-bottom:30px">
 								<tr>
 									<td>
@@ -140,6 +159,10 @@
 					</div>
 
 					<div id="endText" ng-show="results.textBoxContent[1]" ng-bind-html="results.textBoxContent[1]" class="md-body-1" style="padding-top:15px;">
+					</div>
+					<div id="footer" style="margin-top:20px">
+						<div class="md-body-1"><b>Report area:</b></div>
+						<img src="{{thumbURL}}" width="500">
 					</div>
 					
 				</div>
