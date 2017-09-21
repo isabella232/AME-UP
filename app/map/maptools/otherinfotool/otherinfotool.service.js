@@ -71,6 +71,9 @@ angular.module('MapToolsService')
 		let infoEventHandler = function(event) {
 			console.log("single click received");
 			console.log(event);
+			
+			MapSettings.data.selectedTabIndex = myHomeTab;
+			
 			features2.clear();
 			//let selectPoint = event.coordinate;
 			if (event) {
