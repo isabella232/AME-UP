@@ -101,7 +101,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	//$scope.showAll = MapSettings.data.showAll;
 	$scope.data = MapSettings.data; //Need this for showAll
 	
-	//These are for pooping out project data on the Reports tab. They are not currently used.
+	//These (and the Auth injections at the top) are for pooping out project data on the Reports tab. They are not currently used.
 	$scope.userName = Auth.data.username;
 	$scope.projectData = ProjectSettings.data;
 
