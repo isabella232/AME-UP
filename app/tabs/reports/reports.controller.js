@@ -45,7 +45,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 		});
 		function DialogController($scope, $mdDialog, reportName, userName, project) {
 			$scope.reportName = reportName;
-			$scope.implemented = (reportName === 'Contact' || reportName === 'Military Encroachment' || reportName === 'Permitting' || reportName ==='Infrastructure' || reportName === 'Environmental');
+			$scope.implemented = (reportName === 'Contact' || reportName === 'Military Encroachment' || reportName === 'Permitting' || reportName ==='Infrastructure' || reportName === 'Environmental' || reportName === 'Other Considerations');
 			$scope.userName = userName;
 			$scope.project = project;
 			$scope.date = new Date();
