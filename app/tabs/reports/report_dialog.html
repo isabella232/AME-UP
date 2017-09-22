@@ -62,7 +62,7 @@
 							</div>
 						</div>
 					</div>
-					<div id="introText" ng-show="results.textBoxContent[0]" ng-bind-html="results.textBoxContent[0]" class="md-body-1" style="padding-bottom:15px;">
+					<div id="introText" ng-show="results.textBoxContent[0]" ng-bind-html="results.textBoxContent[0]" class="md-body-1" style="padding-top:30px;padding-bottom:30px;">
 					</div>
 					<table class="report-table" ng-show="reportName === 'Contact'">
 						<tr>
@@ -111,6 +111,9 @@
 					</table>
 					-->
 					<div ng-show="reportName === 'Military Encroachment'">
+						<div ng-if="results.records.length === 0" class="md-title" id="me_rec_0">
+							No military encroachments detected in your area of interest
+						</div>
 						<div ng-repeat="r in results.records" id="me_rec_{{$index}}">
 							<table style="border:1px solid black; margin-bottom:30px">
 								<tr>
@@ -158,11 +161,11 @@
 						</div>
 					</div>
 
-					<div id="endText" ng-show="results.textBoxContent[1]" ng-bind-html="results.textBoxContent[1]" class="md-body-1" style="padding-top:15px;">
+					<div id="endText" ng-show="results.textBoxContent[1]" ng-bind-html="results.textBoxContent[1]" class="md-body-1" style="padding-top:20px;">
 					</div>
-					<div id="footer" style="margin-top:20px">
+					<div id="footer" style="padding-top:30px">
 						<div class="md-body-1"><b>Report area:</b></div>
-						<img src="{{thumbURL}}" width="500">
+						<img ng-src="{{thumbURL}}" width="750">
 					</div>
 					
 				</div>
