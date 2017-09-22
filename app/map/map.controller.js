@@ -1,6 +1,6 @@
-angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsService'])
+angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsService', 'AuthService'])
 
-.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $mdToast, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings, MapTools) {
+.controller('MapController', function MapController($scope, $rootScope, $mdDialog, $mdToast, $http, olData, Layers, LayerGroups, MapSettings, APP_CONFIG, ProjectSettings, LayersTabSettings, MapTools, Auth) {
 	function print_call_stack() {
 		var stack = new Error().stack;
 		console.log("PRINTING CALL STACK");
@@ -100,6 +100,10 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	$scope.layers = MapSettings.data.layers;
 	//$scope.showAll = MapSettings.data.showAll;
 	$scope.data = MapSettings.data; //Need this for showAll
+	
+	//These (and the Auth injections at the top) are for pooping out project data on the Reports tab. They are not currently used.
+	$scope.userName = Auth.data.username;
+	$scope.projectData = ProjectSettings.data;
 
 	$scope.defaults = {
 		interactions: {

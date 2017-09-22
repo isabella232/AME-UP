@@ -45,7 +45,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 		});
 		function DialogController($scope, $mdDialog, reportName, userName, project) {
 			$scope.reportName = reportName;
-			$scope.implemented = (reportName === 'Contact' || reportName === 'Military Encroachment' || reportName === 'Permitting' || reportName ==='Infrastructure' || reportName === 'Environmental');
+			$scope.implemented = (reportName === 'Contact' || reportName === 'Military Encroachment' || reportName === 'Permitting' || reportName ==='Infrastructure' || reportName === 'Environmental' || reportName === 'Other Considerations');
 			$scope.userName = userName;
 			$scope.project = project;
 			$scope.date = new Date();
@@ -262,6 +262,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 						footer: function(currentPage, pageCount) { return { text: currentPage.toString() + ' of ' + pageCount, alignment: 'right', margin: [20, 2] }; },
 						content: [
 							{ text: 'Military Encroachment Report ' + dateStr, fontSize: 22, bold:true },
+							{ text: ' ', fontSize: 22, bold:true },
 						]
 					};
 					
