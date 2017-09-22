@@ -262,6 +262,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 						footer: function(currentPage, pageCount) { return { text: currentPage.toString() + ' of ' + pageCount, alignment: 'right', margin: [20, 2] }; },
 						content: [
 							{ text: 'Military Encroachment Report ' + dateStr, fontSize: 22, bold:true },
+							{ text: ' ', fontSize: 22, bold:true },
 						]
 					};
 					
