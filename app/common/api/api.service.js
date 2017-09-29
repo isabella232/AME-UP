@@ -82,22 +82,22 @@ angular.module('APIService', ['ngResource'])
 			get: {
 				method: 'GET',
 				isArray: false,//true,
-				//The result from the endpoint is an array nested three deep. It is more convenient to the html to flatten this 
-				//and this seems to be the best place to do it.
 				transformResponse: function(data, headers){
+					//The result from the endpoint for Contact Report is an array nested three deep. It is more convenient to the html to flatten this and this seems to be the best place to do it.
 					function flatten(arr) {
 					  return arr.reduce(function (flat, toFlatten) {
 						return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
 					  }, []);
-					}			
-					//let flattened = flatten(angular.fromJson(data));
-					//return flattened;
+					}	
+					
 					let result = angular.fromJson(data);
-					let flattened = flatten(result.records);
-					//console.log("flattened = "); console.log(flattened);
-					let returnObj = {textBoxContent: result.textBoxContent, records:flattened};
-					//console.log("returnObj = "); console.log(returnObj);
-					return returnObj
+					if (result.records) { //skip all this if not a Contact report
+						let flattened = flatten(result.records);
+						let returnObj = {textBoxContent: result.textBoxContent, records:flattened};
+						return returnObj;
+					} else {
+						return result;
+					}
 				}
 			}
 		});
