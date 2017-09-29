@@ -350,7 +350,52 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 								}
 							});
 						}
+					});
+				} else { //TODO: Implement other reports
+					let dateStr = new Date().toLocaleDateString();
+								
+					let docDef = {
+						pageOrientation: 'landscape',
+						footer: function(currentPage, pageCount) { return { text: currentPage.toString() + ' of ' + pageCount, alignment: 'right', margin: [20, 2] }; },
+						content: [
+							{ text: reportName + ' Report ' + dateStr, fontSize: 22, bold:true },
+							{ text: ' ', fontSize: 22, bold:true },
+						]
+					};
+					
+					const element = document.getElementById('header');
+					element.scrollIntoView();
+					html2canvas(element, {
+						logging: true,
+						onrendered: function (headerCanvas) {	
+							console.log("header rendered");
+							const headerData = headerCanvas.toDataURL();
+							docDef.content.push({image: headerData, width: 740});
+							const element = document.getElementById('introText');
+							element.scrollIntoView();
+							html2canvas(element, {
+								logging: true,
+								onrendered: function (introCanvas) {	
+									console.log("intro rendered");
+									const introData = introCanvas.toDataURL();
+									docDef.content.push({image: introData, width: 740});
+									const element = document.getElementById('footer');
+									element.scrollIntoView();
+									html2canvas(element, {
+										logging: true,
+										useCORS: true,
+										onrendered: function (footerCanvas) {	
+											console.log("footer rendered");
+											const footerData = footerCanvas.toDataURL();
+											docDef.content.push({image: footerData, width: 740});
+											pdfMake.createPdf(docDef).download(reportName + "Report - " + dateStr + ".pdf");
+										}
+									});
+								}
+							});
+						}
 					});;
+					
 				}
 			}
 		}
