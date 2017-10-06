@@ -113,7 +113,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 			zoom: true,
 			rotate: false,
 			attribution: false
-		},
+		}/*,
 		view: {
 			rotation:0,
 			//Swagged coords for a bounding box around AZ
@@ -123,6 +123,7 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 			//extent: [-114.877197, 31.2405812, -108.985342, 37.072575],
 			minZoom: 7
 		}
+		*/
 	};
 		
 	//scaleline does not work when added via the defaults above. Instead, we must create this object then use it with ol-control in the html
