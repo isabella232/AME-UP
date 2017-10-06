@@ -106,7 +106,6 @@ angular.module('SettingsService', ['APIService'])
 				}
 				
 				data.center = APP_CONFIG.center;	
-				data.view = {rotation:0};
 				
 				//console.log("resetMap, data.center:");
 				//console.log(data.center);
