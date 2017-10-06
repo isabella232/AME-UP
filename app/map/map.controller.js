@@ -115,9 +115,12 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 			attribution: false
 		},
 		view: {
+			rotation:0,
 			//Swagged coords for a bounding box around AZ
 			//Extent units must be in EPSG:3857 I think. So I used this page to convert: https://epsg.io/transform#s_srs=4326&t_srs=3857&x=-108.8774390&y=36.7459890
 			extent: [-12788071.07, 3664032.74, -12132192.78, 4449227.64],
+			//projection: 'EPSG:4326',			
+			//extent: [-114.877197, 31.2405812, -108.985342, 37.072575],
 			minZoom: 7
 		}
 	};
@@ -136,5 +139,6 @@ angular.module('MapController', ['APIService', 'SettingsService', 'MapToolsServi
 	$scope.bboxClicked = MapTools.bboxClicked;
 	$scope.polyMode = MapTools.data.polyMode;
 	$scope.polyClicked = MapTools.polyClicked;
+	$scope.searchClicked = MapTools.searchClicked;
 	
 });
