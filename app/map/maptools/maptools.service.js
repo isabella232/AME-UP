@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('MapToolsService', ['APIService', 'SettingsService'])
-	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings, APP_CONFIG, InfoTool, OtherInfoTool) {
+	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings, APP_CONFIG, InfoTool, OtherInfoTool, SearchTool) {
 		console.log("MapTools init enter");
 		
 		let data = {
@@ -24,6 +24,10 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			MapSettings.data.center.lon = APP_CONFIG.initialLon;
 			MapSettings.data.center.zoom = APP_CONFIG.initialZoom;
 			MapSettings.data.view.rotation = 0;
+		}
+		
+		let searchClicked = function(event) {
+			SearchTool.showSearchDialog(event);
 		}
 
 		let features = new ol.Collection();
@@ -255,7 +259,8 @@ angular.module('MapToolsService', ['APIService', 'SettingsService'])
 			otherInfoClicked: otherInfoClicked,
 			layerClicked: layerClicked,
 			bboxClicked: bboxClicked,
-			polyClicked: polyClicked
+			polyClicked: polyClicked,
+			searchClicked: searchClicked
 		}
 		
 	});

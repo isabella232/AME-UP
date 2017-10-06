@@ -144,4 +144,14 @@ angular.module('APIService', ['ngResource'])
 			}
 			**/			
 		});
+	})
+	//Arguably, this should go somewhere else, since it's not part of our API server. But then again, I don't see a need to create a whole other service for it so... 
+	.factory('Nominatim', function($resource, APP_CONFIG) {
+		return $resource('http://nominatim.openstreetmap.org/search/:place', {}, {
+			query: {
+				method: 'GET',
+				isArray: true,
+				params:{format: 'json', addressdetails: 1, limit: 1, viewbox: '-114.877197, 31.2405812, -108.985342, 37.072575', bounded: 1}
+			}		
+		});
 	});
