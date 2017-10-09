@@ -1,0 +1,41 @@
+<md-dialog aria-label="searchDialog">
+
+	<!--
+	<md-toolbar class="md-dialog-toolbar">
+		<div class="md-toolbar-tools">
+			<h2 class="md-title ng-binding">{{ title }}</h2>
+			<span flex></span>
+			<md-checkbox ng-show="result && !result.noData" class="md-checkbox-small right" ng-model="alternateLayout" ng-change="layerActiveChange(layer)" aria-label="alternateLayout">
+				horizontal
+			</md-checkbox>
+		</div>
+	</md-toolbar>
+	-->
+	
+	<md-dialog-content  class="md-dialog-content">
+		<md-progress-circular ng-show="waiting" md-mode="indeterminate" style="margin-left: auto; margin-right: auto;"></md-progress-circular>
+		<div ng-show="!waiting" >
+			<form name="searchForm">
+				<md-input-container>
+					<label>Address or place name</label>
+					<input type="text" name="searchLocation" ng-model="searchLocation" required ng-change="validateForm()">
+					<div ng-messages="searchForm.searchLocation.$error">
+						<div ng-message="required">This is required</div>
+						<div ng-message="nothingFound">No such location found in Arizona</div>
+						<div ng-message="serverProblem">There is a problem with the geocode server. Please try later.</div>
+					</div>
+				</md-input-container>
+			</form>
+		</div>
+	</md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+		<md-button class="md-primary md-cancel-button md-button md-ink-ripple md-default-theme" ng-click="close()">
+			Cancel
+		</md-button>
+		<md-button class="md-primary md-confirm-button md-button md-autofocus md-ink-ripple md-default-theme" ng-click="search()" ng-disabled="!formValid">
+			Search
+		</md-button>
+    </md-dialog-actions>
+	
+</md-dialog>
