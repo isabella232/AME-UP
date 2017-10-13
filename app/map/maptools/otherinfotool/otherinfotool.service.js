@@ -136,7 +136,7 @@ angular.module('MapToolsService')
 			MapSettings.data.showResultsTab = false;
 			MapSettings.data.selectedTabIndex = 0; //Layers tab
 			
-			visibilityUnregListener();
+			if (visibilityUnregListener !== null) visibilityUnregListener();
 			visibilityUnregListener = null;
 		}
 		
