@@ -59,6 +59,18 @@ angular.module('MapToolsService')
 							$scope.formValid = true;
 						}
 					}
+
+					$scope.locationList = null;
+					$scope.selectedLocationIdx = null;
+					$scope.locationSelected = function() {
+						console.log("selectedLocationIdx = " + $scope.selectedLocationIdx); console.log($scope.selectedLocationIdx);
+						console.log("locationList");console.log($scope.locationList);
+								let min = ol.proj.transform([parseFloat($scope.selectedLocationIdx.boundingbox[2]), parseFloat($scope.selectedLocationIdx.boundingbox[0])], 'EPSG:4326','EPSG:3857');
+								let max = ol.proj.transform([parseFloat($scope.selectedLocationIdx.boundingbox[3]), parseFloat($scope.selectedLocationIdx.boundingbox[1])], 'EPSG:4326','EPSG:3857');
+								let extent = [min[0], min[1], max[0], max[1]];
+								console.log(extent);
+								$mdDialog.hide({extent: extent});
+					}
 					
 					$scope.close = function() {
 						console.log("canceling");
@@ -68,12 +80,14 @@ angular.module('MapToolsService')
 						$scope.waiting = true;
 						queryGeocoder($scope.searchLocation).then(function(jsonResult) {
 							$scope.waiting = false;
-							if (jsonResult.length > 0) {
+							if (jsonResult.length === 1) {
 								let min = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[2]), parseFloat(jsonResult[0].boundingbox[0])], 'EPSG:4326','EPSG:3857');
 								let max = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[3]), parseFloat(jsonResult[0].boundingbox[1])], 'EPSG:4326','EPSG:3857');
 								let extent = [min[0], min[1], max[0], max[1]];
 								console.log(extent);
 								$mdDialog.hide({extent: extent});
+							} else if (jsonResult.length > 1) {
+								$scope.locationList = jsonResult;
 							} else {
 								$scope.searchForm.searchLocation.$setValidity("nothingFound", false);
 							}
