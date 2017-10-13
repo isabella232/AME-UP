@@ -15,7 +15,9 @@ angular.module('MapToolsService')
 			);
 		};
 		
+		
 		let showSearchDialog = function(event) {
+			/**
 			let confirm = $mdDialog.prompt()
 			  .placeholder('Address or place name')
 			  .ariaLabel('Address')
@@ -24,30 +26,82 @@ angular.module('MapToolsService')
 			  .cancel('Cancel');
 
 			$mdDialog.show(confirm).then(function(result) {
-			  //showToast("Search not yet implemented"); //TODO: make Geocode call here. 
 				queryGeocoder(result).then(function(jsonResult) {
 					if (jsonResult.length > 0) {
-						//MapSettings.data.center.lat = parseFloat(jsonResult[0].lat);
-						//MapSettings.data.center.lon = parseFloat(jsonResult[0].lon);
-						//let oldExtent = MapSettings.data.theMap.getExtent();
-						//console.log(oldExtent);
 						let min = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[2]), parseFloat(jsonResult[0].boundingbox[0])], 'EPSG:4326','EPSG:3857');
 						let max = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[3]), parseFloat(jsonResult[0].boundingbox[1])], 'EPSG:4326','EPSG:3857');
 						let extent = [min[0], min[1], max[0], max[1]];
-						//let extent = [parseFloat(jsonResult[0].boundingbox[2]), parseFloat(jsonResult[0].boundingbox[0]), parseFloat(jsonResult[0].boundingbox[3]), parseFloat(jsonResult[0].boundingbox[1])];
-						//let extent = [-12362945.59, 3762211.07, -12323981.12, 3805514.43];
 						console.log(extent);
 						MapSettings.data.theMap.getView().fit(extent, MapSettings.data.theMap.getSize());
-						//MapSettings.data.theMap.getView().fitExtent(extent, MapSettings.data.theMap.getSize());
 					} else {
 						console.log("No results found in search area");
 					}
 				})/*.catch(function() {
 					console.log("there was a problem with geocoding");
-				})*/;
+				})*;
 			}, function() {
 			  showToast("Search canceled");
 			});
+			**/
+			
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: event,
+				templateUrl: 'map/maptools/searchtool/searchtool.dialog.html',
+				controller: function($scope, $mdDialog) {
+					$scope.waiting = false;
+					$scope.searchLocation
+					$scope.formValid = false;
+					
+					$scope.validateForm = function() {
+						console.log ("validating form");
+						if ($scope.searchLocation && $scope.searchLocation.trim() !== '') {
+							$scope.formValid = true;
+						}
+					}
+
+					$scope.locationList = null;
+					$scope.selectedLocationIdx = null;
+					$scope.locationSelected = function() {
+						console.log("selectedLocationIdx = " + $scope.selectedLocationIdx); console.log($scope.selectedLocationIdx);
+						console.log("locationList");console.log($scope.locationList);
+								let min = ol.proj.transform([parseFloat($scope.selectedLocationIdx.boundingbox[2]), parseFloat($scope.selectedLocationIdx.boundingbox[0])], 'EPSG:4326','EPSG:3857');
+								let max = ol.proj.transform([parseFloat($scope.selectedLocationIdx.boundingbox[3]), parseFloat($scope.selectedLocationIdx.boundingbox[1])], 'EPSG:4326','EPSG:3857');
+								let extent = [min[0], min[1], max[0], max[1]];
+								console.log(extent);
+								$mdDialog.hide({extent: extent});
+					}
+					
+					$scope.close = function() {
+						console.log("canceling");
+						$mdDialog.cancel();
+					};
+					$scope.search = function() {
+						$scope.waiting = true;
+						queryGeocoder($scope.searchLocation).then(function(jsonResult) {
+							$scope.waiting = false;
+							if (jsonResult.length === 1) {
+								let min = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[2]), parseFloat(jsonResult[0].boundingbox[0])], 'EPSG:4326','EPSG:3857');
+								let max = ol.proj.transform([parseFloat(jsonResult[0].boundingbox[3]), parseFloat(jsonResult[0].boundingbox[1])], 'EPSG:4326','EPSG:3857');
+								let extent = [min[0], min[1], max[0], max[1]];
+								console.log(extent);
+								$mdDialog.hide({extent: extent});
+							} else if (jsonResult.length > 1) {
+								$scope.locationList = jsonResult;
+							} else {
+								$scope.searchForm.searchLocation.$setValidity("nothingFound", false);
+							}
+						}).catch(function(err) {
+							//TODO: this would probably be better as its own popup dialog
+							console.log(err);
+							$scope.searchForm.searchLocation.$setValidity("serverProblem", false);
+						});
+					}
+				}
+			}).then(function(newExtent) {
+				console.log("back from search dialog, extent = " + newExtent.extent); console.log(newExtent.extent);
+				MapSettings.data.theMap.getView().fit(newExtent.extent, MapSettings.data.theMap.getSize());
+			}).catch(function(){}); // to swallow annoying "unhandled rejection" error from angular when dialog is cancelled
 		}
 
 		let queryGeocoder = function (place) {

@@ -151,7 +151,7 @@ angular.module('APIService', ['ngResource'])
 			query: {
 				method: 'GET',
 				isArray: true,
-				params:{format: 'json', addressdetails: 1, limit: 1, viewbox: '-114.877197, 31.2405812, -108.985342, 37.072575', bounded: 1}
+				params:{format: 'json', addressdetails: 1, viewbox: '-114.877197, 31.2405812, -108.985342, 37.072575', bounded: 1}
 			}		
 		});
 	});

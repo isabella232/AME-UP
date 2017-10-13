@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('MapToolsService', ['APIService', 'SettingsService'])
+angular.module('MapToolsService', ['APIService', 'SettingsService', 'ngMessages'])
 	.factory('MapTools', function($rootScope, $mdToast, $mdDialog, $q, MapSettings, LayersTabSettings, APP_CONFIG, InfoTool, OtherInfoTool, SearchTool) {
 		console.log("MapTools init enter");
 		
