@@ -1,25 +1,12 @@
 <div layout="row" flex style="height:100%;">
 
-	<md-content layout="column" flex="25" style="background-color: #86b8da;">
-		<a ui-sref="cover.info">
-			<md-button class="md-primary" aria-label="Info">
-				General Info
-			</md-button>
-		</a>
-		<a ui-sref="cover.additional">
-			<md-button class="md-primary" aria-label="Additional" >
-				Additional Resources
-			</md-button>
-		</a>
-	</md-content>
-	
 	<div flex="10"></div>
 	
-	<md-content flex="40" style="padding-right:30px; padding-top:20px;">
+	<md-content flex="65" style="padding-right:30px; padding-top:20px;">
 		<ui-view></ui-view>
 	</md-content>
 	
-	<div flex="5"></div>
+	<div flex="10"></div>
 	
 	<md-content flex="15" style=" height:100%">
 		<div ng-if="!isAuthenticated()">
@@ -33,6 +20,6 @@
 		</div>
 	</md-content>
 	
-	<div flex="5"></div>
+	<div flex="10"></div>
 
 </div>
