@@ -69,7 +69,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 			$scope.featureCounter = {count:0}; //Used to index the feature records across featureTypes
 			
 			$scope.omitStandardFields = function(key) {
-				return (['Mil Zone ID', 'Restriction Type', 'Service', 'Description', 'Office', 'Contact'].indexOf(key) == -1)
+				return (['Mil Zone ID', 'Restriction Type', 'Service', 'Description', 'Office', 'Contact', 'likelihood'].indexOf(key) == -1)
 			}
 			
 			//console.log("project name = " + project.name);
@@ -85,6 +85,28 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 			canvas.toBlob(function (blob) {
 				$scope.thumbURL = URL.createObjectURL(blob)
 				$scope.results = Reports.get({report: reportName, filter: new ol.format.GeoJSON().writeGeometry(MapSettings.data.aoi.clone().transform("EPSG:3857", "EPSG:4326"))});
+				$scope.results.$promise.then( () => {
+					console.log("post report processing");
+					//$scope.likelihood = "high"; //TODO: depends on Min Altitude and Project type
+					$scope.results.featureTypes.forEach(function(featureType) { //TODO: incorporate project type (height) into this logic
+						console.log("processing featureType");
+						if (featureType.featureType === "Military_flight_corridor_area" ||
+							featureType.featureType === "Mil_special_use_airspace_area") {
+							featureType.features.forEach(function(feature) {
+								console.log("processing feature");
+								if (feature['Minimum Altitude'] <= 1000) {
+									feature['likelihood'] = "high"
+								} else if (feature ['Minimum Altitude'] <= 2000) {
+									feature['likelihood'] = "medium";
+								} else if (feature ['Minimum Altitude'] > 2000) {
+									feature['likelihood'] = "low";
+								}
+								console.log("feature = "); console.log(feature);
+							});
+						}
+						console.log(featureType);
+					});
+				});
 				$scope.results.$promise.catch(function() {$scope.error = "There was a problem communicating with the server"; console.log($scope.error);});		
 			})	
 			
