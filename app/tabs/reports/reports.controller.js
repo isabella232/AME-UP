@@ -95,6 +95,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 								featureType.featureType === "Mil_special_use_airspace_area") {
 								featureType.features.forEach(function(feature) {
 									console.log("processing feature");
+									/***
 									if (feature['Minimum Altitude'] <= 1000) {
 										feature['likelihood'] = "high"
 									} else if (feature ['Minimum Altitude'] <= 2000) {
@@ -102,10 +103,35 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 									} else if (feature ['Minimum Altitude'] > 2000) {
 										feature['likelihood'] = "low";
 									}
+									***/
+									let type = null;
+									let height = null;
+									if (project) {
+										type = project.type.name;
+										project.type.attributes.some(attribute => {
+											if (attribute.name === 'height') {
+												height = attribute.value;
+											}
+											return height;  //Returns null or a value. If value, some exits
+										});
+									}
+									
+									if (type === null) { //User has not specified a project, give them worst case
+										feature['likelihood'] = 'high';
+									} else if (type === 'CSP' ||
+										(type === 'Wind' && height > 500)) {
+										feature['likelihood'] = feature['Minimum Altitude'] <= 1000 ? 'high' : feature['Minimum Altitude'] <= 2000 ? 'medium' :'low';
+									} else if (type === 'Wind' && height <= 500) {
+										feature['likelihood'] = feature['Minimum Altitude'] <= 500 ? 'high' : feature['Minimum Altitude'] <= 2000 ? 'medium' :'low';
+									} else if (type === 'PV') {
+										feature['likelihood'] = feature['Minimum Altitude'] <= 500 ? 'medium' : 'low';
+									} else {	
+										feature['likelihood'] = 'low'; //TODO: Verify this. To handle unrecognized project type (i.e. project type added but this function not updated)
+									}
 									console.log("feature = "); console.log(feature);
 								});
 							}
-							console.log(featureType);
+							console.log(featureType);							
 						});
 					}
 				});
