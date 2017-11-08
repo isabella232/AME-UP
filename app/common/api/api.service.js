@@ -145,6 +145,17 @@ angular.module('APIService', ['ngResource'])
 			**/			
 		});
 	})
+	.factory('WFSProxy', function($resource, APP_CONFIG) {
+		return $resource(APP_CONFIG.layersAPI + '/wfs_proxy', {}, {
+			xmlQuery: {
+				method: 'POST',
+				isArray: false,
+				headers: { 
+					'Authorization': 'Bearer ' + window.localStorage.getItem(APP_CONFIG.tokenKey)
+				} 
+			}
+		});
+	})
 	//Arguably, this should go somewhere else, since it's not part of our API server. But then again, I don't see a need to create a whole other service for it so... 
 	.factory('Nominatim', function($resource, APP_CONFIG) {
 		return $resource('http://nominatim.openstreetmap.org/search/:place', {}, {
