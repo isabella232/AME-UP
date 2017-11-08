@@ -85,25 +85,19 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 			canvas.toBlob(function (blob) {
 				$scope.thumbURL = URL.createObjectURL(blob)
 				$scope.results = Reports.get({report: reportName, filter: new ol.format.GeoJSON().writeGeometry(MapSettings.data.aoi.clone().transform("EPSG:3857", "EPSG:4326"))});
-				$scope.results.$promise.then( () => {
+				$scope.results.$promise.then( function() {
+					//The following logic is to generate appropriate descriptive text for the ME report, based on project type, project height, and 
+					//minimum altitude of the airspace. Arguably, this should all be done in the API server. This would require passing the project
+					//to the reports endpoint and a bunch of string manipulation in the endpoint code. I'm not against that, but for now I am 
+					//keeping it here and letting angular do the string lifting. 
 					if (reportName === 'Military Encroachment') {
 						console.log("post report processing");
-						//$scope.likelihood = "high"; //TODO: depends on Min Altitude and Project type
-						$scope.results.featureTypes.forEach(function(featureType) { //TODO: incorporate project type (height) into this logic
+						$scope.results.featureTypes.forEach(function(featureType) { 
 							console.log("processing featureType");
 							if (featureType.featureType === "Military_flight_corridor_area" ||
 								featureType.featureType === "Mil_special_use_airspace_area") {
 								featureType.features.forEach(function(feature) {
 									console.log("processing feature");
-									/***
-									if (feature['Minimum Altitude'] <= 1000) {
-										feature['likelihood'] = "high"
-									} else if (feature ['Minimum Altitude'] <= 2000) {
-										feature['likelihood'] = "medium";
-									} else if (feature ['Minimum Altitude'] > 2000) {
-										feature['likelihood'] = "low";
-									}
-									***/
 									let type = null;
 									let height = null;
 									if (project) {
@@ -119,7 +113,7 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 									if (type === null) { //User has not specified a project, give them worst case
 										feature['likelihood'] = 'high';
 									} else if (type === 'CSP' ||
-										(type === 'Wind' && height > 500)) {
+											  (type === 'Wind' && height > 500)) {
 										feature['likelihood'] = feature['Minimum Altitude'] <= 1000 ? 'high' : feature['Minimum Altitude'] <= 2000 ? 'medium' :'low';
 									} else if (type === 'Wind' && height <= 500) {
 										feature['likelihood'] = feature['Minimum Altitude'] <= 500 ? 'high' : feature['Minimum Altitude'] <= 2000 ? 'medium' :'low';
