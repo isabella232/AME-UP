@@ -22,12 +22,31 @@ angular.module('ReportsTabController', ['APIService', 'SettingsService', 'ngMate
 		//console.log("reportClicked, boxExtent = " + $scope.boxExtent);
 		console.log(event);
 		if (MapSettings.data.aoi == undefined) {
-			showAOIalert(event);
+			//showAOIalert(event);
+			showAlert('AOI required', 'Please specify an Area of Interest first.', event);
+		} else if (!ProjectSettings.data.currentProject) {
+			showAlert('Project required', 'Reports require project parameter definitions. Please define a project first.', event)
 		} else {
 			showReportDialog(event, type);
 		}
 	}
 	
+    let showAlert = function(title, text, event) {
+ 		console.log("show reports alert");
+		alert = $mdDialog.alert({
+			title: title,
+			textContent: text,
+			targetEvent: event,
+			ok: 'Ok'
+		});
+
+		$mdDialog
+			.show( alert )
+			.finally(function() {
+				alert = undefined;
+			});
+    }
+
     let showAOIalert = function(event) {
  		console.log("show AOI alert");
 		alert = $mdDialog.alert({
