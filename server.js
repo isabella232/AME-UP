@@ -1,3 +1,5 @@
+const localtest = false;
+
 const express = require('express');
 const app = express();
 const request = require('request');
@@ -37,10 +39,37 @@ app.use('/proxy', function(req, res) {
 	})).pipe(res);
 });
 
+/**
 app.set('port', process.env.PORT || 8000);
 
 app.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
+**/
+
+let port;
+let server;
+if (localtest) {
+    port = 8000;
+    const http = require('http');
+    app.set('port', port);
+	console.log("creating server");
+    server = http.createServer(app);
+} else {
+    port = 4430; //TODO: 443 requires elevated privileges. Using this for now.
+    const options = {
+        key: fs.readFileSync('cert/ameup_private.key'),
+        cert: fs.readFileSync('cert/ameup_usgin_org_cert.cer'),
+        ca: fs.readFileSync('cert/ameup_usgin_org_interm.cer')
+    };    
+    const https = require('https');
+    app.set('port', port);
+	console.log("creating server");
+    server = https.createServer(options, app);
+}
+server.listen(port, function () {
+    console.log('Express server listening on port ' + app.get('port'));
+});
+
 
 
