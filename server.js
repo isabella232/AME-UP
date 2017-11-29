@@ -1,4 +1,4 @@
-const localtest = false;
+const config = require('./server.config.json');
 
 const express = require('express');
 const app = express();
@@ -47,16 +47,14 @@ app.listen(app.get('port'), function () {
 });
 **/
 
+if (config.ignoreCertErrors) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; 
+}
+
 let port;
 let server;
-if (localtest) {
-    port = 8000;
-    const http = require('http');
-    app.set('port', port);
-	console.log("creating server");
-    server = http.createServer(app);
-} else {
-    port = 4430; //TODO: 443 requires elevated privileges. Using this for now.
+if (config.useTLS) {
+    port = config.TLSPort; 
     const options = {
         key: fs.readFileSync('cert/ameup_private.key'),
         cert: fs.readFileSync('cert/ameup_usgin_org_cert.cer'),
@@ -66,6 +64,12 @@ if (localtest) {
     app.set('port', port);
 	console.log("creating server");
     server = https.createServer(options, app);
+} else {
+    port = config.nonTLSPort;
+    const http = require('http');
+    app.set('port', port);
+	console.log("creating server");
+    server = http.createServer(app);
 }
 server.listen(port, function () {
     console.log('Express server listening on port ' + app.get('port'));
