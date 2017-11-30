@@ -67,10 +67,28 @@
 					<div ng-message="required">Email is required</div>
 				</div>
 			</md-input-container>
+			<md-input-container>
+				<label>Organization</label>
+				<input name="organization" ng-model="credentials.organization" required>
+				<div ng-messages="registrationForm.organization.$error">
+					<div ng-message="required">Organization is required</div>
+				</div>
+			</md-input-container>
+			<md-input-container>
+				<label>City</label>
+				<input name="city" ng-model="credentials.city" required>
+				<div ng-messages="registrationForm.city.$error">
+					<div ng-message="required">City is required</div>
+				</div>
+			</md-input-container>
+			<md-input-container>
+				<label>Reason for registering</label>
+				<input name="reason" ng-model="credentials.reason">
+			</md-input-container>
 			<br/>
 			<md-input-container>
 				<label>Desired Role</label>
-				<md-select name="desiredRole" ng-model="credentials.desiredRole">
+				<md-select name="desiredRole" ng-model="credentials.desiredRole" required>
 					<md-option ng-repeat="role in roles" value="{{role.id}}">
 						{{role.name}}
 					</md-option>
@@ -79,8 +97,22 @@
 					<div ng-message="required">Desired role is required</div>
 				</div>
 			</md-input-container>
+			<br/>
+			<md-input-container>
+				<div class="md-title" style="margin-top:1em">Terms of Service</div>
+				<div style="font-size: 12px;margin-top:1em">
+					This web tool was created for informational purposes only and is derived from multiple digital databases and other sources that are subject to change.  Each user of this web tool is responsible for determining its suitability for his or her intended use or purpose and acknowledges that no element of it constitutes legal advice.  The producers and hosts of this web tool make no claims, representations, or warranties, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, freedom from computer virus, or concerning validity, reliability or accuracy, as to any information accessible herein. Users of this web tool are strongly cautioned to inquire directly with appropriate agencies and independently verify all relevant information before making any decisions. Neither the producers of this web tool nor their affiliates, employees or agents, shall be liable for any loss or damages, consequential or otherwise, including but not limited to time, money, or goodwill, arising from the use of this web tool or in reliance upon the information contained herein or linked hereto.  In using these data, users agree to indemnify, defend, and hold harmless the producers and hosts of this web tool from any and all liability of any nature arising out of or resulting from such use.<br/><br/>
+					By registering for an account you are acknowledging that you understand and agree to these terms.
+				</div>				
+				<md-checkbox name="tos" ng-model="credentials.tos" style="margin-top:1em" required>
+					I agree
+				</md-checkbox>
+				<div ng-messages="registrationForm.tos.$error">
+					<div ng-message="required">Checking this box is required</div>
+				</div>
+			</md-input-container>
 		</form>
-		<md-button ng-click="register('submit')" class="md-primary md-raised">Register</md-button>
+		<md-button ng-click="register('submit')" class="md-primary md-raised" ng-disabled="!formValid>Register</md-button>
 		<md-button ng-click="register('cancel')" class="md-accent">Cancel</md-button>		
 	</md-whiteframe>
 
