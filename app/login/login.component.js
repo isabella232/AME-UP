@@ -11,7 +11,11 @@ angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 				firstName: '',
 				lastName: '',
 				email: '',
-				desiredRole: ''
+				organization: '',
+				city: '',
+				reason: '',
+				desiredRole: '',
+				tos: false
 			};
 			
 			$scope.showRegistration = false;
@@ -59,7 +63,7 @@ angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 					} else {
 						Auth.register($scope.credentials).then(function(msg) {
 							console.log("registered");
-							$scope.showAlert('Registration submitted', 'You will receive an email when your registration has been approved.');
+							$scope.showAlert('Registration submitted', 'You will receive an email when your registration has been approved (within seven days).');
 							$scope.showRegistration = false;
 						}, function(errMsg) {
 							console.log("not registered");
