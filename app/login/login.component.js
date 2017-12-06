@@ -84,7 +84,7 @@ angular.module('login', ['ngMaterial', 'AuthService', 'APIService'])
 					} else {
 						Auth.register($scope.credentials).then(function(msg) {
 							console.log("registered");
-							$scope.showAlert('Registration submitted', 'You will receive an email when your registration has been approved (within seven days).');
+							$scope.showAlert('Registration submitted', 'You will receive an email when your registration has been approved (within five business days).');
 							$scope.showRegistration = false;
 						}, function(errMsg) {
 							console.log("not registered");
