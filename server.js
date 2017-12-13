@@ -50,17 +50,14 @@ if (config.useTLS) {
 	server.listen(config.TLSPort, function () {
 		console.log('Express https server listening on port ' + config.TLSPort);
 	});
-};
-//If running https listener, redirect all traffic there
-if (config.useTLS) {
+	//redirect all traffic to https
 	app.all('*', function (req, res, next){
 		if(req.secure){
-			// OK, continue
 			return next();
 		};
-		res.redirect('https://' + req.hostname + ":" + config.TLSPort + req.url); // express 4.x
-	}); 
-}
+		res.redirect('https://' + req.hostname + ":" + config.TLSPort + req.url); 
+	});
+};
 
 app.use('/', express.static(__dirname + '/app'));
 
