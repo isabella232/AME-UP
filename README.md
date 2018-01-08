@@ -11,6 +11,7 @@ This README provides general installation instructions and a description of the 
 + [API server installation](#api-server-installation)
 + [App server installation](#app-server-installation)
 + [Geoserver setup](#geoserver-setup) (optional)
++ [Manage layers in PostgreSQL](#manage-layers-in-postgresql)
 
 ## High level architecture
 There are three components to AMEUP:
@@ -90,3 +91,33 @@ Most of the layers included in AME-UP at AZGS are hosted in a local Geoserver in
 +	HTTPS uses the same certificate used by the other AME-UP servers, converted to PKCS12 and imported into the Tomcat keystore (http://tomcat.apache.org/tomcat-8.5-doc/ssl-howto.html). 
 +	A filter chain requires Credentials from Request Headers for all WFS requests.
 
+## Manage layers in PostgreSQL
+### To add a layer
+1.	Add record to layers table. 
+2.	Add necessary records to layer_parameters table.
+3.	Add a record to the roles_layers_link table for every role that should have access to this layer.	
+
+### To add a layer_group
+1.	Add a record to the layer_groups table.
+2.	Add a record to the roles_layer_groups_link table for every role that should have access to this layer group.
+
+### New user registration
+1.	Designated administrator will receive an email when a new user registers.
+2.	Find the record matching the data in the email in the users table.
+3.	In that record, set the approved column to TRUE
+4.	Notify user (presumably via email)
+
+### Report text
+Intro/outro text for the various can be changed via the report_text table. The ordinal column specifies intro (1) and outro (2).
+
+### Project types and attributes
+Project types are defined in the project_types enum. New types can be added with 
+
+````SQL
+CREATE TYPE project_types AS ENUM ('type1','type2') -- new group of types
+ALTER TYPE project_types ADD VALUE <value> -- add additional type
+````
+
+Project type attributes are specified in the project_type_attributes table. The caption column in this table is what is displayed to the user. 
+
+The input_type column can be: numeric, text, text[], or a regular expression prefaced by "regex"
