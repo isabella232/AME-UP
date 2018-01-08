@@ -120,7 +120,7 @@ var app = angular.module('mapApp', [
 })
 
 .run(function ($rootScope, $state, Auth, AUTH_EVENTS, APP_CONFIG) {
-	//shut down logging for production (uncomment for test environments
+	//shut down logging if so configured
 	if (APP_CONFIG.muteLogging) {
 		console.log = function() {};
 	}
